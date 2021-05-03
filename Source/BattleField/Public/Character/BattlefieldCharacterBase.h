@@ -35,7 +35,7 @@ class BATTLEFIELD_API ABattlefieldCharacterBase : public ACharacter
 
 	class UActorState* State;
 
-	USkeletalMeshComponent* MainWeapon;
+	TArray<USkeletalMeshComponent*> Weapon;
 
 public:
 	// Sets default values for this character's properties
@@ -69,23 +69,14 @@ public:
 	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
 	int RunSpeedChangeValue;
 
-	UFUNCTION(Category = "State", BlueprintCallable)
-	class UActorState* GetState();
-
-	UFUNCTION(Category = "CharacterMesh", BlueprintCallable)
-	void SetCharacterSkeletalMesh(class USkeletalMesh* sk, FTransform transform);
-
-	UFUNCTION(Category = "Weapon", BlueprintCallable)
-	void SetCharacterWeaponMesh(class USkeletalMesh* weapon, FTransform transform);
-
-	UFUNCTION(Category = "CharacterMesh", BlueprintCallable)
-	void SetCharacterAnimBlueprint(const class UAnimBlueprint* abp);
-
-	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
-	UMeshComponent* WeaponMesh;
-
 	UFUNCTION(Category = "Weapon", BlueprintCallable)
 	void HitActor(AActor* targetActor);
+
+	UFUNCTION(Category = "Weapon", BlueprintCallable)
+	USkeletalMeshComponent* GetWeaponMesh(int weaponId);
+
+	UFUNCTION(Category = "State", BlueprintCallable)
+	class UActorState* GetState();
 
 	UFUNCTION(Category = "State", BlueprintNativeEvent)
 	void CharacterStateUpdate(EnumActorStateItem state);

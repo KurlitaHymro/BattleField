@@ -18,6 +18,8 @@ class BATTLEFIELD_API UCommonInterface : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
+	static class ABattleFieldGameMode* GameModeInst;
+
 	UFUNCTION(Category = "Interface", BlueprintCallable)
 	static class ABattleFieldGameMode* GetGameModeInst();
 
@@ -27,5 +29,6 @@ public:
 	UFUNCTION(Category = "Interface", BlueprintCallable)
 	static UDataTable* GetCharacterPropertyTable();
 
-	static class ABattleFieldGameMode* GameModeInst;
+	UFUNCTION(Category = "Interface", BlueprintCallable)
+	static FName CombinFNameId(FString name, int id);
 };

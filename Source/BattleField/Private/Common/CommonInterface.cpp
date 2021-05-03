@@ -22,3 +22,10 @@ UDataTable* UCommonInterface::GetCharacterPropertyTable()
 {
 	return GetGameModeInst()->GetCharacterProperty()->GetPropertyTableRow();
 }
+
+FName UCommonInterface::CombinFNameId(FString name, int id)
+{
+	FString sId = FString::FromInt(id);
+	FString sNameId = name + sId;
+	return FName(*sNameId);
+}

@@ -52,47 +52,6 @@ void ABattlefieldCharacterBase::SetupPlayerInputComponent(UInputComponent* Playe
 
 }
 
-UActorState* ABattlefieldCharacterBase::GetState()
-{
-	if (State) {
-		return State;
-	} else {
-		UE_LOG(LoadLog, Error, TEXT("CharacterBase No State"));
-		return nullptr;
-	}
-}
-
-void ABattlefieldCharacterBase::SetCharacterSkeletalMesh(USkeletalMesh* sk, FTransform transform)
-{
-	if (sk) {
-		GetMesh()->SetSkeletalMesh(sk);
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		GetMesh()->SetRelativeTransform(transform);
-	} else {
-		UE_LOG(LoadLog, Error, TEXT("Load SkeletalMesh Error"));
-	}
-}
-
-void ABattlefieldCharacterBase::SetCharacterWeaponMesh(USkeletalMesh* weapon, FTransform transform)
-{
-	if (weapon && MainWeapon) {
-		MainWeapon->SetSkeletalMesh(weapon);
-		MainWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		MainWeapon->SetRelativeTransform(transform);
-
-		WeaponMesh = MainWeapon;
-	} else {
-		UE_LOG(LoadLog, Error, TEXT("Load Weapon Error"));
-	}
-}
-
-void ABattlefieldCharacterBase::SetCharacterAnimBlueprint(const UAnimBlueprint* abp)
-{
-	UClass* abpClass = abp->GetAnimBlueprintGeneratedClass();
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	GetMesh()->SetAnimInstanceClass(abpClass);
-}
-
 void ABattlefieldCharacterBase::HitActor(AActor* targetActor)
 {
 	UGameplayStatics::ApplyDamage(targetActor,
@@ -101,6 +60,26 @@ void ABattlefieldCharacterBase::HitActor(AActor* targetActor)
 		this,
 		DamageTypeClass);
 	return;
+}
+
+USkeletalMeshComponent* ABattlefieldCharacterBase::GetWeaponMesh(int weaponId)
+{
+	if (Weapon.IsValidIndex(weaponId)) {
+		return Weapon[weaponId];
+	} else {
+		UE_LOG(RunLog, Error, TEXT("Weapon Index Error"));
+		return nullptr;
+	}
+}
+
+UActorState* ABattlefieldCharacterBase::GetState()
+{
+	if (State) {
+		return State;
+	} else {
+		UE_LOG(LoadLog, Error, TEXT("CharacterBase No State"));
+		return nullptr;
+	}
 }
 
 void ABattlefieldCharacterBase::ComponentInit()
@@ -124,38 +103,54 @@ void ABattlefieldCharacterBase::ComponentInit()
 	}
 	USkeletalMesh* skMesh = LoadObject<USkeletalMesh>(NULL,
 		TEXT("SkeletalMesh'/Game/Animation/SkeletalMesh/SK_Default.SK_Default'"));
-	FTransform tBody = UKismetMathLibrary::MakeTransform(
-		FVector(0.f, 0.f, -90.f),
-		FRotator(0.f, -90.f, 0.f),
-		FVector(1.f, 1.f, 1.f));
-	SetCharacterSkeletalMesh(skMesh, tBody);
+	if (skMesh) {
+		FTransform tBody = UKismetMathLibrary::MakeTransform(
+			FVector(0.f, 0.f, -90.f),
+			FRotator(0.f, -90.f, 0.f),
+			FVector(1.f, 1.f, 1.f));
+		GetMesh()->SetSkeletalMesh(skMesh);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->SetRelativeTransform(tBody);
+	} else {
+		UE_LOG(LoadLog, Error, TEXT("Load SkeletalMesh Error"));
+	}
 
 	/* 1.3 武器管理组件 */
-	MainWeapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MainWeapon"));
-	if (MainWeapon) {
-		MainWeapon->SetupAttachment(GetMesh(), TEXT("main_hand"));
-	} else {
-		bIsValid = false; // 组件内存申请失败时角色不可用。
-		return;
+	for (int weaponId = 0; weaponId < 1; weaponId++) {
+		USkeletalMeshComponent* skMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(UCommonInterface::CombinFNameId("Weapon", weaponId));
+		if (skMeshComp) {
+			skMeshComp->SetupAttachment(GetMesh(), TEXT("main_hand"));
+		} else {
+			bIsValid = false; // 组件内存申请失败时角色不可用。
+			return;
+		}
+		USkeletalMesh* axc = LoadObject<USkeletalMesh>(NULL,
+			TEXT("SkeletalMesh'/Game/Character/Mesh/Animation/heavy_weapons/SK_Axc.SK_Axc'"));
+		if (axc) {
+			FTransform tWeapon = UKismetMathLibrary::MakeTransform(
+				FVector(0.f, 0.f, -20.f),
+				FRotator(0.f, 0.f, 0.f),
+				FVector(1.f, 1.f, 0.8f));
+			skMeshComp->SetSkeletalMesh(axc);
+			skMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			skMeshComp->SetRelativeTransform(tWeapon);
+		} else {
+			UE_LOG(LoadLog, Error, TEXT("Load Weapon Error"));
+		}
+		Weapon.Emplace(skMeshComp);
 	}
-	USkeletalMesh* axc = LoadObject<USkeletalMesh>(NULL,
-		TEXT("SkeletalMesh'/Game/Character/Mesh/Animation/heavy_weapons/SK_Axc.SK_Axc'"));
-	FTransform tWeapon = UKismetMathLibrary::MakeTransform(
-		FVector(0.f, 0.f, -20.f),
-		FRotator(0.f, 0.f, 0.f),
-		FVector(1.f, 1.f, 0.8f));
-	SetCharacterWeaponMesh(axc, tWeapon);
 }
 
 void ABattlefieldCharacterBase::BeginPlayLoad()
 {
-	/* step2 : 加载 */
-	/* 加载动画蓝图 */
+	/* step2 : 加载内容 */
+	/* 2.1 动画蓝图 */
 	UAnimBlueprint* abp = LoadObject<UAnimBlueprint>(NULL,
 		TEXT("AnimBlueprint'/Game/Animation/AnimBlueprint/ABP_Default.ABP_Default'"));
-	SetCharacterAnimBlueprint(abp);
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	GetMesh()->SetAnimInstanceClass(abp->GetAnimBlueprintGeneratedClass());
 
-	/* 加载控件蓝图（蓝图层） */
+	/* 2.1 虚控件蓝图 */
 	CreateStateWidget();
 }
 
