@@ -38,7 +38,7 @@ UDataTable* UCharacterProperty::GetPropertyTableRow()
 
 void UCharacterProperty::LoadCharacterProperty(FString dataBase)
 {
-    FString path = FPaths::Combine(FPaths::ProjectDir(), TEXT("dynPara/" + dataBase + ".csv"));
+    FString path = FPaths::Combine(FPaths::ProjectDir(), TEXT("Content/Config/" + dataBase + ".csv"));
     FString data;
     if (FFileHelper::LoadFileToString(data, *path)) {
         UE_LOG(LoadLog, Warning, TEXT("Success To Load %s"), *path);
