@@ -41,7 +41,7 @@ void ABattlefieldCharacterPlayer::CreateStateWidget_Implementation()
 {
 	UE_LOG(LoadLog, Log, TEXT("ABattlefieldCharacterPlayer::CreateStateWidget"));
 	UClass* playerStateWidgetClass = LoadClass<UUserWidget>(NULL,
-		TEXT("UserWidget'/Game/Widget/PlayerStateWidget.PlayerStateWidget_C'"));
+		TEXT("UserWidget'/Game/Widget/UserState.UserState_C'"));
 	if (playerStateWidgetClass) {
 		StateWidget = CreateWidget<UUserWidget>(GetWorld(), playerStateWidgetClass);
 		StateWidget->AddToViewport();

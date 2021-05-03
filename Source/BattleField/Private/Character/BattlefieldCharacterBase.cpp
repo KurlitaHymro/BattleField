@@ -102,7 +102,7 @@ void ABattlefieldCharacterBase::ComponentInit()
 		return;
 	}
 	USkeletalMesh* skMesh = LoadObject<USkeletalMesh>(NULL,
-		TEXT("SkeletalMesh'/Game/Animation/SkeletalMesh/SK_Default.SK_Default'"));
+		TEXT("SkeletalMesh'/Game/SkeletalMesh/SK_Mesh_Default.SK_Mesh_Default'"));
 	if (skMesh) {
 		FTransform tBody = UKismetMathLibrary::MakeTransform(
 			FVector(0.f, 0.f, -90.f),
@@ -116,22 +116,34 @@ void ABattlefieldCharacterBase::ComponentInit()
 	}
 
 	/* 1.3 武器管理组件 */
-	for (int weaponId = 0; weaponId < 1; weaponId++) {
+	for (int weaponId = 0; weaponId < 2; weaponId++) {
 		USkeletalMeshComponent* skMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(UCommonInterface::CombinFNameId("Weapon", weaponId));
 		if (skMeshComp) {
-			skMeshComp->SetupAttachment(GetMesh(), TEXT("main_hand"));
+			skMeshComp->SetupAttachment(GetMesh(), UCommonInterface::CombinFNameId("Eqip", weaponId));
 		} else {
 			bIsValid = false; // 组件内存申请失败时角色不可用。
 			return;
 		}
-		USkeletalMesh* axc = LoadObject<USkeletalMesh>(NULL,
-			TEXT("SkeletalMesh'/Game/Character/Mesh/Animation/heavy_weapons/SK_Axc.SK_Axc'"));
-		if (axc) {
-			FTransform tWeapon = UKismetMathLibrary::MakeTransform(
-				FVector(0.f, 0.f, -20.f),
-				FRotator(0.f, 0.f, 0.f),
-				FVector(1.f, 1.f, 0.8f));
-			skMeshComp->SetSkeletalMesh(axc);
+		USkeletalMesh* weapon;
+		FTransform tWeapon;
+		if (0 == weaponId) {
+			 weapon = LoadObject<USkeletalMesh>(NULL,
+				TEXT("SkeletalMesh'/Game/SkeletalMesh/Weapon/Heavy/HeavyLongAxe/HeavyLongAxe.HeavyLongAxe'"));
+			 tWeapon = UKismetMathLibrary::MakeTransform(
+				 FVector(0.f, 0.f, 0.f),
+				 FRotator(0.f, -20.f, 0.f),
+				 FVector(1.0f, 1.0f, 0.7f));
+		} else {
+			weapon = LoadObject<USkeletalMesh>(NULL,
+				TEXT("SkeletalMesh'/Game/SkeletalMesh/Weapon/Shield/IronBuckler/IronBuckler.IronBuckler'"));
+			tWeapon = UKismetMathLibrary::MakeTransform(
+				FVector(0.f, 3.f, -3.f),
+				FRotator(-10.f, 0.f, 10.f),
+				FVector(0.7f, 0.7f, 0.8f));
+		}
+
+		if (weapon) {
+			skMeshComp->SetSkeletalMesh(weapon);
 			skMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			skMeshComp->SetRelativeTransform(tWeapon);
 		} else {
@@ -146,9 +158,13 @@ void ABattlefieldCharacterBase::BeginPlayLoad()
 	/* step2 : 加载内容 */
 	/* 2.1 动画蓝图 */
 	UAnimBlueprint* abp = LoadObject<UAnimBlueprint>(NULL,
-		TEXT("AnimBlueprint'/Game/Animation/AnimBlueprint/ABP_Default.ABP_Default'"));
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	GetMesh()->SetAnimInstanceClass(abp->GetAnimBlueprintGeneratedClass());
+		TEXT("AnimBlueprint'/Game/SkeletalMesh/SK_AnimBP_Default.SK_AnimBP_Default'"));
+	if (abp) {
+		GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+		GetMesh()->SetAnimInstanceClass(abp->GetAnimBlueprintGeneratedClass());
+	} else {
+		UE_LOG(LoadLog, Error, TEXT("Load AnimBP Error"));
+	}
 
 	/* 2.1 虚控件蓝图 */
 	CreateStateWidget();

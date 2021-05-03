@@ -5,6 +5,8 @@
 #include "Common/CommonInterface.h"
 #include "Common/BattleFieldDelegation.h"
 #include "Interface/CharacterProperty.h"
+#include "Character/BattlefieldCharacterPlayer.h"
+#include "Controller/PlayerControllerBase.h"
 
 /* 日志类型声明 */
 DEFINE_LOG_CATEGORY(LoadLog);
@@ -21,6 +23,9 @@ ABattleFieldGameMode::ABattleFieldGameMode()
     Delegation = NewObject<UBattleFieldDelegation>();
     /* 加载数据 */
     PropertyTableRow = NewObject<UCharacterProperty>();
+    /* 加载默认配置 */
+    DefaultPawnClass = ABattlefieldCharacterPlayer::StaticClass();
+    PlayerControllerClass = APlayerControllerBase::StaticClass();
 }
 
 ABattleFieldGameMode::~ABattleFieldGameMode()
