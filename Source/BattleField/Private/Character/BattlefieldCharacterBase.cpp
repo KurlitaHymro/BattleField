@@ -62,7 +62,7 @@ void ABattlefieldCharacterBase::HitActor(AActor* targetActor)
 	return;
 }
 
-USkeletalMeshComponent* ABattlefieldCharacterBase::GetWeaponMesh(int weaponId)
+UStaticMeshComponent* ABattlefieldCharacterBase::GetWeaponMesh(int weaponId)
 {
 	if (Weapon.IsValidIndex(weaponId)) {
 		return Weapon[weaponId];
@@ -117,25 +117,25 @@ void ABattlefieldCharacterBase::ComponentInit()
 
 	/* 1.3 武器管理组件 */
 	for (int weaponId = 0; weaponId < 2; weaponId++) {
-		USkeletalMeshComponent* skMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(UCommonInterface::CombinFNameId("Weapon", weaponId));
-		if (skMeshComp) {
-			skMeshComp->SetupAttachment(GetMesh(), UCommonInterface::CombinFNameId("Eqip", weaponId));
+		UStaticMeshComponent* stMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(UCommonInterface::CombinFNameId("Weapon", weaponId));
+		if (stMeshComp) {
+			stMeshComp->SetupAttachment(GetMesh(), UCommonInterface::CombinFNameId("Eqip", weaponId));
 		} else {
 			bIsValid = false; // 组件内存申请失败时角色不可用。
 			return;
 		}
-		USkeletalMesh* weapon;
+		UStaticMesh* weapon;
 		FTransform tWeapon;
 		if (0 == weaponId) {
-			 weapon = LoadObject<USkeletalMesh>(NULL,
-				TEXT("SkeletalMesh'/Game/SkeletalMesh/Weapon/Heavy/HeavyLongAxe/HeavyLongAxe.HeavyLongAxe'"));
+			 weapon = LoadObject<UStaticMesh>(NULL,
+				TEXT("StaticMesh'/Game/StaticMesh/Weapon/Heavy/HeavyLongAxe/HeavyLongAxe.HeavyLongAxe'"));
 			 tWeapon = UKismetMathLibrary::MakeTransform(
 				 FVector(0.f, 0.f, 0.f),
 				 FRotator(0.f, -20.f, 0.f),
 				 FVector(1.0f, 1.0f, 0.7f));
 		} else {
-			weapon = LoadObject<USkeletalMesh>(NULL,
-				TEXT("SkeletalMesh'/Game/SkeletalMesh/Weapon/Shield/IronBuckler/IronBuckler.IronBuckler'"));
+			weapon = LoadObject<UStaticMesh>(NULL,
+				TEXT("StaticMesh'/Game/StaticMesh/Weapon/Shield/IronBuckler/IronBuckler.IronBuckler'"));
 			tWeapon = UKismetMathLibrary::MakeTransform(
 				FVector(0.f, 3.f, -3.f),
 				FRotator(-10.f, 0.f, 10.f),
@@ -143,20 +143,22 @@ void ABattlefieldCharacterBase::ComponentInit()
 		}
 
 		if (weapon) {
-			skMeshComp->SetSkeletalMesh(weapon);
-			skMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			skMeshComp->SetRelativeTransform(tWeapon);
+			stMeshComp->SetStaticMesh(weapon);
+			stMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			stMeshComp->SetRelativeTransform(tWeapon);
 		} else {
 			UE_LOG(LoadLog, Error, TEXT("Load Weapon Error"));
 		}
-		Weapon.Emplace(skMeshComp);
+		Weapon.Emplace(stMeshComp);
 	}
 }
 
 void ABattlefieldCharacterBase::BeginPlayLoad()
 {
 	/* step2 : 加载内容 */
-	/* 2.1 动画蓝图 */
+	/* 2.1 虚控件蓝图 */
+	CreateStateWidget();
+	/* 2.2 动画蓝图 */
 	UAnimBlueprint* abp = LoadObject<UAnimBlueprint>(NULL,
 		TEXT("AnimBlueprint'/Game/SkeletalMesh/SK_AnimBP_Default.SK_AnimBP_Default'"));
 	if (abp) {
@@ -165,9 +167,10 @@ void ABattlefieldCharacterBase::BeginPlayLoad()
 	} else {
 		UE_LOG(LoadLog, Error, TEXT("Load AnimBP Error"));
 	}
-
-	/* 2.1 虚控件蓝图 */
-	CreateStateWidget();
+	/* 2.3 启用角色动作 */
+	if (bIsValid) {
+		bIsInMotion = false;
+	}
 }
 
 float ABattlefieldCharacterBase::CalDamage()
@@ -212,6 +215,7 @@ void ABattlefieldCharacterBase::OnceInput(EnumCharacterOnceAction action, float 
 	switch (action)
 	{
 	case EnumCharacterOnceAction::EN_ATTACK:
+		MainNormalAttack();
 		break;
 	case EnumCharacterOnceAction::EN_JUMP:
 		JumpStarted();
@@ -287,4 +291,19 @@ void ABattlefieldCharacterBase::ChangeSpeed(int spd)
 void ABattlefieldCharacterBase::ResetSpeed()
 {
 	GetState()->ResetSpeed();
+}
+
+void ABattlefieldCharacterBase::MainNormalAttack()
+{
+	if (bIsInMotion) {
+		return;
+	}
+	UAnimMontage* montage = LoadObject<UAnimMontage>(NULL,
+		TEXT("AnimBlueprint'/Game/Animations/Montage/NormalAttackMontage.NormalAttackMontage'"));
+	float delay = 0.f;
+	if (montage) {
+		delay = PlayAnimMontage(montage, 1.0f);
+	} else {
+		UE_LOG(LoadLog, Error, TEXT("Load NormalAttackMontage Error"));
+	}
 }

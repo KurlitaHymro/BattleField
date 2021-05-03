@@ -42,14 +42,14 @@ public:
 	uint8 DectGap = 1;
 
 	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
-	uint8 SlotNum = 8;
+	uint8 SlotNum = 2;
 
 	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
-	uint8 DectX = 0x10;
+	uint8 DectX = 8;
 
 	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
-	uint8 DectY = 0x10;
+	uint8 DectY = 4;
 
 	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
-	uint8 DectZ = 0x10;
+	uint8 DectZ = 2;
 };

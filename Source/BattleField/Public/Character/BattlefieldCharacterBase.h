@@ -36,7 +36,7 @@ class BATTLEFIELD_API ABattlefieldCharacterBase : public ACharacter
 
 	class UActorState* State;
 
-	TArray<USkeletalMeshComponent*> Weapon;
+	TArray<UStaticMeshComponent*> Weapon;
 
 public:
 	// Sets default values for this character's properties
@@ -59,6 +59,9 @@ public:
 	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
 	uint32 bIsValid : 1;
 
+	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
+	uint32 bIsInMotion : 1;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseTurnRate;
@@ -74,7 +77,7 @@ public:
 	void HitActor(AActor* targetActor);
 
 	UFUNCTION(Category = "Weapon", BlueprintCallable)
-	USkeletalMeshComponent* GetWeaponMesh(int weaponId);
+	UStaticMeshComponent* GetWeaponMesh(int weaponId);
 
 	UFUNCTION(Category = "State", BlueprintCallable)
 	class UActorState* GetState();
@@ -138,4 +141,7 @@ public:
 	/** Change Speed. */
 	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
 	void ResetSpeed();
+
+	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	void MainNormalAttack();
 };

@@ -15,6 +15,7 @@ APlayerControllerBase::APlayerControllerBase()
 	mOpInput.Emplace(EnumControllerOperatorInput::EN_OP1_RLS, EnumCharacterOnceAction::EN_SPEED_SUB);
 	mOpInput.Emplace(EnumControllerOperatorInput::EN_OP3_PRS, EnumCharacterOnceAction::EN_JUMP);
 	mOpInput.Emplace(EnumControllerOperatorInput::EN_OP3_PRS, EnumCharacterOnceAction::EN_JUMP);
+	mOpInput.Emplace(EnumControllerOperatorInput::EN_OP7_PRS, EnumCharacterOnceAction::EN_ATTACK);
 }
 
 // Called when the game starts
