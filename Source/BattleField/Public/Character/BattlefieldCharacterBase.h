@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Component/ActorState.h"
+#include "Common/CommonInterface.h"
 #include "BattlefieldCharacterBase.generated.h"
 
 UENUM(BlueprintType)

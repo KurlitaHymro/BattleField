@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Component/ActorState.h"
 #include "BattleFieldDelegation.generated.h"
 
 /**
@@ -15,8 +16,8 @@ class BATTLEFIELD_API UBattleFieldDelegation : public UObject
 	GENERATED_BODY()
 
 public:
-	/*
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FuncCharacterStateChange, class ABattlefieldCharacterBase*, character, EnumCharacterStateItem, state);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FuncCharacterStateChange, class ABattlefieldCharacterBase*, character, EnumActorStateItem, state);
 
 	UPROPERTY(BlueprintAssignable)
 	FuncCharacterStateChange playerStateChange;
@@ -25,5 +26,5 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FuncDeathNotify characterDead;
-	*/
+
 };

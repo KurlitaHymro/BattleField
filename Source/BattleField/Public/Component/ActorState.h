@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Common/CommonInterface.h"
+#include "Interface/CharacterProperty.h"
 #include "ActorState.generated.h"
 
 UENUM(BlueprintType)

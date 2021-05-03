@@ -33,7 +33,7 @@ void UActorSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	// ...
 }
 
-AActor* UActorSpawner::SpawnByInfo(UClass* actorClass, float r)
+AActor* UActorSpawner::SpawnInScope(UClass* actorClass, float r)
 {
 	UWorld* const world = GetWorld();
 	if (world) {

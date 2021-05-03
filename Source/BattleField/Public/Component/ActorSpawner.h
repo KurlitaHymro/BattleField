@@ -27,5 +27,5 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(Category = "Spawner")
-	AActor* SpawnByInfo(UClass* actorClass, float r = 0.f);
+	AActor* SpawnInScope(UClass* actorClass, float r = 0.f);
 };

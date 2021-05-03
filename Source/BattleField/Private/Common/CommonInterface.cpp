@@ -2,8 +2,6 @@
 
 
 #include "Common/CommonInterface.h"
-#include "Common/BattleFieldGameMode.h"
-#include "Common/BattleFieldDelegation.h"
 
 // 静态变量类外初始化
 ABattleFieldGameMode* UCommonInterface::GameModeInst = nullptr;

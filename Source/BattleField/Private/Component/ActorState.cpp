@@ -2,6 +2,7 @@
 
 
 #include "Component/ActorState.h"
+#include "Common/CommonInterface.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
