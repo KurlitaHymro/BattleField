@@ -27,7 +27,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
 	virtual void CharacterStateUpdate_Implementation(EnumActorStateItem state) override;
 
 	virtual void CreateStateWidget_Implementation() override;

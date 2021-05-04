@@ -37,7 +37,7 @@ void ACampsite::SetSpawnRadius(float r)
 
 void ACampsite::AddToCampsite(int id, int num)
 {
-	UE_LOG(RunLog, Warning, TEXT("Push To Campsite"));
+	UE_LOG(RunLog, Warning, TEXT("Push To Campsite Id:%d Num:%d"), id, num);
 	unsigned int& characterNum = camp.FindOrAdd(id);
 	if (static_cast<int>(characterNum) + num > 0) {
 		characterNum += num;
@@ -48,41 +48,44 @@ void ACampsite::AddToCampsite(int id, int num)
 	}
 }
 
-void ACampsite::CampsiteRandomSpawn(int num)
+int ACampsite::CampsiteRandomSpawn(int num)
 {
 	int rsv = num;
+	int spawnCnt = 0;
 	while (rsv > 0) {
 		int eleNum = camp.Num();
 		if (!eleNum || !curNum) {
-			return;
+			return 0;
 		}
 		unsigned int seed = rand() % curNum;
 		for (auto& item : camp) {
 			if (seed < item.Value) {
-				item.Value--;
-				CampsiteSpawnByInfo(item.Key);
-				if (item.Value <= 0) {
-					camp.Remove(item.Key);
+				bool spawnResult = CampsiteSpawnByInfo(item.Key);
+				if (spawnResult) {
+					spawnCnt++;
+					item.Value--;
+					if (item.Value <= 0) {
+						camp.Remove(item.Key);
+					}
+					curNum--;
+					rsv--;
+					UE_LOG(RunLog, Warning, TEXT("Success To Spawn, rsv = %d"), curNum);
 				}
-				curNum--;
+				break;
 			} else {
 				seed -= item.Value;
 			}
 		}
-
-		auto it = camp.CreateIterator();
-
-		it.Key();
 		rsv--;
 	}
+	return num - spawnCnt;
 }
 
-void ACampsite::CampsiteSpawnByInfo(int id)
+bool ACampsite::CampsiteSpawnByInfo(int id)
 {
 	UDataTable* dataTable = UCommonInterface::GetCharacterPropertyTable();
 	if (!dataTable) {
-		// dataTable是GameMode的静态成员。
-		return;
+		return false;
 	}
 	FString rowName = FString::FromInt(id);
 	FPropertyTableRow* item = dataTable->FindRow<FPropertyTableRow>(FName(rowName), TEXT("CharacterName"), true);
@@ -94,11 +97,17 @@ void ACampsite::CampsiteSpawnByInfo(int id)
 			if (AICharacter) {
 				AICharacter->bIsEnemy = bIsEnemy;
 				AICharacter->GetState()->InitCharacterStateByInfo(*item);
+				return true;
+			} else {
+				UE_LOG(RunLog, Error, TEXT("Spawn Type Error"));
+				return false;
 			}
 		} else {
-			UE_LOG(RunLog, Warning, TEXT("SpawnActor<ABattlefieldCharacterAI> Fail"));
+			UE_LOG(RunLog, Warning, TEXT("Spawn Fail"));
+			return false;
 		}
 	} else {
 		UE_LOG(RunLog, Error, TEXT("Fail To Read Item"));
+		return false;
 	}
 }

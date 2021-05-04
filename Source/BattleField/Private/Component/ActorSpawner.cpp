@@ -55,6 +55,8 @@ AActor* UActorSpawner::SpawnInScope(UClass* actorClass, float r)
 			GetWorld()->SpawnActor(actorClass, &toSpawnLocation, &toSpawnRotation);
 		if (!spawnCharacter) {
 			return nullptr;
+		} else {
+			return spawnCharacter;
 		}
 	}
 	return nullptr;

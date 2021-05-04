@@ -45,11 +45,11 @@ public:
 	uint8 SlotNum = 2;
 
 	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
-	uint8 DectX = 8;
+	uint8 DectX = 2;
 
 	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
 	uint8 DectY = 4;
 
 	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
-	uint8 DectZ = 2;
+	uint8 DectZ = 8;
 };

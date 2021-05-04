@@ -34,12 +34,12 @@ void ABattlefieldCharacterPlayer::BeginPlay()
 
 void ABattlefieldCharacterPlayer::CharacterStateUpdate_Implementation(EnumActorStateItem state)
 {
-	UE_LOG(RunLog, Warning, TEXT("ABattlefieldCharacterPlayer::CharacterStateUpdate"));
+	UE_LOG(RunLog, Warning, TEXT("Player::StateUpdate"));
 }
 
 void ABattlefieldCharacterPlayer::CreateStateWidget_Implementation()
 {
-	UE_LOG(LoadLog, Log, TEXT("ABattlefieldCharacterPlayer::CreateStateWidget"));
+	UE_LOG(LoadLog, Warning, TEXT("Player::CreateStateWidget"));
 	UClass* playerStateWidgetClass = LoadClass<UUserWidget>(NULL,
 		TEXT("UserWidget'/Game/Widget/UserState.UserState_C'"));
 	if (playerStateWidgetClass) {

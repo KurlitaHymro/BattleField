@@ -42,9 +42,9 @@ public:
 	void AddToCampsite(int id, int num);
 
 	UFUNCTION(Category = "Campsite", BlueprintCallable)
-	void CampsiteRandomSpawn(int num);
+	int CampsiteRandomSpawn(int num);
 
 	/* 根据ID查询属性信息，然后调用UCharacterSpawnMng组件的接口，生成一个士兵。 */
 	UFUNCTION(Category = "Campsite", BlueprintCallable)
-	void CampsiteSpawnByInfo(int id);
+	bool CampsiteSpawnByInfo(int id);
 };

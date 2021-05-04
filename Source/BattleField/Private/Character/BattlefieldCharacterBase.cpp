@@ -5,6 +5,8 @@
 #include "Common/CommonInterface.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Widget/UserWidgetBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -50,6 +52,15 @@ void ABattlefieldCharacterBase::SetupPlayerInputComponent(UInputComponent* Playe
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+float ABattlefieldCharacterBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	UE_LOG(RunLog, Error, TEXT("TakeDamage %f"), Damage);
+	GetState()->HpChange(-Damage);
+	CharacterStateUpdate(EnumActorStateItem::EN_HP);
+
+	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void ABattlefieldCharacterBase::HitActor(AActor* targetActor)
@@ -151,6 +162,10 @@ void ABattlefieldCharacterBase::ComponentInit()
 		}
 		Weapon.Emplace(stMeshComp);
 	}
+
+	/* 1.4 角色状态控件组件 */
+	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget"));
+	WidgetComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void ABattlefieldCharacterBase::BeginPlayLoad()
@@ -182,13 +197,34 @@ float ABattlefieldCharacterBase::CalDamage()
 
 void ABattlefieldCharacterBase::CharacterStateUpdate_Implementation(EnumActorStateItem state)
 {
-	// 角色状态变更时，通知控件组件更新。
+	UE_LOG(RunLog, Warning, TEXT("Base::StateUpdate"));
+	if (WidgetComp) {
+		UUserWidget* widget = WidgetComp->GetUserWidgetObject();
+		UUserWidgetBase* base = Cast<UUserWidgetBase>(widget);
+		if (widget) {
+			base->StateUpdate(this, EnumActorStateItem::EN_HP);
+		} else {
+			UE_LOG(RunLog, Warning, TEXT("Base::WidgetBase::Cast Fail"));
+		}
+	}
 }
 
 void ABattlefieldCharacterBase::CreateStateWidget_Implementation()
 {
-	// 玩家角色添加视口UI。
-	// AI角色添加头顶UI。
+	UE_LOG(RunLog, Warning, TEXT("Base::CreateStateWidget"));
+	UClass* characterStateWidgetClass = LoadClass<UUserWidget>(NULL,
+		TEXT("UserWidget'/Game/Widget/CharacterState.CharacterState_C'"));
+	if (characterStateWidgetClass) {
+		WidgetComp->SetWidgetClass(characterStateWidgetClass);
+		WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+		FTransform tWidget = UKismetMathLibrary::MakeTransform(
+			FVector(0.f, 0.f, 100.f),
+			FRotator(0.f, 0.f, 0.f),
+			FVector(2.f, 2.f, 2.f));
+		WidgetComp->SetRelativeTransform(tWidget);
+	} else {
+		UE_LOG(LoadLog, Error, TEXT("Not Found Widget Class"));
+	}
 }
 
 void ABattlefieldCharacterBase::AxisInput(EnumCharacterAxisAction axis, float value)

@@ -15,17 +15,26 @@ class BATTLEFIELD_API AAIControllerBase : public AAIController
 {
 	GENERATED_BODY()
 	
-	class UAIPerceptionComponent* perception;
+	class UAIPerceptionComponent* PerceptionComp;
 
 	class UAISenseConfig_Sight* sight_cfg;
 
+	UPROPERTY(transient)
+	class UBlackboardComponent* BlackboardComp;
+
+	UPROPERTY(transient)
+	class UBehaviorTreeComponent* BehaviorTreeComp;
+
 protected:
+	int EnemyKeyId;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	AAIControllerBase();
+	virtual void OnPossess(class APawn* InPawn) override;
 
+	AAIControllerBase();
+public:
 	UFUNCTION(Category = "Perception", BlueprintCallable)
 	virtual void OnTargetPerceptionUpdated(AActor* actor, FAIStimulus stimulus);
 };

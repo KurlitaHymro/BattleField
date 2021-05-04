@@ -41,7 +41,7 @@ UBattleFieldDelegation* ABattleFieldGameMode::GetBattleFieldDelegation()
     if (Delegation) {
         return Delegation;
     } else {
-        UE_LOG(LogTemp, Error, TEXT("Invalid Delegation"));
+        UE_LOG(LoadLog, Error, TEXT("Invalid Delegation"));
         return Delegation = NewObject<UBattleFieldDelegation>();
     }
 }
@@ -51,7 +51,7 @@ UCharacterProperty* ABattleFieldGameMode::GetCharacterProperty()
     if (PropertyTableRow) {
         return PropertyTableRow;
     } else {
-        UE_LOG(LogTemp, Error, TEXT("Invalid Scheduler"));
+        UE_LOG(LoadLog, Error, TEXT("Invalid Delegation"));
         return PropertyTableRow = NewObject<UCharacterProperty>();
     }
 }

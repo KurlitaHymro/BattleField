@@ -16,4 +16,9 @@ class BATTLEFIELD_API ABattlefieldCharacterAI : public ABattlefieldCharacterBase
 
 	// Sets default values for this character's properties
 	ABattlefieldCharacterAI();
+
+public:
+	UPROPERTY(Category = Behavior, EditAnywhere, BlueprintReadWrite)
+	class UBehaviorTree* BehaviorTree;
+
 };
