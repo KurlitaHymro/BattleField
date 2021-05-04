@@ -8,7 +8,8 @@ Saved
 *.opensdf
 *.opendb
 *.sdf
-*.sln
+*.fbx
+*.FBX
 *.suo
 *.xcodeproj
 *.xcworkspace
