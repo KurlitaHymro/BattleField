@@ -37,4 +37,7 @@ protected:
 public:
 	UFUNCTION(Category = "Perception", BlueprintCallable)
 	virtual void OnTargetPerceptionUpdated(AActor* actor, FAIStimulus stimulus);
+
+	UFUNCTION(Category = "Perception", BlueprintCallable)
+	virtual void OnPawnDead();
 };

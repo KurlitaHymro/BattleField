@@ -2,7 +2,7 @@
 
 
 #include "Character/BattlefieldCharacterBase.h"
-#include "Common/CommonInterface.h"
+#include "Common/BattleFieldDelegation.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
@@ -59,6 +59,10 @@ float ABattlefieldCharacterBase::TakeDamage(float Damage, struct FDamageEvent co
 	UE_LOG(RunLog, Error, TEXT("TakeDamage %f"), Damage);
 	GetState()->HpChange(-Damage);
 	CharacterStateUpdate(EnumActorStateItem::EN_HP);
+	if (GetState()->GetStateItem(EnumActorStateItem::EN_HP) <= 0) {
+		bIsValid = false;
+		PawnDead.Broadcast();
+	}
 
 	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 }
@@ -173,6 +177,7 @@ void ABattlefieldCharacterBase::BeginPlayLoad()
 	/* step2 : 加载内容 */
 	/* 2.1 虚控件蓝图 */
 	CreateStateWidget();
+	CharacterStateUpdate(EnumActorStateItem::EN_HP);
 	/* 2.2 动画蓝图 */
 	UAnimBlueprint* abp = LoadObject<UAnimBlueprint>(NULL,
 		TEXT("AnimBlueprint'/Game/SkeletalMesh/SK_AnimBP_Default.SK_AnimBP_Default'"));
@@ -336,10 +341,20 @@ void ABattlefieldCharacterBase::MainNormalAttack()
 	}
 	UAnimMontage* montage = LoadObject<UAnimMontage>(NULL,
 		TEXT("AnimBlueprint'/Game/Animations/Montage/NormalAttackMontage.NormalAttackMontage'"));
-	float delay = 0.f;
 	if (montage) {
-		delay = PlayAnimMontage(montage, 1.0f);
+		PlayAnimMontage(montage, 1.f);
 	} else {
-		UE_LOG(LoadLog, Error, TEXT("Load NormalAttackMontage Error"));
+		UE_LOG(LoadLog, Error, TEXT("Load Montage Error"));
+	}
+}
+
+void ABattlefieldCharacterBase::Dead()
+{
+	UAnimMontage* montage = LoadObject<UAnimMontage>(NULL,
+		TEXT("AnimBlueprint'/Game/Animations/Montage/DeadMontage.DeadMontage'"));
+	if (montage) {
+		PlayAnimMontage(montage, 1.4f);
+	} else {
+		UE_LOG(LoadLog, Error, TEXT("Load Montage Error"));
 	}
 }

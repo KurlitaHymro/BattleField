@@ -52,7 +52,8 @@ void AAIControllerBase::OnPossess(class APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	ABattlefieldCharacterAI* ai = Cast<ABattlefieldCharacterAI>(GetPawn());
+	ABattlefieldCharacterAI* ai = Cast<ABattlefieldCharacterAI>(InPawn);
+	/* 加载行为树和黑板数据 */
 	if (ai && ai->BehaviorTree && BlackboardComp && BehaviorTreeComp) {
 		if (ai->BehaviorTree->BlackboardAsset) {
 			BlackboardComp->InitializeBlackboard(*ai->BehaviorTree->BlackboardAsset);
@@ -61,6 +62,8 @@ void AAIControllerBase::OnPossess(class APawn* InPawn)
 	} else {
 		UE_LOG(RunLog, Error, TEXT("Init BehaviorTree Fail"));
 	}
+	/* 挂载角色死亡代理 */
+	ai->PawnDead.AddUniqueDynamic(this, &AAIControllerBase::OnPawnDead);
 }
 
 void AAIControllerBase::OnTargetPerceptionUpdated(AActor* actor, FAIStimulus stimulus)
@@ -71,5 +74,14 @@ void AAIControllerBase::OnTargetPerceptionUpdated(AActor* actor, FAIStimulus sti
 		if (target->bIsEnemy != ctrlPawn->bIsEnemy) {
 			stimulus.IsValid();
 		}
+	}
+}
+
+void AAIControllerBase::OnPawnDead()
+{
+	ABattlefieldCharacterAI* ai = Cast<ABattlefieldCharacterAI>(GetPawn());
+	if (ai) {
+		ai->DetachFromControllerPendingDestroy();
+		ai->Dead();
 	}
 }

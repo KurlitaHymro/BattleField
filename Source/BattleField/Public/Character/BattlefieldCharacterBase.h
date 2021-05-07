@@ -66,6 +66,12 @@ public:
 	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
 	uint32 bIsInMotion : 1;
 
+	UPROPERTY(BlueprintAssignable)
+	FuncDeathNotify PawnDead;
+
+	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
+	int RunSpeedChangeValue;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseTurnRate;
@@ -73,9 +79,6 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate;
-
-	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
-	int RunSpeedChangeValue;
 
 	UFUNCTION(Category = "Weapon", BlueprintCallable)
 	void HitActor(AActor* targetActor);
@@ -109,43 +112,46 @@ public:
 	void OnceInput(EnumCharacterOnceAction action, float value = 0.f);
 
 	/** Called for forwards/backward input */
-	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
 	void MoveForward(float Value);
 
 	/** Called for side to side input */
-	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
 	void MoveRight(float Value);
 
 	/**
 	 * Called via input to turn at a given rate.
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
-	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
 	void TurnAtRate(float Rate);
 
 	/**
 	 * Called via input to turn look up/down at a given rate.
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
-	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
 	void LookUpAtRate(float Rate);
 
 	/** Handler for when a touch input begins. */
-	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
 	void JumpStarted();
 
 	/** Handler for when a touch input stops. */
-	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
 	void JumpStopped();
 
 	/** Change Speed. */
-	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
 	void ChangeSpeed(int spd);
 
 	/** Change Speed. */
-	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
 	void ResetSpeed();
 
-	UFUNCTION(Category = "CharacterInput", BlueprintCallable)
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
 	void MainNormalAttack();
+
+	UFUNCTION(Category = "CharacterBehavior", BlueprintCallable)
+	void Dead();
 };

@@ -45,7 +45,7 @@ void ABattlefieldCharacterPlayer::CreateStateWidget_Implementation()
 	if (playerStateWidgetClass) {
 		StateWidget = CreateWidget<UUserWidget>(GetWorld(), playerStateWidgetClass);
 		StateWidget->AddToViewport();
-		UCommonInterface::GetDelegation()->playerStateChange.Broadcast(this, EnumActorStateItem::EN_HP);
+		UCommonInterface::GetDelegation()->PlayerStateChange.Broadcast(this, EnumActorStateItem::EN_HP);
 	} else {
 		UE_LOG(LoadLog, Error, TEXT("Not Found Widget Class"));
 	}
