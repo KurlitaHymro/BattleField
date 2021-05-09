@@ -72,7 +72,10 @@ void AAIControllerBase::OnTargetPerceptionUpdated(AActor* actor, FAIStimulus sti
 	ABattlefieldCharacterBase* ctrlPawn = Cast<ABattlefieldCharacterBase>(GetPawn());
 	if (target && ctrlPawn) {
 		if (target->bIsEnemy != ctrlPawn->bIsEnemy) {
-			stimulus.IsValid();
+			if (stimulus.IsValid()) {
+				UE_LOG(RunLog, Error, TEXT("Push : %d"), TargetEnemy.Num());
+				TargetEnemy.AddUnique(target);
+			}
 		}
 	}
 }

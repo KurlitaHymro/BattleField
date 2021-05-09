@@ -44,6 +44,9 @@ public:
 	UFUNCTION(Category = "Campsite", BlueprintCallable)
 	int CampsiteRandomSpawn(int num);
 
+	UFUNCTION(Category = "Campsite", BlueprintCallable)
+	void InitCharacterInfo(ABattlefieldCharacterAI* AI);
+
 	/* 根据ID查询属性信息，然后调用UCharacterSpawnMng组件的接口，生成一个士兵。 */
 	UFUNCTION(Category = "Campsite", BlueprintCallable)
 	bool CampsiteSpawnByInfo(int id);

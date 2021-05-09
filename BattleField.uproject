@@ -15,5 +15,12 @@
 				"AIModule"
 			]
 		}
+	],
+	"Plugins": [
+		{
+			"Name": "RidingSystem",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/ea9cd0581e6949d9ab103f15f405bc59"
+		}
 	]
 }

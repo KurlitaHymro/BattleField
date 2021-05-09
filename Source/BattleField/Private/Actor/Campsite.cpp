@@ -81,6 +81,12 @@ int ACampsite::CampsiteRandomSpawn(int num)
 	return num - spawnCnt;
 }
 
+void ACampsite::InitCharacterInfo(ABattlefieldCharacterAI* AI)
+{
+	AI->bIsEnemy = bIsEnemy;
+	AI->CharacterStateUpdate(EnumActorStateItem::EN_HP);
+}
+
 bool ACampsite::CampsiteSpawnByInfo(int id)
 {
 	UDataTable* dataTable = UCommonInterface::GetCharacterPropertyTable();
@@ -95,8 +101,8 @@ bool ACampsite::CampsiteSpawnByInfo(int id)
 		if (spawnActor) {
 			ABattlefieldCharacterAI* AICharacter = Cast<ABattlefieldCharacterAI>(spawnActor);
 			if (AICharacter) {
-				AICharacter->bIsEnemy = bIsEnemy;
 				AICharacter->GetState()->InitCharacterStateByInfo(*item);
+				InitCharacterInfo(AICharacter);
 				return true;
 			} else {
 				UE_LOG(RunLog, Error, TEXT("Spawn Type Error"));

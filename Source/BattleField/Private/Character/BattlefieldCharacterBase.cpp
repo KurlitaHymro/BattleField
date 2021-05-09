@@ -34,10 +34,9 @@ ABattlefieldCharacterBase::ABattlefieldCharacterBase()
 // Called when the game starts or when spawned
 void ABattlefieldCharacterBase::BeginPlay()
 {
-	BeginPlayLoad();
-
 	Super::BeginPlay();
-	
+
+	BeginPlayLoad();
 }
 
 // Called every frame
@@ -177,7 +176,6 @@ void ABattlefieldCharacterBase::BeginPlayLoad()
 	/* step2 : 加载内容 */
 	/* 2.1 虚控件蓝图 */
 	CreateStateWidget();
-	CharacterStateUpdate(EnumActorStateItem::EN_HP);
 	/* 2.2 动画蓝图 */
 	UAnimBlueprint* abp = LoadObject<UAnimBlueprint>(NULL,
 		TEXT("AnimBlueprint'/Game/SkeletalMesh/SK_AnimBP_Default.SK_AnimBP_Default'"));
@@ -202,21 +200,19 @@ float ABattlefieldCharacterBase::CalDamage()
 
 void ABattlefieldCharacterBase::CharacterStateUpdate_Implementation(EnumActorStateItem state)
 {
-	UE_LOG(RunLog, Warning, TEXT("Base::StateUpdate"));
 	if (WidgetComp) {
 		UUserWidget* widget = WidgetComp->GetUserWidgetObject();
 		UUserWidgetBase* base = Cast<UUserWidgetBase>(widget);
 		if (widget) {
 			base->StateUpdate(this, EnumActorStateItem::EN_HP);
 		} else {
-			UE_LOG(RunLog, Warning, TEXT("Base::WidgetBase::Cast Fail"));
+			UE_LOG(RunLog, Error, TEXT("StateUpdate Widget Error"));
 		}
 	}
 }
 
 void ABattlefieldCharacterBase::CreateStateWidget_Implementation()
 {
-	UE_LOG(RunLog, Warning, TEXT("Base::CreateStateWidget"));
 	UClass* characterStateWidgetClass = LoadClass<UUserWidget>(NULL,
 		TEXT("UserWidget'/Game/Widget/CharacterState.CharacterState_C'"));
 	if (characterStateWidgetClass) {
