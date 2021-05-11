@@ -25,6 +25,8 @@ class BATTLEFIELD_API AAIControllerBase : public AAIController
 	UPROPERTY(transient)
 	class UBehaviorTreeComponent* BehaviorTreeComp;
 
+	TArray<AActor*> TargetEnemy;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,11 +36,12 @@ protected:
 	AAIControllerBase();
 
 public:
-	TArray<AActor*> TargetEnemy;
-
-	UFUNCTION(Category = "Perception", BlueprintCallable)
+	UFUNCTION(Category = "AI|Perception")
 	virtual void OnTargetPerceptionUpdated(AActor* actor, FAIStimulus stimulus);
 
-	UFUNCTION(Category = "Perception", BlueprintCallable)
+	UFUNCTION(Category = "AI|Perception")
 	virtual void OnPawnDead();
+
+	UFUNCTION(Category = "AI|Perception")
+	virtual void UpdateBlackboard();
 };

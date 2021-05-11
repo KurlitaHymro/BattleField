@@ -73,8 +73,12 @@ void AAIControllerBase::OnTargetPerceptionUpdated(AActor* actor, FAIStimulus sti
 	if (target && ctrlPawn) {
 		if (target->bIsEnemy != ctrlPawn->bIsEnemy) {
 			if (stimulus.IsValid()) {
-				UE_LOG(RunLog, Error, TEXT("Push : %d"), TargetEnemy.Num());
-				TargetEnemy.AddUnique(target);
+				if (stimulus.WasSuccessfullySensed()) {
+					TargetEnemy.AddUnique(target);
+				} else {
+					TargetEnemy.Remove(target);
+				}
+				UpdateBlackboard();
 			}
 		}
 	}
@@ -86,5 +90,19 @@ void AAIControllerBase::OnPawnDead()
 	if (ai) {
 		ai->DetachFromControllerPendingDestroy();
 		ai->Dead();
+	}
+}
+
+void AAIControllerBase::UpdateBlackboard()
+{
+	if (!BlackboardComp) {
+		return;
+	}
+	if (TargetEnemy.Num() > 0) {
+		BlackboardComp->SetValueAsBool("HasLineOfSight", true);
+		BlackboardComp->SetValueAsObject("EnemyActor ", TargetEnemy[0]);
+	} else {
+		BlackboardComp->SetValueAsBool("HasLineOfSight", false);
+		BlackboardComp->SetValueAsObject("EnemyActor ", nullptr);
 	}
 }
