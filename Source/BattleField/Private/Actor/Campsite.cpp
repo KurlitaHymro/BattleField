@@ -57,7 +57,7 @@ int ACampsite::CampsiteRandomSpawn(int num)
 		if (!eleNum || !curNum) {
 			return 0;
 		}
-		unsigned int seed = rand() % curNum;
+		unsigned int seed = FMath::Rand() % curNum;
 		for (auto& item : camp) {
 			if (seed < item.Value) {
 				bool spawnResult = CampsiteSpawnByInfo(item.Key);

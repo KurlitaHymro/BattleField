@@ -2,10 +2,11 @@
 
 
 #include "Character/BattlefieldCharacterBase.h"
-#include "Common/BattleFieldDelegation.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Component/ActorState.h"
+#include "Component/CharacterAction.h"
 #include "Widget/UserWidgetBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -96,6 +97,17 @@ UActorState* ABattlefieldCharacterBase::GetState()
 	}
 }
 
+UCharacterAction* ABattlefieldCharacterBase::GetAction()
+{
+	if (Action) {
+		return Action;
+	} else {
+		UE_LOG(LoadLog, Error, TEXT("CharacterBase No Action"));
+		return nullptr;
+	}
+	return nullptr;
+}
+
 void ABattlefieldCharacterBase::ComponentInit()
 {
 	/* step1 : 创建组件 */
@@ -108,8 +120,17 @@ void ABattlefieldCharacterBase::ComponentInit()
 		return;
 	}
 
+	/* 1.2 动作管理组件 */
+	Action = CreateDefaultSubobject<UCharacterAction>(TEXT("Action"));
+	if (Action) {
+		
+	} else {
+		bIsValid = false; // 组件内存申请失败时角色不可用。
+		return;
+	}
+
 	// TODO: 做一个装备的表，先读取衣服，生成新的SkMesh；再读武器，绑到对应插槽上或隐藏。
-	/* 1.2 Mesh组件 */
+	/* 1.3 Mesh组件 */
 	if (GetMesh()) {
 	} else {
 		bIsValid = false; // 组件内存申请失败时角色不可用。
@@ -129,7 +150,7 @@ void ABattlefieldCharacterBase::ComponentInit()
 		UE_LOG(LoadLog, Error, TEXT("Load SkeletalMesh Error"));
 	}
 
-	/* 1.3 武器管理组件 */
+	/* 1.4 武器管理组件 */
 	for (int weaponId = 0; weaponId < 2; weaponId++) {
 		UStaticMeshComponent* stMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(UCommonInterface::CombinFNameId("Weapon", weaponId));
 		if (stMeshComp) {
@@ -145,14 +166,14 @@ void ABattlefieldCharacterBase::ComponentInit()
 				TEXT("StaticMesh'/Game/StaticMesh/Weapon/Heavy/HeavyLongAxe/HeavyLongAxe.HeavyLongAxe'"));
 			 tWeapon = UKismetMathLibrary::MakeTransform(
 				 FVector(0.f, 0.f, 0.f),
-				 FRotator(0.f, -20.f, 0.f),
+				 FRotator(0.f, 0.f, 0.f),
 				 FVector(1.0f, 1.0f, 0.7f));
 		} else {
 			weapon = LoadObject<UStaticMesh>(NULL,
 				TEXT("StaticMesh'/Game/StaticMesh/Weapon/Shield/IronBuckler/IronBuckler.IronBuckler'"));
 			tWeapon = UKismetMathLibrary::MakeTransform(
 				FVector(0.f, 3.f, -3.f),
-				FRotator(-10.f, 0.f, 10.f),
+				FRotator(0.f, 0.f, 0.f),
 				FVector(0.7f, 0.7f, 0.8f));
 		}
 
@@ -166,17 +187,11 @@ void ABattlefieldCharacterBase::ComponentInit()
 		Weapon.Emplace(stMeshComp);
 	}
 
-	/* 1.4 角色状态控件组件 */
+	/* 1.5 角色状态控件组件 */
 	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget"));
 	WidgetComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-}
 
-void ABattlefieldCharacterBase::BeginPlayLoad()
-{
-	/* step2 : 加载内容 */
-	/* 2.1 虚控件蓝图 */
-	CreateStateWidget();
-	/* 2.2 动画蓝图 */
+	/* 1.6 动画蓝图 */
 	UAnimBlueprint* abp = LoadObject<UAnimBlueprint>(NULL,
 		TEXT("AnimBlueprint'/Game/SkeletalMesh/SK_AnimBP_Default.SK_AnimBP_Default'"));
 	if (abp) {
@@ -185,7 +200,15 @@ void ABattlefieldCharacterBase::BeginPlayLoad()
 	} else {
 		UE_LOG(LoadLog, Error, TEXT("Load AnimBP Error"));
 	}
-	/* 2.3 启用角色动作 */
+}
+
+void ABattlefieldCharacterBase::BeginPlayLoad()
+{
+	/* step2 : 加载内容 */
+	/* 2.1 虚控件蓝图 */
+	CreateStateWidget();
+
+	/* 2.2 启用角色动作 */
 	if (bIsValid) {
 		bIsInMotion = false;
 	}
@@ -252,10 +275,14 @@ void ABattlefieldCharacterBase::OnceInput(EnumCharacterOnceAction action, float 
 	switch (action)
 	{
 	case EnumCharacterOnceAction::EN_ATTACK:
-		MainNormalAttack();
+		if (!bIsInMotion || bRcvNextInput) {
+			MainNormalAttack();
+		}
 		break;
 	case EnumCharacterOnceAction::EN_JUMP:
-		JumpStarted();
+		if (!bIsInMotion) {
+			JumpStarted();
+		}
 		break;
 	case EnumCharacterOnceAction::EN_JUMP_STOP:
 		JumpStopped();
@@ -332,16 +359,7 @@ void ABattlefieldCharacterBase::ResetSpeed()
 
 void ABattlefieldCharacterBase::MainNormalAttack()
 {
-	if (bIsInMotion) {
-		return;
-	}
-	UAnimMontage* montage = LoadObject<UAnimMontage>(NULL,
-		TEXT("AnimBlueprint'/Game/Animations/Montage/NormalAttackMontage.NormalAttackMontage'"));
-	if (montage) {
-		PlayAnimMontage(montage, 1.f);
-	} else {
-		UE_LOG(LoadLog, Error, TEXT("Load Montage Error"));
-	}
+	Action->MainNormalAttack();
 }
 
 void ABattlefieldCharacterBase::Dead()

@@ -39,7 +39,6 @@ void ABattlefieldCharacterPlayer::CharacterStateUpdate_Implementation(EnumActorS
 
 void ABattlefieldCharacterPlayer::CreateStateWidget_Implementation()
 {
-	UE_LOG(LoadLog, Warning, TEXT("Player::CreateStateWidget"));
 	UClass* playerStateWidgetClass = LoadClass<UUserWidget>(NULL,
 		TEXT("UserWidget'/Game/Widget/UserState.UserState_C'"));
 	if (playerStateWidgetClass) {

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Component/ActorState.h"
 #include "Common/CommonInterface.h"
 #include "BattlefieldCharacterBase.generated.h"
 
@@ -36,9 +35,11 @@ class BATTLEFIELD_API ABattlefieldCharacterBase : public ACharacter
 
 	class UActorState* State;
 
-	TArray<UStaticMeshComponent*> Weapon;
+	class UCharacterAction* Action;
 
 	class UWidgetComponent* WidgetComp;
+
+	TArray<UStaticMeshComponent*> Weapon;
 
 public:
 	// Sets default values for this character's properties
@@ -66,6 +67,9 @@ public:
 	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
 	uint32 bIsInMotion : 1;
 
+	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
+	uint32 bRcvNextInput : 1;
+
 	UPROPERTY(BlueprintAssignable)
 	FuncDeathNotify PawnDead;
 
@@ -88,6 +92,9 @@ public:
 
 	UFUNCTION(Category = "State", BlueprintCallable)
 	class UActorState* GetState();
+
+	UFUNCTION(Category = "Action", BlueprintCallable)
+	class UCharacterAction* GetAction();
 
 	UFUNCTION(Category = "State", BlueprintNativeEvent)
 	void CharacterStateUpdate(EnumActorStateItem state);
