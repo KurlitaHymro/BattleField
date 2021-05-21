@@ -33,7 +33,6 @@ void UBTTask_AttackTarget::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 			// TODO: 判断逻辑
 			if (!CtrlPawn->bIsInMotion || CtrlPawn->bRcvNextInput) {
 				CtrlPawn->MainNormalAttack();
-				UE_LOG(RunLog, Warning, TEXT("Attack"));
 				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 			}
 		} else {

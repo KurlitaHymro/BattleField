@@ -44,4 +44,7 @@ public:
 
 	UFUNCTION(Category = "AI|Perception")
 	virtual void UpdateBlackboard();
+
+	UFUNCTION(Category = "AI|Perception")
+	virtual AActor* GetFirstPriorityTarget();
 };

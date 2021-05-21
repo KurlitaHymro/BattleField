@@ -20,7 +20,7 @@ AAIControllerBase::AAIControllerBase()
 		if (sight_cfg) {
 			sight_cfg->SightRadius = 2000.f;
 			sight_cfg->LoseSightRadius = 3000.f;
-			sight_cfg->PeripheralVisionAngleDegrees = 70.f;
+			sight_cfg->PeripheralVisionAngleDegrees = 150.f;
 			sight_cfg->DetectionByAffiliation.bDetectEnemies = false;
 			sight_cfg->DetectionByAffiliation.bDetectFriendlies = false;
 			sight_cfg->DetectionByAffiliation.bDetectNeutrals = true;
@@ -98,11 +98,20 @@ void AAIControllerBase::UpdateBlackboard()
 	if (!BlackboardComp) {
 		return;
 	}
-	if (TargetEnemy.Num() > 0) {
+
+	AActor* FirstPriorityTarget = GetFirstPriorityTarget();
+	BlackboardComp->SetValueAsObject("EnemyActor", FirstPriorityTarget);
+	if (FirstPriorityTarget) {
 		BlackboardComp->SetValueAsBool("HasLineOfSight", true);
-		BlackboardComp->SetValueAsObject("EnemyActor ", TargetEnemy[0]);
 	} else {
 		BlackboardComp->SetValueAsBool("HasLineOfSight", false);
-		BlackboardComp->SetValueAsObject("EnemyActor ", nullptr);
 	}
+}
+
+AActor* AAIControllerBase::GetFirstPriorityTarget()
+{
+	if (TargetEnemy.Num() > 0) {
+		return TargetEnemy[0];
+	}
+	return nullptr;
 }

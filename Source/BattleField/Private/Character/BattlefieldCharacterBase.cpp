@@ -18,6 +18,7 @@ ABattlefieldCharacterBase::ABattlefieldCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw = false;
 	bIsValid = false;
+	InMotionRotatorChangeRate = 1.0f;
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(50.f, 90.f);
@@ -25,7 +26,7 @@ ABattlefieldCharacterBase::ABattlefieldCharacterBase()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 400.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 400.f;
 	GetCharacterMovement()->AirControl = 0.2f;
-	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	ComponentInit();
@@ -56,7 +57,6 @@ void ABattlefieldCharacterBase::SetupPlayerInputComponent(UInputComponent* Playe
 
 float ABattlefieldCharacterBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	UE_LOG(RunLog, Error, TEXT("TakeDamage %f"), Damage);
 	GetState()->HpChange(-Damage);
 	CharacterStateUpdate(EnumActorStateItem::EN_HP);
 	if (GetState()->GetStateItem(EnumActorStateItem::EN_HP) <= 0) {
@@ -226,7 +226,7 @@ void ABattlefieldCharacterBase::CharacterStateUpdate_Implementation(EnumActorSta
 	if (WidgetComp) {
 		UUserWidget* widget = WidgetComp->GetUserWidgetObject();
 		UUserWidgetBase* base = Cast<UUserWidgetBase>(widget);
-		if (widget) {
+		if (base) {
 			base->StateUpdate(this, EnumActorStateItem::EN_HP);
 		} else {
 			UE_LOG(RunLog, Error, TEXT("StateUpdate Widget Error"));
@@ -249,6 +249,11 @@ void ABattlefieldCharacterBase::CreateStateWidget_Implementation()
 	} else {
 		UE_LOG(LoadLog, Error, TEXT("Not Found Widget Class"));
 	}
+}
+
+FRotator ABattlefieldCharacterBase::GetExceptRotatorInMotion_Implementation()
+{
+	return GetActorRotation();
 }
 
 void ABattlefieldCharacterBase::AxisInput(EnumCharacterAxisAction axis, float value)

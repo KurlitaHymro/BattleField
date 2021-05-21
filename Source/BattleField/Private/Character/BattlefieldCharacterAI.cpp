@@ -4,6 +4,7 @@
 #include "Character/BattlefieldCharacterAI.h"
 #include "Controller/AIControllerBase.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ABattlefieldCharacterAI::ABattlefieldCharacterAI()
@@ -18,4 +19,23 @@ ABattlefieldCharacterAI::ABattlefieldCharacterAI()
 	} else {
 		UE_LOG(LoadLog, Error, TEXT("Load BehaviorTree Error"));
 	}
+
+	InMotionRotatorChangeRate = 2.0f;
+}
+
+FRotator ABattlefieldCharacterAI::GetExceptRotatorInMotion_Implementation()
+{
+	// 获取Controller中的Target
+	AAIControllerBase* AIController = Cast<AAIControllerBase>(Controller);
+	if (AIController) {
+		AActor* Target = AIController->GetFirstPriorityTarget();
+		if (Target) {
+			return UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target->GetActorLocation());
+		} else {
+			UE_LOG(RunLog, Warning, TEXT("Lost Target"));
+		}
+	} else {
+		UE_LOG(RunLog, Error, TEXT("Get Controller Error"));
+	}
+	return Super::GetExceptRotatorInMotion_Implementation();
 }

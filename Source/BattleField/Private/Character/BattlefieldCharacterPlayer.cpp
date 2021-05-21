@@ -2,9 +2,11 @@
 
 
 #include "Character/BattlefieldCharacterPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ABattlefieldCharacterPlayer::ABattlefieldCharacterPlayer()
 {
@@ -34,7 +36,7 @@ void ABattlefieldCharacterPlayer::BeginPlay()
 
 void ABattlefieldCharacterPlayer::CharacterStateUpdate_Implementation(EnumActorStateItem state)
 {
-	UE_LOG(RunLog, Warning, TEXT("Player::StateUpdate"));
+	UCommonInterface::GetDelegation()->PlayerStateChange.Broadcast(this, EnumActorStateItem::EN_HP);
 }
 
 void ABattlefieldCharacterPlayer::CreateStateWidget_Implementation()
@@ -48,4 +50,11 @@ void ABattlefieldCharacterPlayer::CreateStateWidget_Implementation()
 	} else {
 		UE_LOG(LoadLog, Error, TEXT("Not Found Widget Class"));
 	}
+}
+
+FRotator ABattlefieldCharacterPlayer::GetExceptRotatorInMotion_Implementation()
+{
+	// 获取Movement组件中保存的轴输入的最终移动方向作为动作中欲面向Rotation
+	const FVector Direction = GetCharacterMovement()->GetLastInputVector();
+	return UKismetMathLibrary::Conv_VectorToRotator(Direction);
 }

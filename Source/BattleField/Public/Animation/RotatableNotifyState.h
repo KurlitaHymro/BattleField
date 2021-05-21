@@ -4,22 +4,28 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "InMotionNotifyState.generated.h"
+#include "RotatableNotifyState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BATTLEFIELD_API UInMotionNotifyState : public UAnimNotifyState
+class BATTLEFIELD_API URotatableNotifyState : public UAnimNotifyState
 {
 	GENERATED_BODY()
-	
+
 	class ABattlefieldCharacterBase* OwnerCharacter;
 
+	float RotatorChangeRate;
+
 protected:
+	virtual void NotifyBegin(USkeletalMeshComponent*, UAnimSequenceBase*, float) override;
+
 	virtual void NotifyTick(USkeletalMeshComponent*, UAnimSequenceBase*, float) override;
 
 	virtual void NotifyEnd(USkeletalMeshComponent*, UAnimSequenceBase*) override;
 
-	virtual void NotifyBegin(USkeletalMeshComponent*, UAnimSequenceBase*, float) override;
+public:
+	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
+	float MontageRotatorChangeRate = 1.0f;
 };

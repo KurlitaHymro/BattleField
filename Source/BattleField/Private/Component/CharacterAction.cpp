@@ -2,7 +2,7 @@
 
 
 #include "Component/CharacterAction.h"
-#include "Character/BattlefieldCharacterPlayer.h"
+#include "Character/BattlefieldCharacterBase.h"
 #include "Animation/AnimInstance.h"
 
 // Sets default values for this component's properties
@@ -10,7 +10,7 @@ UCharacterAction::UCharacterAction()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	NormalAttackCombo = LoadObject<UAnimMontage>(NULL,
 		TEXT("AnimBlueprint'/Game/Animations/Montage/Combo_SzFhSlXp.Combo_SzFhSlXp'"));
@@ -44,7 +44,6 @@ void UCharacterAction::BeginPlay()
 void UCharacterAction::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (saveInput && NormalAttackComboIdx) {
-		UE_LOG(RunLog, Error, TEXT("Combo! %d"), NormalAttackComboIdx);
 		float Duration = AnimInstance->Montage_Play(NormalAttackCombo, 1.f);
 		FName SectionName = NormalAttackCombo->
 			CompositeSections[NormalAttackComboIdx].SectionName;
@@ -53,14 +52,11 @@ void UCharacterAction::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterru
 		}
 		NormalAttackComboIdx = (NormalAttackComboIdx + 1) % NormalAttackComboNum;
 		saveInput = 0;
-	} else {
-		UE_LOG(RunLog, Error, TEXT("Combo Reset!"));
 	}
 }
 
 void UCharacterAction::OnMontageStarted(UAnimMontage* Montage)
 {
-	UE_LOG(RunLog, Error, TEXT("Start"));
 	if (owner) {
 		owner->bIsInMotion = true;
 	}
@@ -70,7 +66,6 @@ void UCharacterAction::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	
 	if (owner && !bInterrupted) {
-		UE_LOG(RunLog, Error, TEXT("End"));
 		owner->bIsInMotion = false;
 	}
 }
@@ -80,7 +75,6 @@ void UCharacterAction::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
 }
 
 void UCharacterAction::MainNormalAttack()

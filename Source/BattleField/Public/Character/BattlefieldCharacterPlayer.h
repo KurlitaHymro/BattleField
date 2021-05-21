@@ -30,4 +30,6 @@ protected:
 	virtual void CharacterStateUpdate_Implementation(EnumActorStateItem state) override;
 
 	virtual void CreateStateWidget_Implementation() override;
+
+	virtual FRotator GetExceptRotatorInMotion_Implementation() override;
 };

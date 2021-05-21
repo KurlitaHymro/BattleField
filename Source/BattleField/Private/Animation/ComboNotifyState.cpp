@@ -4,9 +4,9 @@
 #include "Animation/ComboNotifyState.h"
 #include "Character/BattlefieldCharacterBase.h"
 
-void UComboNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime)
+void UComboNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
-	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime);
+	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 
 	OwnerCharacter = Cast<ABattlefieldCharacterBase>(MeshComp->GetOwner());
 	if (OwnerCharacter) {
@@ -14,9 +14,9 @@ void UComboNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequen
 	}
 }
 
-void UComboNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
+void UComboNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime)
 {
-	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
+	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime);
 }
 
 void UComboNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)

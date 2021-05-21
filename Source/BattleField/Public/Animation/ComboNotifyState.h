@@ -17,9 +17,9 @@ class BATTLEFIELD_API UComboNotifyState : public UAnimNotifyState
 	class ABattlefieldCharacterBase* OwnerCharacter;
 
 protected:
-	virtual void NotifyTick(USkeletalMeshComponent*, UAnimSequenceBase*, float) override;
-
 	virtual void NotifyBegin(USkeletalMeshComponent*, UAnimSequenceBase*, float) override;
-
+	
+	virtual void NotifyTick(USkeletalMeshComponent*, UAnimSequenceBase*, float) override;
+	
 	virtual void NotifyEnd(USkeletalMeshComponent*, UAnimSequenceBase*) override;
 };

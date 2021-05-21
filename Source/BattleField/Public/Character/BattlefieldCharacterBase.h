@@ -76,6 +76,9 @@ public:
 	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
 	int RunSpeedChangeValue;
 
+	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
+	float InMotionRotatorChangeRate;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseTurnRate;
@@ -103,6 +106,10 @@ public:
 	UFUNCTION(Category = "State", BlueprintNativeEvent)
 	void CreateStateWidget();
 	virtual void CreateStateWidget_Implementation();
+
+	UFUNCTION(Category = "State", BlueprintNativeEvent)
+	FRotator GetExceptRotatorInMotion();
+	virtual FRotator GetExceptRotatorInMotion_Implementation();
 
 private:
 	void ComponentInit();

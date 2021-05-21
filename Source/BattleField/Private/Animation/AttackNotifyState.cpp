@@ -48,14 +48,14 @@ void UAttackNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSeque
 		UKismetSystemLibrary::BoxTraceMulti(OwnerCharacter->GetWorld(),
 			                                WeaponSlots[slotIdx],
 			                                slotCurLocation,
-			                                FVector(DectX,  // x - 武器刃方向 - 影响密度
-												    DectY,  // y - 武器头方向 - 影响长度
-												    DectZ), // z - 武器侧方向 - 影响宽度
+			                                FVector(DectX,
+												    DectY,
+												    DectZ),
 			                                WeaponMesh->GetComponentRotation(),
 			                                ETraceTypeQuery::TraceTypeQuery4,
 			                                false,
 			                                HitTargetIgnore,
-			                                EDrawDebugTrace::ForDuration,
+			                                EDrawDebugTrace::None,
 			                                hitResult,
 			                                true);
 		/* slot位置更新 */
