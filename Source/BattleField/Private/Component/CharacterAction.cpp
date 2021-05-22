@@ -12,6 +12,9 @@ UCharacterAction::UCharacterAction()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
+	DeadAnmi = LoadObject<UAnimMontage>(NULL,
+		TEXT("AnimBlueprint'/Game/Animations/Montage/DeadMontage.DeadMontage'"));
+
 	NormalAttackCombo = LoadObject<UAnimMontage>(NULL,
 		TEXT("AnimBlueprint'/Game/Animations/Montage/Combo_SzFhSlXp.Combo_SzFhSlXp'"));
 	if (NormalAttackCombo) {
@@ -75,6 +78,17 @@ void UCharacterAction::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+}
+
+void UCharacterAction::Dead()
+{
+	if (!DeadAnmi) {
+		UE_LOG(RunLog, Error, TEXT("Dead Montage Error"));
+		return;
+	}
+
+	AnimInstance->Montage_Stop(0.f, nullptr);
+	AnimInstance->Montage_Play(DeadAnmi, 1.4f);
 }
 
 void UCharacterAction::MainNormalAttack()

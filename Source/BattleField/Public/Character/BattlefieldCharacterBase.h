@@ -99,6 +99,10 @@ public:
 	UFUNCTION(Category = "Action", BlueprintCallable)
 	class UCharacterAction* GetAction();
 
+	UFUNCTION(Category = "Action", BlueprintNativeEvent)
+	FRotator GetExceptRotatorInMotion();
+	virtual FRotator GetExceptRotatorInMotion_Implementation();
+
 	UFUNCTION(Category = "State", BlueprintNativeEvent)
 	void CharacterStateUpdate(EnumActorStateItem state);
 	virtual void CharacterStateUpdate_Implementation(EnumActorStateItem state);
@@ -108,8 +112,8 @@ public:
 	virtual void CreateStateWidget_Implementation();
 
 	UFUNCTION(Category = "State", BlueprintNativeEvent)
-	FRotator GetExceptRotatorInMotion();
-	virtual FRotator GetExceptRotatorInMotion_Implementation();
+	void AfterDead();
+	virtual void AfterDead_Implementation();
 
 private:
 	void ComponentInit();

@@ -16,6 +16,8 @@ class BATTLEFIELD_API UCharacterAction : public UActorComponent
 
 	class UAnimInstance* AnimInstance;
 
+	class UAnimMontage* DeadAnmi;
+
 	class UAnimMontage* NormalAttackCombo;
 	uint32 NormalAttackComboNum = 0;
 	uint32 NormalAttackComboIdx;
@@ -40,6 +42,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(Category = "Action", BlueprintCallable)
+	void Dead();
 
 	UFUNCTION(Category = "Action", BlueprintCallable)
 	void MainNormalAttack();

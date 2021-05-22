@@ -26,6 +26,8 @@ ABattleFieldGameMode::ABattleFieldGameMode()
     /* 加载默认配置 */
     DefaultPawnClass = ABattlefieldCharacterPlayer::StaticClass();
     PlayerControllerClass = APlayerControllerBase::StaticClass();
+
+    bFriendlyFire = false;
 }
 
 ABattleFieldGameMode::~ABattleFieldGameMode()
@@ -51,7 +53,7 @@ UCharacterProperty* ABattleFieldGameMode::GetCharacterProperty()
     if (PropertyTableRow) {
         return PropertyTableRow;
     } else {
-        UE_LOG(LoadLog, Error, TEXT("Invalid Delegation"));
+        UE_LOG(LoadLog, Error, TEXT("Invalid Data <CharacterProperty>"));
         return PropertyTableRow = NewObject<UCharacterProperty>();
     }
 }

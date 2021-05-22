@@ -26,16 +26,17 @@ ABattlefieldCharacterAI::ABattlefieldCharacterAI()
 FRotator ABattlefieldCharacterAI::GetExceptRotatorInMotion_Implementation()
 {
 	// 获取Controller中的Target
+	if (!bIsValid) {
+		return Super::GetExceptRotatorInMotion_Implementation();
+	}
 	AAIControllerBase* AIController = Cast<AAIControllerBase>(Controller);
 	if (AIController) {
 		AActor* Target = AIController->GetFirstPriorityTarget();
 		if (Target) {
 			return UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target->GetActorLocation());
-		} else {
-			UE_LOG(RunLog, Warning, TEXT("Lost Target"));
 		}
 	} else {
-		UE_LOG(RunLog, Error, TEXT("Get Controller Error"));
+		bIsValid = false;
 	}
 	return Super::GetExceptRotatorInMotion_Implementation();
 }

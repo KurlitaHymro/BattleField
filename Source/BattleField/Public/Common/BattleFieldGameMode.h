@@ -23,6 +23,9 @@ class BATTLEFIELD_API ABattleFieldGameMode : public AGameMode
 	~ABattleFieldGameMode();
 
 public:
+	UPROPERTY(Category = GameMode, EditAnywhere, BlueprintReadWrite)
+	uint32 bFriendlyFire : 1;
+
 	static class UBattleFieldDelegation* Delegation;
 
 	static class UCharacterProperty* PropertyTableRow;

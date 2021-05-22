@@ -63,7 +63,7 @@ void AAIControllerBase::OnPossess(class APawn* InPawn)
 		UE_LOG(RunLog, Error, TEXT("Init BehaviorTree Fail"));
 	}
 	/* 挂载角色死亡代理 */
-	ai->PawnDead.AddUniqueDynamic(this, &AAIControllerBase::OnPawnDead);
+	ai->PawnDead.AddDynamic(this, &AAIControllerBase::OnPawnDead);
 }
 
 void AAIControllerBase::OnTargetPerceptionUpdated(AActor* actor, FAIStimulus stimulus)

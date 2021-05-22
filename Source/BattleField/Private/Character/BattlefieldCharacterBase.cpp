@@ -57,18 +57,26 @@ void ABattlefieldCharacterBase::SetupPlayerInputComponent(UInputComponent* Playe
 
 float ABattlefieldCharacterBase::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	int befDmg = GetState()->GetStateItem(EnumActorStateItem::EN_HP);
 	GetState()->HpChange(-Damage);
 	CharacterStateUpdate(EnumActorStateItem::EN_HP);
-	if (GetState()->GetStateItem(EnumActorStateItem::EN_HP) <= 0) {
+	int aftDmg = GetState()->GetStateItem(EnumActorStateItem::EN_HP);
+	if (aftDmg <= 0) {
 		bIsValid = false;
 		PawnDead.Broadcast();
 	}
 
-	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	return aftDmg - befDmg;
 }
 
 void ABattlefieldCharacterBase::HitActor(AActor* targetActor)
 {
+	if (!UCommonInterface::GetGameModeInst()->bFriendlyFire) {
+		ABattlefieldCharacterBase* tar = Cast<ABattlefieldCharacterBase>(targetActor);
+		if (tar && tar->bIsEnemy == this->bIsEnemy) {
+			return;
+		}
+	}
 	UGameplayStatics::ApplyDamage(targetActor,
 		CalDamage(),
 		this->GetController(),
@@ -192,11 +200,11 @@ void ABattlefieldCharacterBase::ComponentInit()
 	WidgetComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	/* 1.6 动画蓝图 */
-	UAnimBlueprint* abp = LoadObject<UAnimBlueprint>(NULL,
-		TEXT("AnimBlueprint'/Game/SkeletalMesh/SK_AnimBP_Default.SK_AnimBP_Default'"));
+	UClass* abp = LoadObject<UClass>(NULL,
+		TEXT("UClass'/Game/SkeletalMesh/SK_AnimBP_Default.SK_AnimBP_Default_C'"));
 	if (abp) {
 		GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-		GetMesh()->SetAnimInstanceClass(abp->GetAnimBlueprintGeneratedClass());
+		GetMesh()->SetAnimInstanceClass(abp);
 	} else {
 		UE_LOG(LoadLog, Error, TEXT("Load AnimBP Error"));
 	}
@@ -221,9 +229,14 @@ float ABattlefieldCharacterBase::CalDamage()
 	return static_cast<float>(damage - reduce);
 }
 
+FRotator ABattlefieldCharacterBase::GetExceptRotatorInMotion_Implementation()
+{
+	return GetActorRotation();
+}
+
 void ABattlefieldCharacterBase::CharacterStateUpdate_Implementation(EnumActorStateItem state)
 {
-	if (WidgetComp) {
+	if (bIsValid && WidgetComp) {
 		UUserWidget* widget = WidgetComp->GetUserWidgetObject();
 		UUserWidgetBase* base = Cast<UUserWidgetBase>(widget);
 		if (base) {
@@ -251,9 +264,9 @@ void ABattlefieldCharacterBase::CreateStateWidget_Implementation()
 	}
 }
 
-FRotator ABattlefieldCharacterBase::GetExceptRotatorInMotion_Implementation()
+void ABattlefieldCharacterBase::AfterDead_Implementation()
 {
-	return GetActorRotation();
+	K2_DestroyActor();
 }
 
 void ABattlefieldCharacterBase::AxisInput(EnumCharacterAxisAction axis, float value)
@@ -369,11 +382,13 @@ void ABattlefieldCharacterBase::MainNormalAttack()
 
 void ABattlefieldCharacterBase::Dead()
 {
-	UAnimMontage* montage = LoadObject<UAnimMontage>(NULL,
-		TEXT("AnimBlueprint'/Game/Animations/Montage/DeadMontage.DeadMontage'"));
-	if (montage) {
-		PlayAnimMontage(montage, 1.4f);
-	} else {
-		UE_LOG(LoadLog, Error, TEXT("Load Montage Error"));
-	}
+	Action->Dead();
+	GetMesh()->SetSimulatePhysics(true);
+	K2_DestroyComponent(WidgetComp);
+	K2_DestroyComponent(State);
+	K2_DestroyComponent(Action);
+	K2_DestroyComponent(GetCapsuleComponent());
+	FTimerHandle AfterDeadHandle;
+	FTimerDelegate AfterDeadDelegate = FTimerDelegate::CreateUObject(this, &ABattlefieldCharacterBase::AfterDead);
+	GetWorldTimerManager().SetTimer(AfterDeadHandle, AfterDeadDelegate, 3.0f, false);
 }
