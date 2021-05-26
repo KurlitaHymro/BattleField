@@ -40,7 +40,10 @@ public:
 	virtual void OnTargetPerceptionUpdated(AActor* actor, FAIStimulus stimulus);
 
 	UFUNCTION(Category = "AI|Perception")
-	virtual void OnPawnDead();
+	virtual void OnCtrlPawnDead();
+
+	UFUNCTION(Category = "AI|Perception")
+	virtual void OnTargetBehavior(class ABattlefieldCharacterBase* Target, EnumCharacterTargetBehavior Behavior);
 
 	UFUNCTION(Category = "AI|Perception")
 	virtual void UpdateBlackboard();

@@ -21,4 +21,7 @@ public:
 
 	UFUNCTION(Category = Widget, BlueprintCallable)
 	void StateUpdate(class ABattlefieldCharacterBase* character, EnumActorStateItem stateItem);
+
+	UFUNCTION(Category = Widget, BlueprintCallable)
+	void SetHpColor(FLinearColor InColor);
 };

@@ -15,23 +15,22 @@ ABattlefieldCharacterPlayer::ABattlefieldCharacterPlayer()
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->bDoCollisionTest = false;
-	SpringArm->TargetArmLength = 350.f;
-
-	BaseTurnRate = 100.f;
-	BaseLookUpRate = 80.f;
+	SpringArm->TargetArmLength = 350.f; 
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->SetRelativeLocation(FVector(0.f, 0.f, 30.f));
+	
+	BaseTurnRate = 100.f;
+	BaseLookUpRate = 80.f;
 }
 
 // Called when the game starts or when spawned
 void ABattlefieldCharacterPlayer::BeginPlay()
 {
-	GetState()->InitCharacterState(100, 0, 30, 5, 300);
-
 	Super::BeginPlay();
 
+	GetState()->InitCharacterState(100, 0, 30, 5, 300);
 }
 
 void ABattlefieldCharacterPlayer::CharacterStateUpdate_Implementation(EnumActorStateItem state)

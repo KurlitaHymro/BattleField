@@ -105,6 +105,17 @@ UActorState* ABattlefieldCharacterBase::GetState()
 	}
 }
 
+UUserWidget* ABattlefieldCharacterBase::GetWidget()
+{
+	if (WidgetComp) {
+		return WidgetComp->GetUserWidgetObject();
+	} else {
+		UE_LOG(LoadLog, Error, TEXT("CharacterBase No WidgetObject"));
+		return nullptr;
+	}
+	return nullptr;
+}
+
 UCharacterAction* ABattlefieldCharacterBase::GetAction()
 {
 	if (Action) {
@@ -382,6 +393,8 @@ void ABattlefieldCharacterBase::MainNormalAttack()
 
 void ABattlefieldCharacterBase::Dead()
 {
+	// 通知目标列表中包含此角色的感知者更新决策
+	TargetBehavior.Broadcast(this, EnumCharacterTargetBehavior::EN_DEAD);
 	Action->Dead();
 	GetMesh()->SetSimulatePhysics(true);
 	K2_DestroyComponent(WidgetComp);

@@ -25,3 +25,8 @@ void UUserWidgetBase::StateUpdate(ABattlefieldCharacterBase* character, EnumActo
 		break;
 	}
 }
+
+void UUserWidgetBase::SetHpColor(FLinearColor InColor)
+{
+	HP->SetFillColorAndOpacity(InColor);
+}

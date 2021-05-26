@@ -4,6 +4,7 @@
 #include "Actor/Campsite.h"
 #include "Common/CommonInterface.h"
 #include "Component/ActorSpawner.h"
+#include "Widget/UserWidgetBase.h"
 #include "Character/BattlefieldCharacterAI.h"
 
 // Sets default values
@@ -84,6 +85,20 @@ int ACampsite::CampsiteRandomSpawn(int num)
 void ACampsite::InitCharacterInfo(ABattlefieldCharacterAI* AI)
 {
 	AI->bIsEnemy = bIsEnemy;
+	UUserWidget* WidgetObj = AI->GetWidget();
+	UUserWidgetBase* MyWidgetObj = Cast<UUserWidgetBase>(WidgetObj);
+	if (MyWidgetObj) {
+		if (bIsEnemy) {
+			// 红
+			MyWidgetObj->SetHpColor(FLinearColor(0.85f, 0.0f, 0.0f));
+		} else {
+			// 蓝
+			MyWidgetObj->SetHpColor(FLinearColor(0.0f, 0.2f, 0.85f));
+		}
+		
+	} else {
+		UE_LOG(RunLog, Error, TEXT("Get Widget Error"));
+	}
 	AI->CharacterStateUpdate(EnumActorStateItem::EN_HP);
 }
 

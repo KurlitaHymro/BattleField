@@ -26,6 +26,16 @@ enum class EnumCharacterOnceAction : uint8
 	EN_SPEED_SUB  UMETA(DisplayName = "SPEED_SUB"),
 };
 
+UENUM(BlueprintType)
+enum class EnumCharacterTargetBehavior : uint8
+{
+	EN_DEAD     UMETA(DisplayName = "Dead"),
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FuncDeathNotify);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FuncTargetBehavior, class ABattlefieldCharacterBase*, character, EnumCharacterTargetBehavior, behavior);
+
 UCLASS()
 class BATTLEFIELD_API ABattlefieldCharacterBase : public ACharacter
 {
@@ -73,6 +83,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FuncDeathNotify PawnDead;
 
+	UPROPERTY(BlueprintAssignable)
+	FuncTargetBehavior TargetBehavior;
+
 	UPROPERTY(Category = "State", EditAnywhere, BlueprintReadWrite)
 	int RunSpeedChangeValue;
 
@@ -95,6 +108,9 @@ public:
 
 	UFUNCTION(Category = "State", BlueprintCallable)
 	class UActorState* GetState();
+
+	UFUNCTION(Category = "State", BlueprintCallable)
+	class UUserWidget* GetWidget();
 
 	UFUNCTION(Category = "Action", BlueprintCallable)
 	class UCharacterAction* GetAction();

@@ -18,9 +18,9 @@ AAIControllerBase::AAIControllerBase()
 		/* 1.1.1 视觉组件 */
 		sight_cfg = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("AISightConfig"));
 		if (sight_cfg) {
-			sight_cfg->SightRadius = 2000.f;
-			sight_cfg->LoseSightRadius = 3000.f;
-			sight_cfg->PeripheralVisionAngleDegrees = 150.f;
+			sight_cfg->SightRadius = 800.f;
+			sight_cfg->LoseSightRadius = 1200.f;
+			sight_cfg->PeripheralVisionAngleDegrees = 180.f;
 			sight_cfg->DetectionByAffiliation.bDetectEnemies = false;
 			sight_cfg->DetectionByAffiliation.bDetectFriendlies = false;
 			sight_cfg->DetectionByAffiliation.bDetectNeutrals = true;
@@ -63,20 +63,23 @@ void AAIControllerBase::OnPossess(class APawn* InPawn)
 		UE_LOG(RunLog, Error, TEXT("Init BehaviorTree Fail"));
 	}
 	/* 挂载角色死亡代理 */
-	ai->PawnDead.AddDynamic(this, &AAIControllerBase::OnPawnDead);
+	ai->PawnDead.AddDynamic(this, &AAIControllerBase::OnCtrlPawnDead);
 }
 
 void AAIControllerBase::OnTargetPerceptionUpdated(AActor* actor, FAIStimulus stimulus)
 {
 	ABattlefieldCharacterBase* target = Cast<ABattlefieldCharacterBase>(actor);
 	ABattlefieldCharacterBase* ctrlPawn = Cast<ABattlefieldCharacterBase>(GetPawn());
-	if (target && ctrlPawn) {
-		if (target->bIsEnemy != ctrlPawn->bIsEnemy) {
+	if (ctrlPawn && target) {
+		if (target->bIsEnemy != ctrlPawn->bIsEnemy && target->bIsValid) {
 			if (stimulus.IsValid()) {
+				UE_LOG(RunLog, Error, TEXT("%s -> %s : Sensed %d"),
+					*GetDebugName(ctrlPawn), *GetDebugName(target),
+					stimulus.WasSuccessfullySensed());
 				if (stimulus.WasSuccessfullySensed()) {
 					TargetEnemy.AddUnique(target);
-				} else {
-					TargetEnemy.Remove(target);
+					/* 挂载目标行为代理 */
+					target->TargetBehavior.AddDynamic(this, &AAIControllerBase::OnTargetBehavior);
 				}
 				UpdateBlackboard();
 			}
@@ -84,7 +87,7 @@ void AAIControllerBase::OnTargetPerceptionUpdated(AActor* actor, FAIStimulus sti
 	}
 }
 
-void AAIControllerBase::OnPawnDead()
+void AAIControllerBase::OnCtrlPawnDead()
 {
 	ABattlefieldCharacterAI* ai = Cast<ABattlefieldCharacterAI>(GetPawn());
 	if (ai) {
@@ -93,25 +96,55 @@ void AAIControllerBase::OnPawnDead()
 	}
 }
 
+void AAIControllerBase::OnTargetBehavior(ABattlefieldCharacterBase* Target, EnumCharacterTargetBehavior Behavior)
+{
+	switch (Behavior) {
+	case EnumCharacterTargetBehavior::EN_DEAD:
+		Target->TargetBehavior.RemoveDynamic(this, &AAIControllerBase::OnTargetBehavior);
+		TargetEnemy.Remove(Target);
+		break;
+	}
+	UpdateBlackboard();
+}
+
 void AAIControllerBase::UpdateBlackboard()
 {
+	UE_LOG(RunLog, Error, TEXT("%s Update : %d"), *GetDebugName(GetPawn()), TargetEnemy.Num());
 	if (!BlackboardComp) {
 		return;
 	}
 
 	AActor* FirstPriorityTarget = GetFirstPriorityTarget();
-	BlackboardComp->SetValueAsObject("EnemyActor", FirstPriorityTarget);
-	if (FirstPriorityTarget) {
-		BlackboardComp->SetValueAsBool("HasLineOfSight", true);
-	} else {
+
+	BlackboardComp->SetValueAsInt("EnemyNum", TargetEnemy.Num());
+	if (!FirstPriorityTarget) {
+		BlackboardComp->SetValueAsObject("EnemyActor", nullptr);
 		BlackboardComp->SetValueAsBool("HasLineOfSight", false);
+	} else {
+		ABattlefieldCharacterBase* target = Cast<ABattlefieldCharacterBase>(FirstPriorityTarget);
+		if (target) {
+			BlackboardComp->SetValueAsObject("EnemyActor", target);
+			BlackboardComp->SetValueAsBool("HasLineOfSight", true);
+		} else {
+			BlackboardComp->SetValueAsObject("EnemyActor", FirstPriorityTarget);
+			BlackboardComp->SetValueAsBool("HasLineOfSight", false);
+		}
 	}
 }
 
 AActor* AAIControllerBase::GetFirstPriorityTarget()
 {
-	if (TargetEnemy.Num() > 0) {
-		return TargetEnemy[0];
+	APawn* p = GetPawn();
+	AActor* nearestTarget = nullptr;
+	if (TargetEnemy.Num() > 0 && p) {
+		float minDistance = 1000.f;
+		for (auto It = TargetEnemy.CreateConstIterator(); It; ++It) {
+			float distance = p->GetDistanceTo(*It);
+			if (distance < minDistance) {
+				minDistance = distance;
+				nearestTarget = *It;
+			}
+		}
 	}
-	return nullptr;
+	return nearestTarget;
 }

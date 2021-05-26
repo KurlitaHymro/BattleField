@@ -24,7 +24,7 @@ void URotatableNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSe
 		FRotator CurRotator = OwnerCharacter->GetActorRotation();
 		if (NewRotator != CurRotator) {
 			FRotator DeltaRotator = UKismetMathLibrary::RInterpTo(CurRotator, NewRotator, FrameDeltaTime, RotatorChangeRate);
-			OwnerCharacter->SetActorRotation(DeltaRotator);
+			OwnerCharacter->SetActorRotation(FRotator(CurRotator.Roll, DeltaRotator.Yaw, CurRotator.Pitch));
 		}
 	}
 

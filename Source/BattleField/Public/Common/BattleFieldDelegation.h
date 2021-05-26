@@ -9,8 +9,6 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FuncCharacterStateChange, class ABattlefieldCharacterBase*, character, EnumActorStateItem, state);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FuncDeathNotify);
-
 /**
  * 
  */

@@ -51,7 +51,7 @@ class BATTLEFIELD_API APlayerControllerBase : public APlayerController
 
 	APlayerControllerBase();
 
-	ABattlefieldCharacterBase* CtrlPlayer;
+	class ABattlefieldCharacterBase* CtrlPlayer;
 	
 	TMap<EnumControllerAxisInput, EnumCharacterAxisAction> mAxisInput;
 	TMap<EnumControllerOperatorInput, EnumCharacterOnceAction> mOpInput;
