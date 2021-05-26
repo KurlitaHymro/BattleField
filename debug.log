@@ -1,0 +1,115 @@
+LogTemp: Repeating last play command: 选中的视口
+LogPlayLevel: PlayLevel: No blueprints needed recompiling
+PIE: New page: PIE会话：BattleField（2021年5月27日 上午4:22:25）
+LogPlayLevel: Creating play world package: /Game/Maps/UEDPIE_0_BattleField
+LogPlayLevel: PIE: StaticDuplicateObject took: (0.013179s)
+LogAIModule: Creating AISystem for world BattleField
+LogPlayLevel: PIE: World Init took: (0.001000s)
+LogPlayLevel: PIE: Created PIE world by copying editor world from /Game/Maps/BattleField.BattleField to /Game/Maps/UEDPIE_0_BattleField.BattleField (0.014325s)
+LogUObjectHash: Compacting FUObjectHashTables data took   0.68ms
+LogAudio: Display: Creating Audio Device:                 Id: 6, Scope: Unique, Realtime: True
+LogAudioMixer: Display: Audio Mixer Platform Settings:
+LogAudioMixer: Display:     Sample Rate:                          48000
+LogAudioMixer: Display:     Callback Buffer Frame Size Requested: 1024
+LogAudioMixer: Display:     Callback Buffer Frame Size To Use:    1024
+LogAudioMixer: Display:     Number of buffers to queue:           2
+LogAudioMixer: Display:     Max Channels (voices):                32
+LogAudioMixer: Display:     Number of Async Source Workers:       0
+LogAudio: Display: AudioDevice MaxSources: 32
+LogAudio: Display: Using built-in audio occlusion.
+LogAudioMixer: Display: Initializing audio mixer.
+LogAudioMixer: Display: 0: FrontLeft
+LogAudioMixer: Display: 1: FrontRight
+LogAudioMixer: Display: Using Audio Device 扬声器 (Realtek High Definition Audio)
+LogAudioMixer: Display: Initializing Sound Submixes...
+LogAudioMixer: Display: Creating Master Submix 'MasterSubmixDefault'
+LogAudioMixer: Display: Creating Master Submix 'MasterReverbSubmixDefault'
+LogAudioMixer: Display: Creating Master Submix 'MasterEQSubmixDefault'
+LogAudioMixer: FMixerPlatformXAudio2::StartAudioStream() called
+LogAudioMixer: Display: Output buffers initialized: Frames=1024, Channels=2, Samples=2048
+LogAudioMixer: Display: Starting AudioMixerPlatformInterface::RunInternal()
+LogAudioMixer: Display: FMixerPlatformXAudio2::SubmitBuffer() called for the first time
+LogInit: FAudioDevice initialized.
+LogAudio: Display: Audio Device (ID: 6) registered with world 'BattleField'.
+LogLoad: Game class is 'BattleFieldGameMode'
+LoadLog: Warning: Success To Load E:/Project/BattleField/Content/Config/CharacterProperty.csv
+LogWorld: Bringing World /Game/Maps/UEDPIE_0_BattleField.BattleField up for play (max tick rate 0) at 2021.05.26-20.22.25
+LogWorld: Bringing up level for play took: 0.000783
+LogOnline: OSS: Creating online subsystem instance for: :Context_8
+LogGameMode: Display: Match State Changed from EnteringMap to WaitingToStart
+LogGameState: Match State Changed from EnteringMap to WaitingToStart
+LogGameMode: Display: Match State Changed from WaitingToStart to InProgress
+RunLog: Warning: Push To Campsite Id:0 Num:3
+RunLog: Warning: Push To Campsite Id:0 Num:3
+LogGameState: Match State Changed from WaitingToStart to InProgress
+PIE: 登陆的服务器
+PIE: PIE总开始时间：0.115秒。
+RunLog: Warning: Success To Spawn, rsv = 2
+RunLog: Warning: Success To Spawn, rsv = 1
+RunLog: Warning: Success To Spawn, rsv = 0
+RunLog: Warning: Success To Spawn, rsv = 2
+RunLog: Warning: Spawn Fail
+RunLog: Warning: Success To Spawn, rsv = 1
+RunLog: Warning: Success To Spawn, rsv = 0
+Cmd: ToggleDebugCamera
+Cmd: EnableGDT
+Cmd: ToggleDebugCamera
+RunLog: Error: BattlefieldCharacterAI_2 -> BattlefieldCharacterPlayer_0 : Sensed 1
+RunLog: Error: BattlefieldCharacterAI_2 Update : 1
+Cmd: ToggleDebugCamera
+RunLog: Error: BattlefieldCharacterAI_5 -> BattlefieldCharacterAI_2 : Sensed 1
+RunLog: Error: BattlefieldCharacterAI_5 Update : 1
+RunLog: Error: BattlefieldCharacterAI_2 -> BattlefieldCharacterAI_5 : Sensed 1
+RunLog: Error: BattlefieldCharacterAI_2 Update : 2
+RunLog: Error: BattlefieldCharacterAI_2 -> BattlefieldCharacterAI_5 : Sensed 0
+RunLog: Error: BattlefieldCharacterAI_2 Update : 2
+RunLog: Error: BattlefieldCharacterAI_5 -> BattlefieldCharacterAI_2 : Sensed 0
+RunLog: Error: BattlefieldCharacterAI_5 Update : 1
+RunLog: Error: BattlefieldCharacterAI_5 -> BattlefieldCharacterAI_2 : Sensed 1
+LogOutputDevice: Warning: Script Stack (1 frames):
+AIControllerBase.OnTargetPerceptionUpdated
+LogStats: FPlatformStackWalk::StackWalkAndDump -  0.682 s
+LogOutputDevice: Error: === Handled ensure: ===
+LogOutputDevice: Error: Ensure condition failed: InvocationList[ CurFunctionIndex ] != InDelegate [File:G:\UnrealEngine\UE_4.26\Engine\Source\Runtime\Core\Public\UObject/ScriptDelegates.h] [Line: 556]
+LogOutputDevice: Error: Stack: 
+LogOutputDevice: Error: [Callstack] 0x00007ffd755e7ab9 UE4Editor-BattleField-5040.dll!<lambda_2c7dd842a319ffbfe48fec75c2015105>::operator()() [G:\UnrealEngine\UE_4.26\Engine\Source\Runtime\Core\Public\UObject\ScriptDelegates.h:556]
+LogOutputDevice: Error: [Callstack] 0x00007ffd755d0b5d UE4Editor-BattleField-5040.dll!TMulticastScriptDelegate<FWeakObjectPtr>::Add() [G:\UnrealEngine\UE_4.26\Engine\Source\Runtime\Core\Public\UObject\ScriptDelegates.h:327]
+LogOutputDevice: Error: [Callstack] 0x00007ffd755d2a6d UE4Editor-BattleField-5040.dll!AAIControllerBase::OnTargetPerceptionUpdated() [E:\Project\BattleField\Source\BattleField\Private\Controller\AIControllerBase.cpp:84]
+LogOutputDevice: Error: [Callstack] 0x00007ffd755d9666 UE4Editor-BattleField-5040.dll!AAIControllerBase::execOnTargetPerceptionUpdated() [E:\Project\BattleField\Intermediate\Build\Win64\UE4Editor\Inc\BattleField\AIControllerBase.gen.cpp:65]
+LogOutputDevice: Error: [Callstack] 0x00007ffdc8792604 UE4Editor-CoreUObject.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffdc8a20e63 UE4Editor-CoreUObject.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffd9bc8c435 UE4Editor-Engine.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffd8db08dab UE4Editor-AIModule.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffd8dc0cc15 UE4Editor-AIModule.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffd8dc4f1d5 UE4Editor-AIModule.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffd9ce88456 UE4Editor-Engine.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffd9c5a6de2 UE4Editor-Engine.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffd962f9423 UE4Editor-UnrealEd.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffd96c150e6 UE4Editor-UnrealEd.dll!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ff63c709bc2 UE4Editor.exe!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ff63c72117c UE4Editor.exe!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ff63c72125a UE4Editor.exe!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ff63c7352bd UE4Editor.exe!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ff63c737fea UE4Editor.exe!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffde6566fd4 KERNEL32.DLL!UnknownFunction []
+LogOutputDevice: Error: [Callstack] 0x00007ffde737cec1 ntdll.dll!UnknownFunction []
+LogStats:                SubmitErrorReport -  0.000 s
+LogStats:                    SendNewReport -  1.498 s
+LogStats:             FDebug::EnsureFailed -  2.195 s
+RunLog: Error: BattlefieldCharacterAI_5 Update : 1
+RunLog: Error: BattlefieldCharacterAI_5 -> BattlefieldCharacterAI_2 : Sensed 0
+RunLog: Error: BattlefieldCharacterAI_5 Update : 1
+RunLog: Error: BattlefieldCharacterAI_5 Update : 0
+RunLog: Error: BattlefieldCharacterAI_5 Update : 0
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogWorld: BeginTearingDown for /Game/Maps/UEDPIE_0_BattleField
+LogWorld: UWorld::CleanupWorld for BattleField, bSessionEnded=true, bCleanupResources=true
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogPlayLevel: Display: Shutting down PIE online subsystems
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogAudio: Display: Audio Device unregistered from world 'None'.
+LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called
+LogAudioMixer: FMixerPlatformXAudio2::StopAudioStream() called
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogUObjectHash: Compacting FUObjectHashTables data took   0.73ms
+LogPlayLevel: Display: Destroying online subsystem :Context_8
