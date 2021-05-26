@@ -70,16 +70,25 @@ void AAIControllerBase::OnTargetPerceptionUpdated(AActor* actor, FAIStimulus sti
 {
 	ABattlefieldCharacterBase* target = Cast<ABattlefieldCharacterBase>(actor);
 	ABattlefieldCharacterBase* ctrlPawn = Cast<ABattlefieldCharacterBase>(GetPawn());
-	if (ctrlPawn && target) {
-		if (target->bIsEnemy != ctrlPawn->bIsEnemy && target->bIsValid) {
+
+	if (stimulus.WasSuccessfullySensed()) {
+		UE_LOG(RunLog, Error, TEXT("PerceptionUpdated %s ---> %s  Cur : %d"),
+			*GetDebugName(this), *GetDebugName(target->Controller), TargetEnemy.Num());
+	} else {
+		UE_LOG(RunLog, Error, TEXT("PerceptionUpdated %s -|-> %s  Cur : %d"),
+			*GetDebugName(this), *GetDebugName(target->Controller), TargetEnemy.Num());
+	}
+
+	if (ctrlPawn && target && target->bIsValid) {
+		if (target->bIsEnemy != ctrlPawn->bIsEnemy) {
 			if (stimulus.IsValid()) {
-				UE_LOG(RunLog, Error, TEXT("%s -> %s : Sensed %d"),
-					*GetDebugName(ctrlPawn), *GetDebugName(target),
-					stimulus.WasSuccessfullySensed());
 				if (stimulus.WasSuccessfullySensed()) {
 					TargetEnemy.AddUnique(target);
 					/* 挂载目标行为代理 */
 					target->TargetBehavior.AddDynamic(this, &AAIControllerBase::OnTargetBehavior);
+				} else if (TargetEnemy.Num() > 3) {
+					/* 如果目标个数充裕则放弃暂时丢失的目标 */
+					TargetEnemy.Remove(target);
 				}
 				UpdateBlackboard();
 			}
@@ -109,7 +118,6 @@ void AAIControllerBase::OnTargetBehavior(ABattlefieldCharacterBase* Target, Enum
 
 void AAIControllerBase::UpdateBlackboard()
 {
-	UE_LOG(RunLog, Error, TEXT("%s Update : %d"), *GetDebugName(GetPawn()), TargetEnemy.Num());
 	if (!BlackboardComp) {
 		return;
 	}
@@ -121,14 +129,8 @@ void AAIControllerBase::UpdateBlackboard()
 		BlackboardComp->SetValueAsObject("EnemyActor", nullptr);
 		BlackboardComp->SetValueAsBool("HasLineOfSight", false);
 	} else {
-		ABattlefieldCharacterBase* target = Cast<ABattlefieldCharacterBase>(FirstPriorityTarget);
-		if (target) {
-			BlackboardComp->SetValueAsObject("EnemyActor", target);
-			BlackboardComp->SetValueAsBool("HasLineOfSight", true);
-		} else {
-			BlackboardComp->SetValueAsObject("EnemyActor", FirstPriorityTarget);
-			BlackboardComp->SetValueAsBool("HasLineOfSight", false);
-		}
+		BlackboardComp->SetValueAsObject("EnemyActor", FirstPriorityTarget);
+		BlackboardComp->SetValueAsBool("HasLineOfSight", true);
 	}
 }
 

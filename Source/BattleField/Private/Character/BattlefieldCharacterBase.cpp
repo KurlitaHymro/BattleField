@@ -18,6 +18,7 @@ ABattlefieldCharacterBase::ABattlefieldCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw = false;
 	bIsValid = false;
+	bIsInMotion = true;
 	InMotionRotatorChangeRate = 1.0f;
 
 	// Set size for collision capsule

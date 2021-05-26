@@ -30,7 +30,7 @@ void ABattlefieldCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetState()->InitCharacterState(100, 0, 30, 5, 300);
+	GetState()->InitCharacterState(10000, 100, 500, 100, 300);
 }
 
 void ABattlefieldCharacterPlayer::CharacterStateUpdate_Implementation(EnumActorStateItem state)

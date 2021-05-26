@@ -36,7 +36,7 @@ FRotator ABattlefieldCharacterAI::GetExceptRotatorInMotion_Implementation()
 			return UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target->GetActorLocation());
 		}
 	} else {
-		bIsValid = false;
+		UE_LOG(RunLog, Error, TEXT("Error AAIControllerBase"));
 	}
 	return Super::GetExceptRotatorInMotion_Implementation();
 }
