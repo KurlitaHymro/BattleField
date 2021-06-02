@@ -8,7 +8,18 @@ public class BattleField : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "NavigationSystem", "AIModule", "GameplayTasks" });
+		PublicDependencyModuleNames.AddRange(new string[] {
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"NavigationSystem",
+			"AIModule",
+			"GameplayTasks",
+			"ModularGameplayActors",
+			"EnhancedInput",
+			"GameplayAbilities",
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
