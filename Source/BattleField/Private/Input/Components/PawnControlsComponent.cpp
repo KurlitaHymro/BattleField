@@ -71,7 +71,16 @@ void UPawnControlsComponent::OnControllerChanged(APawn* Pawn, AController* OldCo
 
 void UPawnControlsComponent::SetupInputComponent(APawn* Pawn)
 {
-	InputComponent = CastChecked<UEnhancedInputComponent>(Pawn->InputComponent);
+	//InputComponent = CastChecked<UEnhancedInputComponent>(Pawn->InputComponent);
+	UEnhancedInputComponent* tmp = Cast<UEnhancedInputComponent>(Pawn->InputComponent);
+	if (tmp) {
+		UE_LOG(LogTemp, Error, TEXT("SUCCESS"));
+		InputComponent = tmp;
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("InputComponent Error"));
+		return;
+	}
 
 	if (ensureMsgf(InputComponent, TEXT("Project must use EnhancedInputComponent to support PlayerControlsComponent")))
 	{

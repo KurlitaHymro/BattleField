@@ -13,12 +13,14 @@ public class BattleField : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"NavigationSystem",
 			"AIModule",
+			"NavigationSystem",
 			"GameplayTasks",
-			"ModularGameplayActors",
+
 			"EnhancedInput",
 			"GameplayAbilities",
+
+			"ModularGameplayActors",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

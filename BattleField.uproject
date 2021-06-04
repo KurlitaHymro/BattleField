@@ -20,10 +20,6 @@
 	],
 	"Plugins": [
 		{
-			"Name": "GameFeatures",
-			"Enabled": true
-		},
-		{
 			"Name": "GameplayAbilities",
 			"Enabled": true
 		},
@@ -70,6 +66,10 @@
 		{
 			"Name": "ChaosCaching",
 			"Enabled": true
+		},
+		{
+			"Name": "GameFeatures",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
@@ -78,6 +78,8 @@
 		"LinuxNoEditor",
 		"Android",
 		"MacNoEditor",
-		"WindowsNoEditorWin32"
+		"WindowsNoEditorWin32",
+		"Linux",
+		"Windows"
 	]
 }
