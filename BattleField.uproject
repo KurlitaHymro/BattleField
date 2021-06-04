@@ -77,6 +77,8 @@
 		"LinuxNoEditor",
 		"Android",
 		"MacNoEditor",
-		"WindowsNoEditorWin32"
+		"WindowsNoEditorWin32",
+		"Linux",
+		"Windows"
 	]
 }
