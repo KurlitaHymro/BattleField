@@ -16,7 +16,6 @@ public class BattleField : ModuleRules
 			"NavigationSystem",
 			"AIModule",
 			"GameplayTasks",
-			"ModularGameplayActors",
 			"EnhancedInput",
 			"GameplayAbilities",
 		});
