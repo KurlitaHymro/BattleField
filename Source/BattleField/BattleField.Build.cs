@@ -18,9 +18,16 @@ public class BattleField : ModuleRules
 			"GameplayTasks",
 			"EnhancedInput",
 			"GameplayAbilities",
+			"ComponentReceiverActors"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] {
+			"GameFeatures",
+			"RHI",
+			"RenderCore",
+			"SlateCore",
+			"ModularGameplay"
+		});
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
