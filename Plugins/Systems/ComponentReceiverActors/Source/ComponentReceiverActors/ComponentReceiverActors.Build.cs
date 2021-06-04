@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
+using System.IO;
 
 public class ComponentReceiverActors : ModuleRules
 {
@@ -26,6 +27,10 @@ public class ComponentReceiverActors : ModuleRules
 			new string[]
 			{
 				"Core",
+				"CoreUObject",
+				"Engine",
+				"ModularGameplay",
+				"AIModule",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
