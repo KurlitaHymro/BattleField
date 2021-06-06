@@ -20,9 +20,7 @@ ABfCharacter::ABfCharacter()
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	BaseTurnRate = 100.f;
-	BaseLookUpRate = 100.f;
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 }
 
 // Called PreInitializeComponents
@@ -58,56 +56,4 @@ void ABfCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
-
-// 基本行为：移动、视野、跳跃
-void ABfCharacter::MoveForward(float Value)
-{
-	if ((Controller != nullptr) && (Value != 0.0f))
-	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
-	}
-}
-
-void ABfCharacter::MoveRight(float Value)
-{
-	if ((Controller != nullptr) && (Value != 0.0f))
-	{
-		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get right vector 
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		// add movement in that direction
-		AddMovementInput(Direction, Value);
-	}
-}
-
-void ABfCharacter::TurnAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-}
-
-void ABfCharacter::LookUpAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
-
-void ABfCharacter::JumpStarted()
-{
-	Jump();
-}
-
-void ABfCharacter::JumpStopped()
-{
-	StopJumping();
 }
