@@ -13,10 +13,8 @@ void UThirdPersonControlsComponent::SetupPlayerControls_Implementation(UEnhanced
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 
-	BindInputAction(MoveForwardInputAction, ETriggerEvent::Triggered, this, &ThisClass::HandleMoveForward);
-	BindInputAction(MoveRightInputAction, ETriggerEvent::Triggered, this, &ThisClass::HandleMoveRight);
-	BindInputAction(LookUpInputAction, ETriggerEvent::Triggered, this, &ThisClass::HandleLookUp);
-	BindInputAction(TurnInputAction, ETriggerEvent::Triggered, this, &ThisClass::HandleTurn);
+	BindInputAction(MoveInputAction, ETriggerEvent::Triggered, this, &ThisClass::HandleMove);
+	BindInputAction(SightInputAction, ETriggerEvent::Triggered, this, &ThisClass::HandleSight);
 	BindInputAction(JumpInputAction, ETriggerEvent::Started, this, &ThisClass::HandleStartJump);
 	BindInputAction(JumpInputAction, ETriggerEvent::Completed, this, &ThisClass::HandleStopJump);
 	BindInputAction(RunInputAction, ETriggerEvent::Started, this, &ThisClass::HandleStartRun);
@@ -28,74 +26,61 @@ void UThirdPersonControlsComponent::SetupPlayerControls_Implementation(UEnhanced
 	SpeedChangeValue = 200.f;
 }
 
-void UThirdPersonControlsComponent::HandleMoveForward(const FInputActionValue& InputActionValue)
+void UThirdPersonControlsComponent::HandleMove(const FInputActionValue& InputActionValue)
 {
 	APawn* MyPawn = GetPawnChecked<APawn>();
-	float Val = InputActionValue.Get<FInputActionValue::Axis1D>();
-	
-	if (MyPawn->Controller == nullptr || Val == 0.0f)
+
+	// 键盘输入为方形9个点，摇杆输入是圆环（径向死区0.2-1.0）。
+	FVector Val = InputActionValue.Get<FInputActionValue::Axis3D>();
+
+	if (MyPawn->Controller == nullptr || Val.IsZero())
 	{
 		return;
 	}
-	MoveForwardActionValue = Val;
 
-	// find out which way is right
-	const FRotator Rotation = MyPawn->Controller->GetControlRotation();
-	const FRotator YawRotation(0, Rotation.Yaw, 0);
-	
-	// get right vector 
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	// add movement in that direction
-	MyPawn->AddMovementInput(Direction, BlendMovementVector().X);
-}
-
-void UThirdPersonControlsComponent::HandleMoveRight(const FInputActionValue& InputActionValue)
-{
-	APawn* MyPawn = GetPawnChecked<APawn>();
-	float Val = InputActionValue.Get<FInputActionValue::Axis1D>();
-
-	if (MyPawn->Controller == nullptr || Val == 0.0f)
-	{
-		return;
+	// 将移动输入Clamp到两个圆环中，对不同输入方式不会移动得过慢或过快。
+	if (Val.Size() < 0.65f) {
+		Val = UKismetMathLibrary::ClampVectorSize(Val, 0.3f, 0.5f);
+	} else {
+		Val = UKismetMathLibrary::ClampVectorSize(Val, 0.8f, 1.0f);
 	}
-	MoveRightActionValue = Val;
 
 	// find out which way is right
 	const FRotator Rotation = MyPawn->Controller->GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 	// get right vector 
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	const FVector DirectionX = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	const FVector DirectionY = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
 	// add movement in that direction
-	MyPawn->AddMovementInput(Direction, BlendMovementVector().Y);
+	MyPawn->AddMovementInput(DirectionX, Val.X);
+	MyPawn->AddMovementInput(DirectionY, Val.Y);
 }
 
-void UThirdPersonControlsComponent::HandleLookUp(const FInputActionValue& InputActionValue)
-{	
-	APawn* MyPawn = GetPawnChecked<APawn>();
-	float Val = InputActionValue.Get<FInputActionValue::Axis1D>();
-
-	if (MyPawn->Controller == nullptr || Val == 0.0f)
-	{
-		return;
-	}
-
-	// calculate delta for this frame from the rate information
-	MyPawn->AddControllerPitchInput(Val * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
-
-void UThirdPersonControlsComponent::HandleTurn(const FInputActionValue& InputActionValue)
+void UThirdPersonControlsComponent::HandleSight(const FInputActionValue& InputActionValue)
 {
 	APawn* MyPawn = GetPawnChecked<APawn>();
-	float Val = InputActionValue.Get<FInputActionValue::Axis1D>();
 
-	if (MyPawn->Controller == nullptr || Val == 0.0f)
+	// 鼠标输入为任意值，摇杆输入是圆环（径向死区0.2 - 1.0）。
+	FVector2D Val = InputActionValue.Get<FInputActionValue::Axis2D>();
+
+	if (MyPawn->Controller == nullptr || Val.IsZero())
 	{
 		return;
 	}
 
-	// calculate delta for this frame from the rate information
-	MyPawn->AddControllerYawInput(Val * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	// find out which way is right
+	const FRotator Rotation = MyPawn->Controller->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	// get right vector 
+	const FVector DirectionY = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	const FVector DirectionX = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+	// add movement in that direction
+	MyPawn->AddControllerPitchInput(Val.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	MyPawn->AddControllerYawInput(Val.X * BaseLookUpRate* GetWorld()->GetDeltaSeconds());
 }
 
 void UThirdPersonControlsComponent::HandleStartJump(const FInputActionValue& InputActionValue)
@@ -135,20 +120,6 @@ void UThirdPersonControlsComponent::HandleStopRun(const FInputActionValue& Input
 void UThirdPersonControlsComponent::HandleInteract(const FInputActionValue& InputActionValue)
 {
 	
-}
-
-FVector UThirdPersonControlsComponent::BlendMovementVector()
-{
-	FVector inputVec = UKismetMathLibrary::MakeVector(MoveForwardActionValue, MoveRightActionValue, 0.f);
-	if (inputVec.Size() < 0.586f)
-	{
-		inputVec = UKismetMathLibrary::ClampVectorSize(inputVec, 0.287f, 0.332f);
-	}
-	else
-	{
-		inputVec = UKismetMathLibrary::ClampVectorSize(inputVec, 0.625f, 1.000f);
-	}
-	return inputVec;
 }
 
 float UThirdPersonControlsComponent::ChangeSpeed(float Val)
