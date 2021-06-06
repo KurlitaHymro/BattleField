@@ -20,6 +20,7 @@ ABfCharacter::ABfCharacter()
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 
 	BaseTurnRate = 100.f;
 	BaseLookUpRate = 100.f;
