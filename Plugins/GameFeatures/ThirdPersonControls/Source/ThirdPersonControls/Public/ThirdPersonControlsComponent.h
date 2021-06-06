@@ -14,10 +14,7 @@ class THIRDPERSONCONTROLS_API UThirdPersonControlsComponent : public UPawnContro
 {
 	GENERATED_BODY()
 
-	float MoveForwardActionValue;
-	float MoveRightActionValue;
 	float ActualSpeedChangeValue;
-	FVector BlendMovementVector();
 	float ChangeSpeed(float Val);
 
 public:
@@ -29,15 +26,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Controls")
 	float SpeedChangeValue;
-
+	
 protected:
 	virtual void SetupPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent) override;
 
 	/** Movement input handlers */
-	void HandleMoveForward(const FInputActionValue& InputActionValue);
-	void HandleMoveRight(const FInputActionValue& InputActionValue);
-	void HandleLookUp(const FInputActionValue& InputActionValue);
-	void HandleTurn(const FInputActionValue& InputActionValue);
+	void HandleMove(const FInputActionValue& InputActionValue);
+	void HandleSight(const FInputActionValue& InputActionValue);
 	void HandleStartJump(const FInputActionValue& InputActionValue);
 	void HandleStopJump(const FInputActionValue& InputActionValue);
 	void HandleStartRun(const FInputActionValue& InputActionValue);
@@ -45,16 +40,10 @@ protected:
 	void HandleInteract(const FInputActionValue& InputActionValue);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Controls")
-	UInputAction* MoveForwardInputAction;
+	UInputAction* MoveInputAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Controls")
-	UInputAction* MoveRightInputAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Controls")
-	UInputAction* LookUpInputAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Controls")
-	UInputAction* TurnInputAction;
+	UInputAction* SightInputAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Controls")
 	UInputAction* JumpInputAction;
