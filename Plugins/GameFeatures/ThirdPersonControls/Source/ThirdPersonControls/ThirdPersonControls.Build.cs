@@ -40,7 +40,6 @@ public class ThirdPersonControls : ModuleRules
 				"SlateCore",
 				"ModularGameplay",
 				"EnhancedInput",
-				"BattleField",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

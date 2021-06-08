@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Input/Components/PawnControlsComponent.h"
+#include "CharacterControlsComponent.h"
 #include "ThirdPersonControlsComponent.generated.h"
 
 /**
  * 
  */
 UCLASS(Blueprintable, BlueprintType, Category = "Input", meta = (BlueprintSpawnableComponent))
-class THIRDPERSONCONTROLS_API UThirdPersonControlsComponent : public UPawnControlsComponent
+class THIRDPERSONCONTROLS_API UThirdPersonControlsComponent : public UCharacterControlsComponent
 {
 	GENERATED_BODY()
 
