@@ -26,7 +26,7 @@ public class GameFeaturesExpansions : ModuleRules
 			new string[]
 			{
 				"Core",
-				"ModularGameplay",
+				"GameFeatures",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
