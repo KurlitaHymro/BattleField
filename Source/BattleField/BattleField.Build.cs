@@ -15,9 +15,10 @@ public class BattleField : ModuleRules
 			"InputCore",
 			"NavigationSystem",
 			"AIModule",
-			"GameplayTasks",
-			"EnhancedInput",
 			"GameplayAbilities",
+			"GameplayTasks",
+			"GameplayTags",
+			"EnhancedInput",
 			"ComponentReceiverActors"
 		});
 
