@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class ThirdPersonControls : ModuleRules
+public class BattleAbility : ModuleRules
 {
-	public ThirdPersonControls(ReadOnlyTargetRules Target) : base(Target)
+	public BattleAbility(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -27,7 +27,7 @@ public class ThirdPersonControls : ModuleRules
 			{
 				"Core",
 				"ModularGameplay",
-				"EnhancedInput",
+				"GameplayAbilities",
 				"BattleField",
 				// ... add other public dependencies that you statically link with here ...
 			}
