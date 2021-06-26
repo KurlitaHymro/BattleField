@@ -28,7 +28,7 @@ public class BattleAbility : ModuleRules
 				"Core",
 				"ModularGameplay",
 				"GameplayAbilities",
-				"BattleField",
+				"GameplayTasks",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
