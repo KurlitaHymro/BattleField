@@ -39,7 +39,7 @@ struct FBattleAttributeApplication
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (BlueprintSpawnableComponent))
 class BATTLEABILITY_API UBattleAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
@@ -62,5 +62,12 @@ protected:
 	void ClearAddedAttributes();
 	void GrantDefaultAbilities();
 	void GrantDefaultAttributes();
-	void GrantDefaultAbilitiesAndAttributes();
+
+public:
+	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
+
+	virtual void BeginDestroy() override;
+
+	UFUNCTION()
+	void OnPawnControllerChanged(APawn* Pawn, AController* NewController);
 };
