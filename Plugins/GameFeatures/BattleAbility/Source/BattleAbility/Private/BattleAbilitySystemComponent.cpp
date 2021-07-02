@@ -5,7 +5,7 @@
 
 void UBattleAbilitySystemComponent::ClearAddedAbilities()
 {
-	for (const auto Ability : AddedAbilityHandle)
+	for (const auto& Ability : AddedAbilityHandle)
 	{
 		SetRemoveAbilityOnEnd(Ability);
 	}
@@ -14,7 +14,7 @@ void UBattleAbilitySystemComponent::ClearAddedAbilities()
 
 void UBattleAbilitySystemComponent::ClearAddedAttributes()
 {
-	for (const auto Attribute : AddedAttributeSet)
+	for (const auto& Attribute : AddedAttributeSet)
 	{
 		GetSpawnedAttributes_Mutable().Remove(Attribute);
 	}
@@ -24,7 +24,7 @@ void UBattleAbilitySystemComponent::ClearAddedAttributes()
 void UBattleAbilitySystemComponent::GrantDefaultAbilities()
 {
 	AddedAbilityHandle.Reserve(DefaultAbilities.Num());
-	for (const auto &Ability : DefaultAbilities)
+	for (const auto& Ability : DefaultAbilities)
 	{
 		if (Ability.AbilityType)
 		{
@@ -78,6 +78,8 @@ void UBattleAbilitySystemComponent::BeginDestroy()
 			GameInstance->GetOnPawnControllerChanged().RemoveAll(this);
 		}
 	}
+
+	Super::BeginDestroy();
 }
 
 void UBattleAbilitySystemComponent::OnPawnControllerChanged(APawn* Pawn, AController* NewController)
