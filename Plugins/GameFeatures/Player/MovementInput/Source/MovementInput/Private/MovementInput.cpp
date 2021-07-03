@@ -1,15 +1,15 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "ThirdPersonControls.h"
+#include "MovementInput.h"
 
-#define LOCTEXT_NAMESPACE "FThirdPersonControlsModule"
+#define LOCTEXT_NAMESPACE "FMovementInputModule"
 
-void FThirdPersonControlsModule::StartupModule()
+void FMovementInputModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
 
-void FThirdPersonControlsModule::ShutdownModule()
+void FMovementInputModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
@@ -17,4 +17,4 @@ void FThirdPersonControlsModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FThirdPersonControlsModule, ThirdPersonControls)
+IMPLEMENT_MODULE(FMovementInputModule, MovementInput)

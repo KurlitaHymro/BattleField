@@ -29,8 +29,7 @@ public class ComponentReceiverActors : ModuleRules
 				"Core",
 				"CoreUObject",
 				"Engine",
-				"ModularGameplay",
-				"AIModule",
+				"ModularGameplay"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -43,6 +42,7 @@ public class ComponentReceiverActors : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"AIModule"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
