@@ -38,7 +38,6 @@ public class MovementInput : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"BattleField",
 				"PawnInput",
 				"EnhancedInput",
 				// ... add private dependencies that you statically link with here ...	
