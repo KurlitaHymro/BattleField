@@ -3,17 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Input/Components/PawnControlsComponent.h"
-#include "ThirdPersonControlsComponent.generated.h"
+#include "PawnInputModComponent.h"
+#include "CharacterMovementInputComponent.generated.h"
 
 /**
  * 
  */
-UCLASS(Blueprintable, BlueprintType, Category = "Input", meta = (BlueprintSpawnableComponent))
-class THIRDPERSONCONTROLS_API UThirdPersonControlsComponent : public UPawnControlsComponent
+UCLASS()
+class MOVEMENTINPUT_API UCharacterMovementInputComponent : public UPawnInputModComponent
 {
 	GENERATED_BODY()
 
+private:
 	float ActualSpeedChangeValue;
 	float ChangeSpeed(float Val);
 
@@ -26,7 +27,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Controls")
 	float SpeedChangeValue;
-	
+
 protected:
 	virtual void SetupPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent) override;
 

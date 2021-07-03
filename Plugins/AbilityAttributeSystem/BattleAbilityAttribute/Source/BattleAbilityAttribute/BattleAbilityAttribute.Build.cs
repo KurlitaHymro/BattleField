@@ -1,11 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
-using System.IO;
 
-public class ComponentReceiverActors : ModuleRules
+public class BattleAbilityAttribute : ModuleRules
 {
-	public ComponentReceiverActors(ReadOnlyTargetRules Target) : base(Target)
+	public BattleAbilityAttribute(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -27,9 +26,8 @@ public class ComponentReceiverActors : ModuleRules
 			new string[]
 			{
 				"Core",
-				"CoreUObject",
-				"Engine",
-				"ModularGameplay"
+				"GameplayAbilities",
+				"GameplayTasks",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -42,7 +40,8 @@ public class ComponentReceiverActors : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"AIModule"
+				"PawnInput",
+				"EnhancedInput",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

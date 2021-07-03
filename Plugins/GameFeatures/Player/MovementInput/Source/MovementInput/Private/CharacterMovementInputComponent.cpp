@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ThirdPersonControlsComponent.h"
+#include "CharacterMovementInputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
-void UThirdPersonControlsComponent::SetupPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent)
+void UCharacterMovementInputComponent::SetupPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent)
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
@@ -26,11 +26,11 @@ void UThirdPersonControlsComponent::SetupPlayerControls_Implementation(UEnhanced
 	SpeedChangeValue = 200.f;
 }
 
-void UThirdPersonControlsComponent::HandleMove(const FInputActionValue& InputActionValue)
+void UCharacterMovementInputComponent::HandleMove(const FInputActionValue& InputActionValue)
 {
 	APawn* MyPawn = GetPawnChecked<APawn>();
 
-	// é”®ç›˜è¾“å…¥ä¸ºæ–¹å½¢9ä¸ªç‚¹ï¼Œæ‘‡æ†è¾“å…¥æ˜¯åœ†ç¯ï¼ˆå¾„å‘æ­»åŒº0.2-1.0ï¼‰ã€‚
+	// ¼üÅÌÊäÈëÎª·½ĞÎ9¸öµã£¬Ò¡¸ËÊäÈëÊÇÔ²»·£¨¾¶ÏòËÀÇø0.2-1.0£©¡£
 	FVector Val = InputActionValue.Get<FInputActionValue::Axis3D>();
 
 	if (MyPawn->Controller == nullptr || Val.IsZero())
@@ -38,10 +38,11 @@ void UThirdPersonControlsComponent::HandleMove(const FInputActionValue& InputAct
 		return;
 	}
 
-	// å°†ç§»åŠ¨è¾“å…¥Clampåˆ°ä¸¤ä¸ªåœ†ç¯ä¸­ï¼Œå¯¹ä¸åŒè¾“å…¥æ–¹å¼ä¸ä¼šç§»åŠ¨å¾—è¿‡æ…¢æˆ–è¿‡å¿«ã€‚
+	// ½«ÒÆ¶¯ÊäÈëClampµ½Á½¸öÔ²»·ÖĞ£¬¶Ô²»Í¬ÊäÈë·½Ê½²»»áÒÆ¶¯µÃ¹ıÂı»ò¹ı¿ì¡£
 	if (Val.Size() < 0.65f) {
 		Val = UKismetMathLibrary::ClampVectorSize(Val, 0.3f, 0.5f);
-	} else {
+	}
+	else {
 		Val = UKismetMathLibrary::ClampVectorSize(Val, 0.8f, 1.0f);
 	}
 
@@ -58,11 +59,11 @@ void UThirdPersonControlsComponent::HandleMove(const FInputActionValue& InputAct
 	MyPawn->AddMovementInput(DirectionY, Val.Y);
 }
 
-void UThirdPersonControlsComponent::HandleSight(const FInputActionValue& InputActionValue)
+void UCharacterMovementInputComponent::HandleSight(const FInputActionValue& InputActionValue)
 {
 	APawn* MyPawn = GetPawnChecked<APawn>();
 
-	// é¼ æ ‡è¾“å…¥ä¸ºä»»æ„å€¼ï¼Œæ‘‡æ†è¾“å…¥æ˜¯åœ†ç¯ï¼ˆå¾„å‘æ­»åŒº0.2 - 1.0ï¼‰ã€‚
+	// Êó±êÊäÈëÎªÈÎÒâÖµ£¬Ò¡¸ËÊäÈëÊÇÔ²»·£¨¾¶ÏòËÀÇø0.2 - 1.0£©¡£
 	FVector2D Val = InputActionValue.Get<FInputActionValue::Axis2D>();
 
 	if (MyPawn->Controller == nullptr || Val.IsZero())
@@ -80,10 +81,10 @@ void UThirdPersonControlsComponent::HandleSight(const FInputActionValue& InputAc
 
 	// add movement in that direction
 	MyPawn->AddControllerPitchInput(Val.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-	MyPawn->AddControllerYawInput(Val.X * BaseLookUpRate* GetWorld()->GetDeltaSeconds());
+	MyPawn->AddControllerYawInput(Val.X * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-void UThirdPersonControlsComponent::HandleStartJump(const FInputActionValue& InputActionValue)
+void UCharacterMovementInputComponent::HandleStartJump(const FInputActionValue& InputActionValue)
 {
 	APawn* MyPawn = GetPawnChecked<APawn>();
 
@@ -92,7 +93,7 @@ void UThirdPersonControlsComponent::HandleStartJump(const FInputActionValue& Inp
 	MyCharacter->Jump();
 }
 
-void UThirdPersonControlsComponent::HandleStopJump(const FInputActionValue& InputActionValue)
+void UCharacterMovementInputComponent::HandleStopJump(const FInputActionValue& InputActionValue)
 {
 	APawn* MyPawn = GetPawnChecked<APawn>();
 
@@ -101,7 +102,7 @@ void UThirdPersonControlsComponent::HandleStopJump(const FInputActionValue& Inpu
 	MyCharacter->StopJumping();
 }
 
-void UThirdPersonControlsComponent::HandleStartRun(const FInputActionValue& InputActionValue)
+void UCharacterMovementInputComponent::HandleStartRun(const FInputActionValue& InputActionValue)
 {
 	if (SpeedChangeValue < 0.f)
 	{
@@ -111,18 +112,18 @@ void UThirdPersonControlsComponent::HandleStartRun(const FInputActionValue& Inpu
 	ActualSpeedChangeValue = ChangeSpeed(SpeedChangeValue);
 }
 
-void UThirdPersonControlsComponent::HandleStopRun(const FInputActionValue& InputActionValue)
+void UCharacterMovementInputComponent::HandleStopRun(const FInputActionValue& InputActionValue)
 {
 	ChangeSpeed(-ActualSpeedChangeValue);
 	ActualSpeedChangeValue = 0.f;
 }
 
-void UThirdPersonControlsComponent::HandleInteract(const FInputActionValue& InputActionValue)
+void UCharacterMovementInputComponent::HandleInteract(const FInputActionValue& InputActionValue)
 {
-	
+
 }
 
-float UThirdPersonControlsComponent::ChangeSpeed(float Val)
+float UCharacterMovementInputComponent::ChangeSpeed(float Val)
 {
 	APawn* MyPawn = GetPawnChecked<APawn>();
 	ACharacter* MyCharacter = CastChecked<ACharacter>(MyPawn);

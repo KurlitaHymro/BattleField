@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FThirdPersonControlsModule : public IModuleInterface
+class FGameFeaturesExpansionsModule : public IModuleInterface
 {
 public:
 

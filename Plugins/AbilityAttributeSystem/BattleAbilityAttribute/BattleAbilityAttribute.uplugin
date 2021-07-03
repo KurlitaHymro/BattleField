@@ -2,9 +2,9 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "ThirdPersonControls",
+	"FriendlyName": "BattleAbilityAttribute",
 	"Description": "",
-	"Category": "Other",
+	"Category": "Battle",
 	"CreatedBy": "KurlitaHymro",
 	"CreatedByURL": "",
 	"DocsURL": "",
@@ -16,20 +16,23 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "ThirdPersonControls",
+			"Name": "BattleAbilityAttribute",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
 		{
-			"Name": "ModularGameplay",
+			"Name": "GameplayAbilities",
 			"Enabled": true
 		},
 		{
 			"Name": "EnhancedInput",
 			"Enabled": true
+		},
+		{
+			"Name": "PawnInput",
+			"Enabled": true
 		}
-	],
-	"BuiltInInitialFeatureState": "Active"
+	]
 }

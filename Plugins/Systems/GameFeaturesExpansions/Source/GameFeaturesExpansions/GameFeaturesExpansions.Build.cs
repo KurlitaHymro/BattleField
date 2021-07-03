@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class ThirdPersonControls : ModuleRules
+public class GameFeaturesExpansions : ModuleRules
 {
-	public ThirdPersonControls(ReadOnlyTargetRules Target) : base(Target)
+	public GameFeaturesExpansions(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -26,6 +26,7 @@ public class ThirdPersonControls : ModuleRules
 			new string[]
 			{
 				"Core",
+				"GameFeatures",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -38,9 +39,6 @@ public class ThirdPersonControls : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"ModularGameplay",
-				"EnhancedInput",
-				"BattleField",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
