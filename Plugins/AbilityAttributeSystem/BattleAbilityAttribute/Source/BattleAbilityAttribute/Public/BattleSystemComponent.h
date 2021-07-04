@@ -7,7 +7,7 @@
 #include "BattleSystemComponent.generated.h"
 
 /**
- * ÄÜÁ¦
+ * æŠ€èƒ½
  */
 USTRUCT()
 struct FBattleAbilityApplication
@@ -20,7 +20,7 @@ struct FBattleAbilityApplication
 };
 
 /**
- * ÊôĞÔ
+ * å±æ€§
  */
 USTRUCT()
 struct FBattleAttributeApplication

@@ -25,6 +25,10 @@
 		{
 			"Name": "GameFeatures",
 			"Enabled": true
+		},
+		{
+			"Name": "BattleAbilityAttribute",
+			"Enabled": true
 		}
 	]
 }

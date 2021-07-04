@@ -27,6 +27,7 @@ public class GameFeaturesExpansions : ModuleRules
 			{
 				"Core",
 				"GameFeatures",
+				"BattleAbilityAttribute",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

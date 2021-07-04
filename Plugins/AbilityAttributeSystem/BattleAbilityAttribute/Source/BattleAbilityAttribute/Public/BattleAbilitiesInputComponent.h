@@ -65,6 +65,4 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void TeardownAbilityBinding(FGameplayAbilitySpecHandle AbilityHandle);
 
-private:
-
 };

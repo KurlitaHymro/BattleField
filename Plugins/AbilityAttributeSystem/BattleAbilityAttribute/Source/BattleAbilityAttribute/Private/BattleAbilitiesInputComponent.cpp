@@ -20,8 +20,6 @@ namespace ActionAbilityInputID
 
 void UBattleAbilitiesInputComponent::SetupPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerControls(PlayerInputComponent);
-
 	TeardownBindings();
 
 	SetupBindings();
@@ -42,8 +40,6 @@ void UBattleAbilitiesInputComponent::SetupPlayerControls_Implementation(UEnhance
 
 void UBattleAbilitiesInputComponent::TeardownPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent)
 {
-	Super::TeardownPlayerControls(PlayerInputComponent);
-
 	TeardownBindings();
 }
 
