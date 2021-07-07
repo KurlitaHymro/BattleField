@@ -71,6 +71,7 @@ private:
 	void AddToWorld(const FWorldContext& WorldContext);
 
 	void Reset();
+
 private:
 	FDelegateHandle GameInstanceStartHandle;
 

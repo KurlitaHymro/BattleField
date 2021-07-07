@@ -22,6 +22,7 @@ public:
 
 private:
 	void HandleGameInstanceStart(UGameInstance* GameInstance);
+
 	virtual void AddToWorld(const FWorldContext& WorldContext) PURE_VIRTUAL(UGameFeatureAction_WorldActionBase::AddToWorld,);
 
 private:

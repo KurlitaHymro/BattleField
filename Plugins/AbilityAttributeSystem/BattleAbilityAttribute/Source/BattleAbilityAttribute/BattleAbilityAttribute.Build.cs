@@ -28,6 +28,7 @@ public class BattleAbilityAttribute : ModuleRules
 				"Core",
 				"GameplayAbilities",
 				"GameplayTasks",
+				"PawnInput",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -40,7 +41,6 @@ public class BattleAbilityAttribute : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"PawnInput",
 				"EnhancedInput",
 				// ... add private dependencies that you statically link with here ...	
 			}

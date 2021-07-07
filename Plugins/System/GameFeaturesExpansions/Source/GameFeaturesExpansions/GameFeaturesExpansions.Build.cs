@@ -26,8 +26,6 @@ public class GameFeaturesExpansions : ModuleRules
 			new string[]
 			{
 				"Core",
-				"GameFeatures",
-				"BattleAbilityAttribute",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -40,6 +38,12 @@ public class GameFeaturesExpansions : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"GameFeatures",
+				"ModularGameplay",
+				"GameplayAbilities",
+				"EnhancedInput",
+				"PawnInput",
+				"BattleAbilityAttribute",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
