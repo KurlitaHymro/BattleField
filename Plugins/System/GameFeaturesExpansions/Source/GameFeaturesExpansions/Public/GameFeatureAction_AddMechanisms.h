@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFeatureAction.h"
 #include "Abilities/GameplayAbility.h"
-#include "GameFeatureAction_AddBattleAbilitiesAttributes.generated.h"
+#include "GameFeatureAction_AddMechanisms.generated.h"
 
 USTRUCT(BlueprintType)
 struct FAbilityInputMapping
@@ -35,7 +35,7 @@ struct FAttributeInitialMapping
 	TSoftObjectPtr<UDataTable> InitializationData;
 };
 
-USTRUCT()
+USTRUCT(meta = (DisplayName = "Add Actor Abilities Attributes Mechanisms"))
 struct FGameFeatureAbilitiesAttributesEntry
 {
 	GENERATED_BODY()
@@ -56,8 +56,8 @@ struct FGameFeatureAbilitiesAttributesEntry
 /**
  * 
  */
-UCLASS()
-class GAMEFEATURESEXPANSIONS_API UGameFeatureAction_AddBattleAbilitiesAttributes : public UGameFeatureAction
+UCLASS(meta = (DisplayName = "Add Abilities&Attributes Mechanisms"))
+class GAMEFEATURESEXPANSIONS_API UGameFeatureAction_AddMechanisms : public UGameFeatureAction
 {
 	GENERATED_BODY()
 

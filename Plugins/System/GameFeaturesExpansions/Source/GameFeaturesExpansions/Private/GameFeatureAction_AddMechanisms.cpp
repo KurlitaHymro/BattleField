@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameFeatureAction_AddBattleAbilitiesAttributes.h"
+#include "GameFeatureAction_AddMechanisms.h"
 #include "Engine/AssetManager.h"
 #include "Components/GameFrameworkComponentManager.h"
 #include "GameFeaturesSubsystemSettings.h"
@@ -11,7 +11,7 @@
 
 #define LOCTEXT_NAMESPACE "GameFeaturesExpansions"
 
-void UGameFeatureAction_AddBattleAbilitiesAttributes::OnGameFeatureActivating()
+void UGameFeatureAction_AddMechanisms::OnGameFeatureActivating()
 {
 	if (!ensureAlways(ComponentRequests.IsEmpty()) ||
 		!ensureAlways(ActiveAbilitiesAttributes.IsEmpty()))
@@ -19,7 +19,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::OnGameFeatureActivating()
 		ResetExtension();
 	}
 
-	GameInstanceStartHandle = FWorldDelegates::OnStartGameInstance.AddUObject(this, &UGameFeatureAction_AddBattleAbilitiesAttributes::HandleGameInstanceStart);
+	GameInstanceStartHandle = FWorldDelegates::OnStartGameInstance.AddUObject(this, &UGameFeatureAction_AddMechanisms::HandleGameInstanceStart);
 
 	// Add to any worlds with associated game instances that have already been initialized
 	for (const FWorldContext& WorldContext : GEngine->GetWorldContexts())
@@ -28,7 +28,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::OnGameFeatureActivating()
 	}
 }
 
-void UGameFeatureAction_AddBattleAbilitiesAttributes::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)
+void UGameFeatureAction_AddMechanisms::OnGameFeatureDeactivating(FGameFeatureDeactivatingContext& Context)
 {
 	FWorldDelegates::OnStartGameInstance.Remove(GameInstanceStartHandle);
 
@@ -36,7 +36,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::OnGameFeatureDeactivating(
 }
 
 #if WITH_EDITORONLY_DATA
-void UGameFeatureAction_AddBattleAbilitiesAttributes::AddAdditionalAssetBundleData(FAssetBundleData& AssetBundleData)
+void UGameFeatureAction_AddMechanisms::AddAdditionalAssetBundleData(FAssetBundleData& AssetBundleData)
 {
 	if (UAssetManager::IsValid())
 	{
@@ -71,7 +71,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::AddAdditionalAssetBundleDa
 #endif
 
 #if WITH_EDITOR
-EDataValidationResult UGameFeatureAction_AddBattleAbilitiesAttributes::IsDataValid(TArray<FText>& ValidationErrors)
+EDataValidationResult UGameFeatureAction_AddMechanisms::IsDataValid(TArray<FText>& ValidationErrors)
 {
 	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(ValidationErrors), EDataValidationResult::Valid);
 
@@ -119,7 +119,7 @@ EDataValidationResult UGameFeatureAction_AddBattleAbilitiesAttributes::IsDataVal
 }
 #endif
 
-void UGameFeatureAction_AddBattleAbilitiesAttributes::HandleGameInstanceStart(UGameInstance* GameInstance)
+void UGameFeatureAction_AddMechanisms::HandleGameInstanceStart(UGameInstance* GameInstance)
 {
 	if (FWorldContext* WorldContext = GameInstance->GetWorldContext())
 	{
@@ -127,7 +127,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::HandleGameInstanceStart(UG
 	}
 }
 
-void UGameFeatureAction_AddBattleAbilitiesAttributes::AddToWorld(const FWorldContext& WorldContext)
+void UGameFeatureAction_AddMechanisms::AddToWorld(const FWorldContext& WorldContext)
 {
 	UWorld* World = WorldContext.World();
 	UGameInstance* GameInstance = WorldContext.OwningGameInstance;
@@ -143,7 +143,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::AddToWorld(const FWorldCon
 				UGameFrameworkComponentManager::FExtensionHandlerDelegate AddAbilitiesDelegate =
 					UGameFrameworkComponentManager::FExtensionHandlerDelegate::CreateUObject(
 						this,
-						&UGameFeatureAction_AddBattleAbilitiesAttributes::HandleActorExtension,
+						&UGameFeatureAction_AddMechanisms::HandleActorExtension,
 						EntryIndex);
 				TSharedPtr<FComponentRequestHandle> ExtensionRequestHandle =
 					GFCM->AddExtensionHandler(
@@ -157,7 +157,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::AddToWorld(const FWorldCon
 	}
 }
 
-void UGameFeatureAction_AddBattleAbilitiesAttributes::HandleActorExtension(AActor* Actor, FName EventName, int32 EntryIndex)
+void UGameFeatureAction_AddMechanisms::HandleActorExtension(AActor* Actor, FName EventName, int32 EntryIndex)
 {
 	if (ActorAbilitiesAttributesList.IsValidIndex(EntryIndex))
 	{
@@ -175,7 +175,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::HandleActorExtension(AActo
 	}
 }
 
-void UGameFeatureAction_AddBattleAbilitiesAttributes::ResetExtension()
+void UGameFeatureAction_AddMechanisms::ResetExtension()
 {
 	while (!ActiveAbilitiesAttributes.IsEmpty())
 	{
@@ -186,7 +186,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::ResetExtension()
 	ComponentRequests.Empty();
 }
 
-void UGameFeatureAction_AddBattleAbilitiesAttributes::AddAbilitiesAttributes(AActor* Actor, const FGameFeatureAbilitiesAttributesEntry& Entry)
+void UGameFeatureAction_AddMechanisms::AddAbilitiesAttributes(AActor* Actor, const FGameFeatureAbilitiesAttributesEntry& Entry)
 {
 	UAbilitySystemComponent* ASC = GetComponentForActor<UAbilitySystemComponent>(Actor, Entry);
 	if (!ASC)
@@ -251,7 +251,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::AddAbilitiesAttributes(AAc
 	ActiveAbilitiesAttributes.Add(Actor, ActorExtension);
 }
 
-void UGameFeatureAction_AddBattleAbilitiesAttributes::RemoveAbilitiesAttributes(AActor* Actor)
+void UGameFeatureAction_AddMechanisms::RemoveAbilitiesAttributes(AActor* Actor)
 {
 	FActorAbilitiesAttributes* ActorExtension = ActiveAbilitiesAttributes.Find(Actor);
 	if (ActorExtension)
@@ -282,7 +282,7 @@ void UGameFeatureAction_AddBattleAbilitiesAttributes::RemoveAbilitiesAttributes(
 	ActiveAbilitiesAttributes.Remove(Actor);
 }
 
-UActorComponent* UGameFeatureAction_AddBattleAbilitiesAttributes::GetComponentForActor(UClass* ComponentType, AActor* Actor, const FGameFeatureAbilitiesAttributesEntry& Entry)
+UActorComponent* UGameFeatureAction_AddMechanisms::GetComponentForActor(UClass* ComponentType, AActor* Actor, const FGameFeatureAbilitiesAttributesEntry& Entry)
 {
 	UActorComponent* Component = Actor->FindComponentByClass(ComponentType);
 
