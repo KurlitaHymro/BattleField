@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class BattleAbilityAttribute : ModuleRules
+public class BattleFeature : ModuleRules
 {
-	public BattleAbilityAttribute(ReadOnlyTargetRules Target) : base(Target)
+	public BattleFeature(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -26,9 +26,6 @@ public class BattleAbilityAttribute : ModuleRules
 			new string[]
 			{
 				"Core",
-				"GameplayAbilities",
-				"GameplayTasks",
-				"PawnInput",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -41,7 +38,6 @@ public class BattleAbilityAttribute : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"EnhancedInput",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

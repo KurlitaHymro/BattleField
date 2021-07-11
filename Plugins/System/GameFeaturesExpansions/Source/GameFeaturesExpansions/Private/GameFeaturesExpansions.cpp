@@ -2,6 +2,8 @@
 
 #include "GameFeaturesExpansions.h"
 
+DEFINE_LOG_CATEGORY(LogExpansion)
+
 #define LOCTEXT_NAMESPACE "FGameFeaturesExpansionsModule"
 
 void FGameFeaturesExpansionsModule::StartupModule()

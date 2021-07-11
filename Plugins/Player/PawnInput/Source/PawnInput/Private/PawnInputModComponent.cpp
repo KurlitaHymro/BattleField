@@ -104,7 +104,7 @@ void UPawnInputModComponent::ReleaseInputComponent(AController* OldController)
 
 void UPawnInputModComponent::SetupPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent)
 {
-	// ÅÉÉúÀà¼Ì³ĞÖØĞ´¸Ã·½·¨£¬²¢µ÷ÓÃBindInputAction()½Ó¿Ú£¬°ó¶¨ÊäÈë²Ù×÷ÓëĞĞÎª¡£
+	// æ´¾ç”Ÿç±»ç»§æ‰¿é‡å†™è¯¥æ–¹æ³•ï¼Œå¹¶è°ƒç”¨BindInputAction()æ¥å£ï¼Œç»‘å®šè¾“å…¥æ“ä½œä¸è¡Œä¸ºã€‚
 }
 
 void UPawnInputModComponent::TeardownPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent)

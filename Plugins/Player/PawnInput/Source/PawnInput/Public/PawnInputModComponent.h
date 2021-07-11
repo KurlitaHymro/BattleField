@@ -68,7 +68,6 @@ protected:
 	virtual void ReleaseInputComponent(AController* OldController = nullptr);
 	UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputSubsystem(AController* OldController = nullptr) const;
 
-private:
 	/** The bound input component. */
 	UPROPERTY(transient)
 	UEnhancedInputComponent* InputComponent;
