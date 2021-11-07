@@ -9,7 +9,11 @@ void UMovementAttributeSet::PostAttributeChange(const FGameplayAttribute& Attrib
 {
 	Super::PostAttributeChange(Attribute, OldValue, NewValue);
 
-	if (Attribute == GetMoveSpeedAttribute())
+	if (Attribute == GetMoveSpeedRateAttribute())
+	{
+
+	}
+	else if (Attribute == GetMoveSpeedAttribute())
 	{
 		if (ACharacter* TargetCharacter = GetTypedOuter<ACharacter>())
 		{
