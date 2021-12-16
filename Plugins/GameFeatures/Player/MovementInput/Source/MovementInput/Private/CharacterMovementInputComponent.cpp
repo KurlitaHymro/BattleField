@@ -15,15 +15,9 @@ void UCharacterMovementInputComponent::SetupPlayerControls_Implementation(UEnhan
 
 	BindInputAction(MoveInputAction, ETriggerEvent::Triggered, this, &ThisClass::HandleMove);
 	BindInputAction(SightInputAction, ETriggerEvent::Triggered, this, &ThisClass::HandleSight);
-	BindInputAction(JumpInputAction, ETriggerEvent::Started, this, &ThisClass::HandleStartJump);
-	BindInputAction(JumpInputAction, ETriggerEvent::Completed, this, &ThisClass::HandleStopJump);
-	BindInputAction(RunInputAction, ETriggerEvent::Started, this, &ThisClass::HandleStartRun);
-	BindInputAction(RunInputAction, ETriggerEvent::Completed, this, &ThisClass::HandleStopRun);
-	BindInputAction(InteractInputAction, ETriggerEvent::Started, this, &ThisClass::HandleInteract);
 
 	BaseLookUpRate = 60.f;
 	BaseTurnRate = 60.f;
-	SpeedChangeValue = 200.f;
 }
 
 void UCharacterMovementInputComponent::HandleMove(const FInputActionValue& InputActionValue)
@@ -82,59 +76,4 @@ void UCharacterMovementInputComponent::HandleSight(const FInputActionValue& Inpu
 	// add movement in that direction
 	MyPawn->AddControllerPitchInput(Val.Y * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 	MyPawn->AddControllerYawInput(Val.X * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
-
-void UCharacterMovementInputComponent::HandleStartJump(const FInputActionValue& InputActionValue)
-{
-	APawn* MyPawn = GetPawnChecked<APawn>();
-
-	ACharacter* MyCharacter = CastChecked<ACharacter>(MyPawn);
-
-	MyCharacter->Jump();
-}
-
-void UCharacterMovementInputComponent::HandleStopJump(const FInputActionValue& InputActionValue)
-{
-	APawn* MyPawn = GetPawnChecked<APawn>();
-
-	ACharacter* MyCharacter = CastChecked<ACharacter>(MyPawn);
-
-	MyCharacter->StopJumping();
-}
-
-void UCharacterMovementInputComponent::HandleStartRun(const FInputActionValue& InputActionValue)
-{
-	if (SpeedChangeValue < 0.f)
-	{
-		return;
-	}
-
-	ActualSpeedChangeValue = ChangeSpeed(SpeedChangeValue);
-}
-
-void UCharacterMovementInputComponent::HandleStopRun(const FInputActionValue& InputActionValue)
-{
-	ChangeSpeed(-ActualSpeedChangeValue);
-	ActualSpeedChangeValue = 0.f;
-}
-
-void UCharacterMovementInputComponent::HandleInteract(const FInputActionValue& InputActionValue)
-{
-
-}
-
-float UCharacterMovementInputComponent::ChangeSpeed(float Val)
-{
-	APawn* MyPawn = GetPawnChecked<APawn>();
-	ACharacter* MyCharacter = CastChecked<ACharacter>(MyPawn);
-
-	float Speed = MyCharacter->GetCharacterMovement()->MaxWalkSpeed;
-	float NewSpeed = Speed + Val;
-
-	if (NewSpeed < 0.f) {
-		NewSpeed = 0.f;
-	}
-
-	MyCharacter->GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
-	return NewSpeed - Speed;
 }
