@@ -26,10 +26,6 @@ public:
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(MoveSpeedRate)
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(MoveSpeedRate)
 
-	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UMovementAttributeSet, MoveSpeedBase)
-	GAMEPLAYATTRIBUTE_VALUE_GETTER(MoveSpeedBase)
-	GAMEPLAYATTRIBUTE_VALUE_INITTER(MoveSpeedBase)
-
 protected:
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 
@@ -40,6 +36,5 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MoveSpeedRate;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = true))
-	FGameplayAttributeData MoveSpeedBase;
+	void SpeedSync(float NewSpeed);
 };
