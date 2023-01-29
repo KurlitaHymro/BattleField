@@ -38,6 +38,7 @@ public class BattleFeature : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"GameplayTasks",
 				"GameplayAbilities",
 				// ... add private dependencies that you statically link with here ...	
 			}
