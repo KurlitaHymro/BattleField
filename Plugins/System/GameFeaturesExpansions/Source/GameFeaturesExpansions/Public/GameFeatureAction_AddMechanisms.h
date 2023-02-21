@@ -35,21 +35,21 @@ struct FAttributeInitialMapping
 	TSoftObjectPtr<UDataTable> InitializationData;
 };
 
-USTRUCT(meta = (DisplayName = "Add Actor Abilities Attributes Mechanisms"))
+USTRUCT(meta = (DisplayName = "Add Actor with Abilities&Attributes"))
 struct FGameFeatureAbilitiesAttributesEntry
 {
 	GENERATED_BODY()
 
 	// The base actor class to add to
-	UPROPERTY(EditAnywhere, Category = "Abilities")
+	UPROPERTY(EditAnywhere, Category = "Actor with Abilities&Attributes")
 	TSoftClassPtr<AActor> ActorClass;
 
 	// List of abilities to grant to actors of the specified class
-	UPROPERTY(EditAnywhere, Category = "Abilities")
+	UPROPERTY(EditAnywhere, Category = "Actor with Abilities")
 	TArray<FAbilityInputMapping> GrantedAbilities;
 
 	// List of attribute sets to grant to actors of the specified class 
-	UPROPERTY(EditAnywhere, Category = "Attributes")
+	UPROPERTY(EditAnywhere, Category = "Actor with Attributes")
 	TArray<FAttributeInitialMapping> GrantedAttributes;
 };
 
@@ -62,8 +62,11 @@ class GAMEFEATURESEXPANSIONS_API UGameFeatureAction_AddMechanisms : public UGame
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Abilities", meta = (TitleProperty = "ActorClass", ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "Actor with Abilities&Attributes", meta = (TitleProperty = "ActorClass", ShowOnlyInnerProperties))
 	TArray<FGameFeatureAbilitiesAttributesEntry> ActorAbilitiesAttributesList;
+
+	UPROPERTY(EditAnywhere, Category = "Actor with Abilities&Attributes")
+	bool bLoadAsync;
 
 public:
 	//~ Begin UGameFeatureAction interface
