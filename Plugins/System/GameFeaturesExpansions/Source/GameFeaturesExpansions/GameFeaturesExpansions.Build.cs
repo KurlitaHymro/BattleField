@@ -42,8 +42,7 @@ public class GameFeaturesExpansions : ModuleRules
 				"ModularGameplay",
 				"GameplayAbilities",
 				"EnhancedInput",
-				"PawnInput",
-				"BattleAbilityAttribute",
+				"PawnInput"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

@@ -38,9 +38,10 @@ struct FAttributeApplication
 };
 
 /**
+ * As a GAS, Grant Default Abilities and Attributes when Pawn Init.
  * 取代GAS的ASC，在初始化时对Actor赋予默认的能力和属性。
  */
-UCLASS()
+UCLASS(meta = (BlueprintSpawnableComponent))
 class ABILITIESINPUTRUNTIME_API UGrantAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()

@@ -3,6 +3,7 @@
 
 #include "Character/BfCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GrantAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
@@ -21,6 +22,9 @@ ABfCharacter::ABfCharacter()
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->MaxWalkSpeed = 325.f;
+
+	// Init AbilitySystemComponent
+	ASC = CreateDefaultSubobject<UGrantAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 }
 
 // Called PreInitializeComponents

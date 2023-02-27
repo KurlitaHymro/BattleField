@@ -84,6 +84,10 @@
 		{
 			"Name": "AbilitiesInput",
 			"Enabled": true
+		},
+		{
+			"Name": "BattleAbilityAttribute",
+			"Enabled": false
 		}
 	],
 	"TargetPlatforms": [

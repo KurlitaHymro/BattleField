@@ -19,7 +19,7 @@ public class BattleField : ModuleRules
 			"GameplayTasks",
 			"GameplayTags",
 			"EnhancedInput",
-			"ComponentReceiverActors"
+			"ComponentReceiverActors",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
@@ -27,7 +27,8 @@ public class BattleField : ModuleRules
 			"RHI",
 			"RenderCore",
 			"SlateCore",
-			"ModularGameplay"
+			"ModularGameplay",
+			"AbilitiesInputRuntime"
 		});
 
 		// Uncomment if you are using Slate UI

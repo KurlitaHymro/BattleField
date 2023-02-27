@@ -22,6 +22,7 @@ struct FAbilitiesStack
 class UInputAction;
 
 /**
+ * Pawn can use Abilities by InputAction.
  * 将增强输入操作转化成InputID以此激活/去激活技能
  * 一个操作可以对应多个技能特例，但只触发栈顶的技能。
  */
