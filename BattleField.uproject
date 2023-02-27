@@ -80,6 +80,10 @@
 				"Mac",
 				"Linux"
 			]
+		},
+		{
+			"Name": "AbilitiesInput",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
@@ -90,6 +94,7 @@
 		"MacNoEditor",
 		"WindowsNoEditorWin32",
 		"Linux",
-		"Windows"
+		"Windows",
+		"HoloLens"
 	]
 }
