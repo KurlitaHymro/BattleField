@@ -34,4 +34,7 @@ public:
 
 	// Called PreInitializeComponents
 	virtual void PreInitializeComponents() override;
+
+public:
+	class UAbilitySystemComponent* ASC;
 };
