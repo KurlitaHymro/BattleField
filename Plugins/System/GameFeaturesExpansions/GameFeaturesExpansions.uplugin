@@ -27,10 +27,6 @@
 			"Enabled": true
 		},
 		{
-			"Name": "BattleAbilityAttribute",
-			"Enabled": true
-		},
-		{
 			"Name": "EnhancedInput",
 			"Enabled": true
 		},
