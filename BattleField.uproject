@@ -92,7 +92,14 @@
 		{
 			"Name": "SwordAndShield",
 			"Enabled": true
-		}
+		},
+		{
+			"Name": "BattleAI",
+			"Enabled": true
+		},
+		{
+			"Name": "AbilitySystemGameFeatureActions",
+			"Enabled": true		}
 	],
 	"TargetPlatforms": [
 		"AllDesktop",

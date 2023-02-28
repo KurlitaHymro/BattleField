@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class GameFeaturesExpansions : ModuleRules
+public class BattleAIRuntime : ModuleRules
 {
-	public GameFeaturesExpansions(ReadOnlyTargetRules Target) : base(Target)
+	public BattleAIRuntime(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -38,8 +38,6 @@ public class GameFeaturesExpansions : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"GameFeatures",
-				"ModularGameplay",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
