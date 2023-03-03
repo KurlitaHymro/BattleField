@@ -35,6 +35,11 @@ void ABfCharacter::PreInitializeComponents()
 
 }
 
+UAbilitySystemComponent* ABfCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 // Called when the game starts or when spawned
 void ABfCharacter::BeginPlay()
 {

@@ -26,6 +26,11 @@ public class BattleAIRuntime : ModuleRules
 			new string[]
 			{
 				"Core",
+				"AIModule",
+				"GameplayTags",
+				"GameplayTasks",
+				"GameplayAbilities",
+				"NavigationSystem",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -38,6 +43,7 @@ public class BattleAIRuntime : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"BattleField",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
