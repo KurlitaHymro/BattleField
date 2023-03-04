@@ -89,9 +89,5 @@ private:
 
 	TArray<TSharedPtr<struct FComponentRequestHandle>> ComponentRequests;
 
-	struct FActorAbilities
-	{
-		TArray<FGameplayAbilitySpecHandle> Abilities;
-	};
-	TMap<AActor*, FActorAbilities> ActiveAbilities;
+	TMap<AActor*, TArray<FGameplayAbilitySpecHandle>> ActiveAbilities;
 };

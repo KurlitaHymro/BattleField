@@ -17,24 +17,28 @@ class BATTLEFEATURE_API UGameplayAbility_DeriveCombo : public UGameplayAbility
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* OwnerInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	UPROPERTY(EditDefaultsOnly, Category = MontageAbility)
+	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
 	TObjectPtr<UAnimMontage> MontageToPlay;
 
-	UPROPERTY(EditDefaultsOnly, Category = MontageAbility)
+	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
 	float PlayRate;
 
-	UPROPERTY(EditDefaultsOnly, Category = MontageAbility)
+	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
 	FName SectionName;
 
 	/** GameplayEffects to apply and then remove while the animation is playing */
-	UPROPERTY(EditDefaultsOnly, Category = MontageAbility)
+	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
 	TArray<TSubclassOf<UGameplayEffect>> GameplayEffectClassesWhileAnimating;
 
 	/** ≈……˙”≥…‰±Ì */
 	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
 	TMap<TSubclassOf<class UGameplayAbility_Operate>, TSubclassOf<UGameplayAbility_DeriveCombo>> OperateDerive;
 
-	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted, TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent, TArray<struct FActiveGameplayEffectHandle> AppliedEffects);
+protected:
+	UAbilitySystemComponent* AbilitySystemComponent;
 
-	void GetGameplayEffectsWhileAnimating(TArray<const UGameplayEffect*>& OutEffects) const;
+	TArray<FActiveGameplayEffectHandle>	AppliedEffects;
+
+	UFUNCTION()
+	void OnTaskEnd();
 };

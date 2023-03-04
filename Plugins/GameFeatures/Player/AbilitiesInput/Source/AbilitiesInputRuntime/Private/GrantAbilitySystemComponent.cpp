@@ -7,9 +7,9 @@ void UGrantAbilitySystemComponent::ClearGrantedAbilities()
 {
 	for (const auto& Ability : GrantedAbilitiesHandle)
 	{
-		SetRemoveAbilityOnEnd(Ability);
+		SetRemoveAbilityOnEnd(Ability.Value);
 	}
-	GrantedAbilitiesHandle.Empty(DefaultAbilities.Num());
+	GrantedAbilitiesHandle.Empty();
 }
 
 void UGrantAbilitySystemComponent::ClearGrantedAttributes()
@@ -23,12 +23,12 @@ void UGrantAbilitySystemComponent::ClearGrantedAttributes()
 
 void UGrantAbilitySystemComponent::GrantDefaultAbilities()
 {
-	GrantedAbilitiesHandle.Reserve(DefaultAbilities.Num());
 	for (const auto& Ability : DefaultAbilities)
 	{
 		if (Ability.AbilityType)
 		{
-			GrantedAbilitiesHandle.Add(GiveAbility(FGameplayAbilitySpec(Ability.AbilityType)));
+			FGameplayAbilitySpecHandle AbilityHandle = GiveAbility(FGameplayAbilitySpec(Ability.AbilityType));
+			GrantedAbilitiesHandle.Add(Ability.AbilityType, AbilityHandle);
 		}
 	}
 }

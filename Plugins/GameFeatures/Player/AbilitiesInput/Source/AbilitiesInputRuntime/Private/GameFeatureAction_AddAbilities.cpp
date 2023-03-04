@@ -3,6 +3,8 @@
 
 #include "GameFeatureAction_AddAbilities.h"
 #include "AbilitiesInputComponent.h"
+#include "AbilitySystemComponent.h"
+#include "GrantAbilitySystemComponent.h"
 #include "GameFeaturesSubsystemSettings.h"
 #include "Engine/AssetManager.h"
 #include "Components/GameFrameworkComponentManager.h"
@@ -208,16 +210,23 @@ void UGameFeatureAction_AddAbilities::AddAbilities(AActor* Actor, const FGameFea
 		return;
 	}
 
-	FActorAbilities ActorExtension;
+	TArray<FGameplayAbilitySpecHandle> ActorAbilitySpecHandles;
 	
-	ActorExtension.Abilities.Reserve(Entry.GrantedAbilities.Num());
+	ActorAbilitySpecHandles.Reserve(Entry.GrantedAbilities.Num());
 	for (const auto& Ability : Entry.GrantedAbilities)
 	{
 		if (!Ability.AbilityType.IsNull())
 		{
-			FGameplayAbilitySpec AbilitySpec(Ability.AbilityType.LoadSynchronous());
+			TSubclassOf<UGameplayAbility> AbilityType = Ability.AbilityType.LoadSynchronous();
+			FGameplayAbilitySpec AbilitySpec(AbilityType);
 			FGameplayAbilitySpecHandle AbilityHandle = ASC->GiveAbility(AbilitySpec);
-	
+
+			UGrantAbilitySystemComponent* GASC = Cast<UGrantAbilitySystemComponent>(ASC);
+			if (GASC)
+			{
+				GASC->GrantedAbilitiesHandle.Add(AbilityType, AbilityHandle);
+			}
+
 			if (!Ability.InputAction.IsNull())
 			{
 				UAbilitiesInputComponent* AIC = GetComponentForActor<UAbilitiesInputComponent>(Actor, Entry);
@@ -232,17 +241,17 @@ void UGameFeatureAction_AddAbilities::AddAbilities(AActor* Actor, const FGameFea
 				}
 			}
 	
-			ActorExtension.Abilities.Add(AbilityHandle);
+			ActorAbilitySpecHandles.Add(AbilityHandle);
 		}
 	}
 	
-	ActiveAbilities.Add(Actor, ActorExtension);
+	ActiveAbilities.Add(Actor, ActorAbilitySpecHandles);
 }
 
 void UGameFeatureAction_AddAbilities::RemoveAbilities(AActor* Actor)
 {
-	FActorAbilities* ActorExtension = ActiveAbilities.Find(Actor);
-	if (ActorExtension)
+	TArray<FGameplayAbilitySpecHandle>* ActorAbilitySpecHandles = ActiveAbilities.Find(Actor);
+	if (ActorAbilitySpecHandles)
 	{
 		UAbilitySystemComponent* ASC = Actor->FindComponentByClass<UAbilitySystemComponent>();
 		if (!ASC)
@@ -252,7 +261,7 @@ void UGameFeatureAction_AddAbilities::RemoveAbilities(AActor* Actor)
 		}
 	
 		UAbilitiesInputComponent* AIC = Actor->FindComponentByClass<UAbilitiesInputComponent>();
-		for (auto Ability : ActorExtension->Abilities)
+		for (auto Ability : *ActorAbilitySpecHandles)
 		{
 			if (AIC)
 			{

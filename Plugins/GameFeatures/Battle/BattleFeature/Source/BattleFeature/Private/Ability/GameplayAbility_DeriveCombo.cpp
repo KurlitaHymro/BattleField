@@ -4,6 +4,7 @@
 #include "Ability/GameplayAbility_DeriveCombo.h"
 #include "Animation/AnimInstance.h"
 #include "AbilitySystemComponent.h"
+#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameplayAbility_DeriveCombo)
 
@@ -27,18 +28,23 @@ void UGameplayAbility_DeriveCombo::ActivateAbility(const FGameplayAbilitySpecHan
 		return;
 	}
 
+	AbilitySystemComponent = ActorInfo->AbilitySystemComponent.Get();
 	UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
 
 	if (MontageToPlay != nullptr && AnimInstance != nullptr && AnimInstance->GetActiveMontageInstance() == nullptr)
 	{
-		TArray<FActiveGameplayEffectHandle>	AppliedEffects;
-
 		// Apply GameplayEffects
 		TArray<const UGameplayEffect*> Effects;
-		GetGameplayEffectsWhileAnimating(Effects);
+		for (TSubclassOf<UGameplayEffect> EffectClass : GameplayEffectClassesWhileAnimating)
+		{
+			if (EffectClass)
+			{
+				Effects.Add(EffectClass->GetDefaultObject<UGameplayEffect>());
+			}
+		}
+
 		if (Effects.Num() > 0)
 		{
-			UAbilitySystemComponent* const AbilitySystemComponent = ActorInfo->AbilitySystemComponent.Get();
 			for (const UGameplayEffect* Effect : Effects)
 			{
 				FActiveGameplayEffectHandle EffectHandle = AbilitySystemComponent->ApplyGameplayEffectToSelf(Effect, 1.f, MakeEffectContext(Handle, ActorInfo));
@@ -49,39 +55,22 @@ void UGameplayAbility_DeriveCombo::ActivateAbility(const FGameplayAbilitySpecHan
 			}
 		}
 
-		float const Duration = AnimInstance->Montage_Play(MontageToPlay, PlayRate);
-
-		FOnMontageEnded EndDelegate;
-		EndDelegate.BindUObject(this, &UGameplayAbility_DeriveCombo::OnMontageEnded, ActorInfo->AbilitySystemComponent, AppliedEffects);
-		AnimInstance->Montage_SetEndDelegate(EndDelegate);
-
-		if (SectionName != NAME_None)
-		{
-			AnimInstance->Montage_JumpToSection(SectionName);
-		}
+		UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, MontageToPlay, PlayRate, SectionName);
+		MontageTask->OnCompleted.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnTaskEnd);
+		MontageTask->OnInterrupted.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnTaskEnd);
+		MontageTask->Activate();
 	}
 }
 
-void UGameplayAbility_DeriveCombo::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted, TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponentPtr, TArray<FActiveGameplayEffectHandle> AppliedEffects)
+void UGameplayAbility_DeriveCombo::OnTaskEnd()
 {
-	// Remove any GameplayEffects that we applied
-	UAbilitySystemComponent* const AbilitySystemComponent = AbilitySystemComponentPtr.Get();
+	K2_EndAbility();
+
 	if (AbilitySystemComponent)
 	{
 		for (FActiveGameplayEffectHandle Handle : AppliedEffects)
 		{
 			AbilitySystemComponent->RemoveActiveGameplayEffect(Handle);
-		}
-	}
-}
-
-void UGameplayAbility_DeriveCombo::GetGameplayEffectsWhileAnimating(TArray<const UGameplayEffect*>& OutEffects) const
-{
-	for (TSubclassOf<UGameplayEffect> EffectClass : GameplayEffectClassesWhileAnimating)
-	{
-		if (EffectClass)
-		{
-			OutEffects.Add(EffectClass->GetDefaultObject<UGameplayEffect>());
 		}
 	}
 }

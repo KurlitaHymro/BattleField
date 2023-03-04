@@ -53,13 +53,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Ability)
 	TArray<FAttributeApplication> DefaultAttributes;
 
-protected:
 	UPROPERTY(transient)
-	TArray<struct FGameplayAbilitySpecHandle> GrantedAbilitiesHandle;
-
+	TMap<TSubclassOf<class UGameplayAbility>, struct FGameplayAbilitySpecHandle> GrantedAbilitiesHandle;
+	
 	UPROPERTY(transient)
 	TArray<class UAttributeSet*> GrantedAttributesSet;
 
+protected:
 	void ClearGrantedAbilities();
 
 	void ClearGrantedAttributes();
