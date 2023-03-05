@@ -56,10 +56,35 @@ void UGameplayAbility_DeriveCombo::ActivateAbility(const FGameplayAbilitySpecHan
 		}
 
 		UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, MontageToPlay, PlayRate, SectionName);
-		MontageTask->OnCompleted.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnTaskEnd);
-		MontageTask->OnInterrupted.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnTaskEnd);
+		MontageTask->OnCompleted.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnCompleted);
+		MontageTask->OnBlendOut.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnBlendOut);
+		MontageTask->OnInterrupted.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnInterrupted);
+		MontageTask->OnCancelled.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnCancelled);
 		MontageTask->Activate();
 	}
+	else
+	{
+		K2_EndAbility();
+	}
+}
+
+void UGameplayAbility_DeriveCombo::OnCompleted()
+{
+	OnTaskEnd();
+	TryActivateDeriveAbility();
+}
+
+void UGameplayAbility_DeriveCombo::OnBlendOut()
+{
+}
+
+void UGameplayAbility_DeriveCombo::OnInterrupted()
+{
+	OnTaskEnd();
+}
+
+void UGameplayAbility_DeriveCombo::OnCancelled()
+{
 }
 
 void UGameplayAbility_DeriveCombo::OnTaskEnd()
@@ -71,6 +96,24 @@ void UGameplayAbility_DeriveCombo::OnTaskEnd()
 		for (FActiveGameplayEffectHandle Handle : AppliedEffects)
 		{
 			AbilitySystemComponent->RemoveActiveGameplayEffect(Handle);
+		}
+	}
+}
+
+void UGameplayAbility_DeriveCombo::TryActivateDeriveAbility()
+{
+	if (AbilitySystemComponent)
+	{
+		for (auto dervieInfo : DervieAbilities)
+		{
+			if (true)
+			{
+				bool result = AbilitySystemComponent->TryActivateAbilityByClass(dervieInfo.GameplayAbilityType);
+				if (result)
+				{
+					return;
+				}
+			}
 		}
 	}
 }

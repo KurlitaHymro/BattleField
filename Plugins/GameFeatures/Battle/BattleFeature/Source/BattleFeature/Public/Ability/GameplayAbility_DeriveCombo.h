@@ -6,6 +6,18 @@
 #include "Abilities/GameplayAbility.h"
 #include "GameplayAbility_DeriveCombo.generated.h"
 
+USTRUCT(BlueprintType)
+struct FAbilityDervieInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
+	TSubclassOf<UGameplayAbility> GameplayAbilityType;
+
+	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
+	TArray<FGameplayTag> Conditions;
+};
+
 /**
  * 
  */
@@ -32,13 +44,28 @@ public:
 
 	/** ≈……˙”≥…‰±Ì */
 	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
-	TMap<TSubclassOf<class UGameplayAbility_Operate>, TSubclassOf<UGameplayAbility_DeriveCombo>> OperateDerive;
+	TArray<FAbilityDervieInfo> DervieAbilities;
 
 protected:
 	UAbilitySystemComponent* AbilitySystemComponent;
 
 	TArray<FActiveGameplayEffectHandle>	AppliedEffects;
 
+	UFUNCTION(BlueprintCallable, Category = "AbilityDelegate")
+	void OnCompleted();
+
+	UFUNCTION(BlueprintCallable, Category = "AbilityDelegate")
+	void OnBlendOut();
+
+	UFUNCTION(BlueprintCallable, Category = "AbilityDelegate")
+	void OnInterrupted();
+
+	UFUNCTION(BlueprintCallable, Category = "AbilityDelegate")
+	void OnCancelled();
+
 	UFUNCTION()
 	void OnTaskEnd();
+
+	UFUNCTION()
+	void TryActivateDeriveAbility();
 };

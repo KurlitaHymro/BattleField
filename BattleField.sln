@@ -24,6 +24,10 @@ Global
 		Development|Win64 = Development|Win64
 		Shipping|Win64 = Shipping|Win64
 	EndGlobalSection
+	# UnrealVS Section
+	GlobalSection(ddbf523f-7eb6-4887-bd51-85a714ff87eb) = preSolution
+		AvailablePlatforms=Win64
+	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4E0C166F-A24A-3760-ACFA-594CF906A767}.DebugGame Editor|Win64.ActiveCfg = BuiltWithUnrealBuildTool|Win64
 		{4E0C166F-A24A-3760-ACFA-594CF906A767}.DebugGame|Win64.ActiveCfg = BuiltWithUnrealBuildTool|Win64
@@ -34,8 +38,8 @@ Global
 		{A36C8F91-A4D2-36BA-A631-5784820894D0}.DebugGame Editor|Win64.Build.0 = DebugGame_Editor|x64
 		{A36C8F91-A4D2-36BA-A631-5784820894D0}.DebugGame|Win64.ActiveCfg = DebugGame|x64
 		{A36C8F91-A4D2-36BA-A631-5784820894D0}.DebugGame|Win64.Build.0 = DebugGame|x64
-		{A36C8F91-A4D2-36BA-A631-5784820894D0}.Development Editor|Win64.ActiveCfg = DebugGame|x64
-		{A36C8F91-A4D2-36BA-A631-5784820894D0}.Development Editor|Win64.Build.0 = DebugGame|x64
+		{A36C8F91-A4D2-36BA-A631-5784820894D0}.Development Editor|Win64.ActiveCfg = Development_Editor|x64
+		{A36C8F91-A4D2-36BA-A631-5784820894D0}.Development Editor|Win64.Build.0 = Development_Editor|x64
 		{A36C8F91-A4D2-36BA-A631-5784820894D0}.Development|Win64.ActiveCfg = Development|x64
 		{A36C8F91-A4D2-36BA-A631-5784820894D0}.Development|Win64.Build.0 = Development|x64
 		{A36C8F91-A4D2-36BA-A631-5784820894D0}.Shipping|Win64.ActiveCfg = Shipping|x64
@@ -47,11 +51,5 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4E0C166F-A24A-3760-ACFA-594CF906A767} = {233774A8-CC9D-3FA9-86D1-90573E92B704}
 		{A36C8F91-A4D2-36BA-A631-5784820894D0} = {DE1F8B53-6C02-3C13-9101-A7C8D96F3FF6}
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {225A27C4-4CB2-41D2-AEDB-E7D10551CCAA}
-	EndGlobalSection
-	GlobalSection(ddbf523f-7eb6-4887-bd51-85a714ff87eb) = preSolution
-		AvailablePlatforms = Win64
 	EndGlobalSection
 EndGlobal
