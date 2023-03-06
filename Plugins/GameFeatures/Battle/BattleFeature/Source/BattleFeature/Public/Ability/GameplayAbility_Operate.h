@@ -13,5 +13,19 @@ UCLASS()
 class BATTLEFEATURE_API UGameplayAbility_Operate : public UGameplayAbility
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* OwnerInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
+	UPROPERTY(EditDefaultsOnly, Category = Ability)
+	TSubclassOf<UGameplayAbility> IdleAbilityType;
+
+protected:
+	UAbilitySystemComponent* AbilitySystemComponent;
+
+	UFUNCTION()
+	void OnRelease(float ElapsedTime);
+
+	UFUNCTION()
+	bool TryActivateIdleAbility();
 };

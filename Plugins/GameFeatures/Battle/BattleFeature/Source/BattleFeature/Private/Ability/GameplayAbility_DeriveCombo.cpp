@@ -25,6 +25,7 @@ void UGameplayAbility_DeriveCombo::ActivateAbility(const FGameplayAbilitySpecHan
 {
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
 	{
+		UE_LOG(LogTemp, Error, TEXT("ActivateAbility Failed (Ability not be commited)"));
 		return;
 	}
 
@@ -70,21 +71,28 @@ void UGameplayAbility_DeriveCombo::ActivateAbility(const FGameplayAbilitySpecHan
 
 void UGameplayAbility_DeriveCombo::OnCompleted()
 {
+	UE_LOG(LogTemp, Error, TEXT("OnCompleted"));
 	OnTaskEnd();
-	TryActivateDeriveAbility();
 }
 
 void UGameplayAbility_DeriveCombo::OnBlendOut()
 {
+	UE_LOG(LogTemp, Error, TEXT("OnBlendOut"));
+	if (TryActivateDeriveAbility())
+	{
+		OnTaskEnd();
+	}
 }
 
 void UGameplayAbility_DeriveCombo::OnInterrupted()
 {
+	UE_LOG(LogTemp, Error, TEXT("OnInterrupted"));
 	OnTaskEnd();
 }
 
 void UGameplayAbility_DeriveCombo::OnCancelled()
 {
+	UE_LOG(LogTemp, Error, TEXT("OnCancelled"));
 }
 
 void UGameplayAbility_DeriveCombo::OnTaskEnd()
@@ -100,20 +108,27 @@ void UGameplayAbility_DeriveCombo::OnTaskEnd()
 	}
 }
 
-void UGameplayAbility_DeriveCombo::TryActivateDeriveAbility()
+bool UGameplayAbility_DeriveCombo::TryActivateDeriveAbility()
 {
 	if (AbilitySystemComponent)
 	{
-		for (auto dervieInfo : DervieAbilities)
+		// 所有派生技能按优先顺序填入默认值，因为可能不止一个派生技能满足要求，所以以满足条件的最高优先级技能为准。
+		for (auto DervieInfo : DervieAbilities)
 		{
-			if (true)
+			bool ConditionMet = false;
+			for (auto Condition : DervieInfo.Conditions)
 			{
-				bool result = AbilitySystemComponent->TryActivateAbilityByClass(dervieInfo.GameplayAbilityType);
-				if (result)
+				if (AbilitySystemComponent->HasMatchingGameplayTag(Condition))
 				{
-					return;
+					ConditionMet = true;
 				}
+			}
+			// 满足所有条件（至少一个）后，释放下个技能。
+			if (ConditionMet)
+			{
+				return AbilitySystemComponent->TryActivateAbilityByClass(DervieInfo.GameplayAbilityType);
 			}
 		}
 	}
+	return false;
 }

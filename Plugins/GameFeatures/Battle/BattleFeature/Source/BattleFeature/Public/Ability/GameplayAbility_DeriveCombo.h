@@ -67,5 +67,5 @@ protected:
 	void OnTaskEnd();
 
 	UFUNCTION()
-	void TryActivateDeriveAbility();
+	bool TryActivateDeriveAbility();
 };
