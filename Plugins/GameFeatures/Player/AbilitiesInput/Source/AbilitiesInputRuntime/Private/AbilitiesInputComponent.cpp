@@ -18,13 +18,10 @@ namespace ActionAbilityInputID
 	}
 }
 
-void UAbilitiesInputComponent::SetupBindings()
+void UAbilitiesInputComponent::EnableBindings()
 {
-	AActor* MyOwner = GetOwner();
-	check(MyOwner);
-
 	// 分配操作ID
-	AbilityComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(MyOwner);
+	AbilityComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 	if (AbilityComponent)
 	{
 		for (auto& Binding : MappedAbilities)
@@ -45,7 +42,7 @@ void UAbilitiesInputComponent::SetupBindings()
 	}
 }
 
-void UAbilitiesInputComponent::TeardownBindings()
+void UAbilitiesInputComponent::DisableBindings()
 {
 	// 移除增强输入操作代理
 	if (InputComponent)
@@ -80,7 +77,7 @@ void UAbilitiesInputComponent::OnAbilityInputPressed(UInputAction* InputAction)
 	// The AbilitySystemComponent may not have been valid when we first bound input... try again.
 	if (!AbilityComponent)
 	{
-		SetupBindings();
+		EnableBindings();
 	}
 
 	if (AbilityComponent)
@@ -98,7 +95,7 @@ void UAbilitiesInputComponent::OnAbilityInputReleased(UInputAction* InputAction)
 	// The AbilitySystemComponent may not have been valid when we first bound input... try again.
 	if (!AbilityComponent)
 	{
-		SetupBindings();
+		EnableBindings();
 	}
 
 	if (AbilityComponent)
@@ -216,7 +213,6 @@ void UAbilitiesInputComponent::TeardownAbilityBinding(FGameplayAbilitySpecHandle
 			auto& Binding = MappedIterator.Value();
 			if (Binding.BoundAbilitiesStack.Remove(AbilityHandle) > 0)
 			{
-				// 删除技能绑定后废弃技能InputID
 				AbilitySpec->InputID = ActionAbilityInputID::InvalidInputID;
 
 				if (Binding.BoundAbilitiesStack.Num())
@@ -230,14 +226,13 @@ void UAbilitiesInputComponent::TeardownAbilityBinding(FGameplayAbilitySpecHandle
 				}
 				else
 				{
-					// 移除增强输入操作代理
+					// 移除增强输入操作代理并除此操作
 					if (InputComponent)
 					{
 						InputComponent->RemoveBindingByHandle(Binding.OnPressedHandle);
 						InputComponent->RemoveBindingByHandle(Binding.OnReleasedHandle);
 					}
 
-					// 移除此操作
 					MappedAbilities.Remove(MappedIterator.Key());
 				}
 			}
@@ -245,14 +240,34 @@ void UAbilitiesInputComponent::TeardownAbilityBinding(FGameplayAbilitySpecHandle
 	}
 }
 
+FGameplayAbilitySpecHandle UAbilitiesInputComponent::GetActionCurrentAbility(UInputAction* InputAction)
+{
+	FGameplayAbilitySpecHandle Invaild;
+	if (!AbilityComponent)
+	{
+		return Invaild;
+	}
+
+	if (auto Binding = MappedAbilities.Find(InputAction))
+	{
+		FGameplayAbilitySpec* BoundAbilitySpec = AbilityComponent->FindAbilitySpecFromHandle(Binding->BoundAbilitiesStack.Top());
+		if (BoundAbilitySpec->InputID == Binding->InputID)
+		{
+			return Binding->BoundAbilitiesStack.Top();
+		}
+	}
+	return Invaild;
+}
+
 void UAbilitiesInputComponent::SetupPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent)
 {
-	TeardownBindings();
+	DisableBindings();
 
-	SetupBindings();
+	EnableBindings();
 
-	// 将所有操作的Started/Completed绑定到Pressed/Released上
-	// 再根据具体InputID调用技能系统的Pressed/Released接口
+	/** 将本组件的Pressed/Released绑定到所有操作IA的Started/Completed上
+	 *  再根据具体的IA查找InputID并调用技能系统的Pressed/Released接口触发技能特例
+	 */
 	for (auto& Binding : MappedAbilities)
 	{
 		UInputAction* InputAction = Binding.Key;
@@ -267,5 +282,5 @@ void UAbilitiesInputComponent::SetupPlayerControls_Implementation(UEnhancedInput
 
 void UAbilitiesInputComponent::TeardownPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent)
 {
-	TeardownBindings();
+	DisableBindings();
 }

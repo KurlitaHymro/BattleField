@@ -16,7 +16,7 @@ struct FAbilitiesStack
 	int32  InputID = 0;
 	uint32 OnPressedHandle = 0;
 	uint32 OnReleasedHandle = 0;
-	TArray<FGameplayAbilitySpecHandle> BoundAbilitiesStack;
+	TArray<FGameplayAbilitySpecHandle> BoundAbilitiesStack; // 是数组但功能上类似栈
 };
 
 class UInputAction;
@@ -38,9 +38,9 @@ private:
 	UPROPERTY(transient)
 	TMap<UInputAction*, FAbilitiesStack> MappedAbilities;
 
-	void SetupBindings();
+	void EnableBindings();
 
-	void TeardownBindings();
+	void DisableBindings();
 
 	void OnAbilityInputPressed(UInputAction* InputAction);
 
@@ -59,6 +59,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void TeardownAbilityBinding(FGameplayAbilitySpecHandle AbilityHandle);
 
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	FGameplayAbilitySpecHandle GetActionCurrentAbility(UInputAction* InputAction);
 protected:
 	/** Native/BP Event to set up player controls */
 	void SetupPlayerControls_Implementation(UEnhancedInputComponent* PlayerInputComponent);
