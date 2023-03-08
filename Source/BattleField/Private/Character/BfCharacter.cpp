@@ -4,6 +4,7 @@
 #include "Character/BfCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GrantAbilitySystemComponent.h"
+#include "AbilitiesInputComponent.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
@@ -24,7 +25,7 @@ ABfCharacter::ABfCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 325.f;
 
 	// Init AbilitySystemComponent
-	ASC = CreateDefaultSubobject<UGrantAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent = CreateDefaultSubobject<UGrantAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 }
 
 // Called PreInitializeComponents
@@ -60,4 +61,20 @@ void ABfCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+// IAbilitySystemInterface
+UAbilitySystemComponent* ABfCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+// IAbilitySystemInterface
+UAbilitiesInputComponent* ABfCharacter::GetAbilitiesInputComponent()
+{
+	if (nullptr == AbilitiesInputComponent)
+	{
+		AbilitiesInputComponent = Cast<UAbilitiesInputComponent>(GetComponentByClass(UAbilitiesInputComponent::StaticClass()));
+	}
+	return AbilitiesInputComponent;
 }

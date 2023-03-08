@@ -56,7 +56,8 @@ void UGameplayAbility_DeriveCombo::ActivateAbility(const FGameplayAbilitySpecHan
 			}
 		}
 
-		UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, MontageToPlay, PlayRate, SectionName);
+		UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(
+			this, NAME_None, MontageToPlay, PlayRate, SectionName, false, 1.0f, 0.f);
 		MontageTask->OnCompleted.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnCompleted);
 		MontageTask->OnBlendOut.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnBlendOut);
 		MontageTask->OnInterrupted.AddDynamic(this, &UGameplayAbility_DeriveCombo::OnInterrupted);
@@ -131,4 +132,9 @@ bool UGameplayAbility_DeriveCombo::TryActivateDeriveAbility()
 		}
 	}
 	return false;
+}
+
+float UGameplayAbility_DeriveCombo::GetTaskProgress()
+{
+	return 1.0f;
 }

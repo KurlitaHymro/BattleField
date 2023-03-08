@@ -4,71 +4,58 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "GameplayAbility_DeriveCombo.generated.h"
-
-USTRUCT(BlueprintType)
-struct FAbilityDervieInfo
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
-	TSubclassOf<UGameplayAbility> GameplayAbilityType;
-
-	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
-	TArray<FGameplayTag> Conditions;
-};
+#include "GameplayAbility_Anim.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BATTLEFEATURE_API UGameplayAbility_DeriveCombo : public UGameplayAbility
+class BATTLEFEATURE_API UGameplayAbility_Anim : public UGameplayAbility
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* OwnerInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
+	//UPROPERTY(EditDefaultsOnly, Category = AnimAbility)
+	//struct FTexture Icon;
+
+	UPROPERTY(EditDefaultsOnly, Category = AnimAbility)
 	TObjectPtr<UAnimMontage> MontageToPlay;
 
-	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
+	UPROPERTY(EditDefaultsOnly, Category = AnimAbility)
 	float PlayRate;
 
-	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
+	UPROPERTY(EditDefaultsOnly, Category = AnimAbility)
 	FName SectionName;
 
 	/** GameplayEffects to apply and then remove while the animation is playing */
 	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
 	TArray<TSubclassOf<UGameplayEffect>> GameplayEffectClassesWhileAnimating;
 
-	/** ≈……˙”≥…‰±Ì */
-	UPROPERTY(EditDefaultsOnly, Category = DeriveCombo)
-	TArray<FAbilityDervieInfo> DervieAbilities;
-
 protected:
+	UPROPERTY()
+	float Progress;
+
 	UAbilitySystemComponent* AbilitySystemComponent;
 
 	TArray<FActiveGameplayEffectHandle>	AppliedEffects;
 
 	UFUNCTION(BlueprintCallable, Category = "AbilityDelegate")
-	void OnCompleted();
-
-	UFUNCTION(BlueprintCallable, Category = "AbilityDelegate")
-	void OnBlendOut();
+	void OnCancelled();
 
 	UFUNCTION(BlueprintCallable, Category = "AbilityDelegate")
 	void OnInterrupted();
 
 	UFUNCTION(BlueprintCallable, Category = "AbilityDelegate")
-	void OnCancelled();
+	void OnBlendOut();
+
+	UFUNCTION(BlueprintCallable, Category = "AbilityDelegate")
+	void OnCompleted();
 
 	UFUNCTION()
 	void OnTaskEnd();
 
-	UFUNCTION()
-	bool TryActivateDeriveAbility();
-
-	UFUNCTION(BlueprintCallable, Category = "Ability")
-	float GetTaskProgress();
+	UFUNCTION(BlueprintCallable)
+	float GetProgress();
 };

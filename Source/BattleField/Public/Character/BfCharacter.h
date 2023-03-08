@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "CRCharacter.h"
+#include "AbilitySystemInterface.h"
 #include "BfCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BATTLEFIELD_API ABfCharacter : public ACRCharacter
+class BATTLEFIELD_API ABfCharacter : public ACRCharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -35,6 +36,17 @@ public:
 	// Called PreInitializeComponents
 	virtual void PreInitializeComponents() override;
 
+	//~ Begin IAbilitySystemInterface
+protected:
+	class UAbilitySystemComponent* AbilitySystemComponent;
+
+	class UAbilitiesInputComponent* AbilitiesInputComponent;
+
 public:
-	class UAbilitySystemComponent* ASC;
+	/** Returns our Ability System Component. */
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	//~ End IAbilitySystemInterface
+
+	UFUNCTION(BlueprintCallable, Category = "Ability|Input")
+	virtual UAbilitiesInputComponent* GetAbilitiesInputComponent();
 };
