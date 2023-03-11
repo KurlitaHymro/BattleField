@@ -177,13 +177,11 @@ void UGameFeatureAction_AddAbilities::HandleActorExtension(AActor* Actor, FName 
 	if (ActorAbilities.IsValidIndex(EntryIndex))
 	{
 		const auto& Entry = ActorAbilities[EntryIndex];
-		if (EventName == UGameFrameworkComponentManager::NAME_ReceiverAdded ||
-			EventName == UGameFrameworkComponentManager::NAME_GameActorReady)
+		if (EventName == UGameFrameworkComponentManager::NAME_GameActorReady)
 		{
 			AddAbilities(Actor, Entry);
 		}
-		else if (EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved ||
-			EventName == UGameFrameworkComponentManager::NAME_ReceiverRemoved)
+		else if (EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved)
 		{
 			RemoveAbilities(Actor);
 		}

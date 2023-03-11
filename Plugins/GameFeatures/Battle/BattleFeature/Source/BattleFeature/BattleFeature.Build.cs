@@ -40,7 +40,9 @@ public class BattleFeature : ModuleRules
 				"SlateCore",
 				"GameplayAbilities",
 				"GameplayTasks",
-				"GameplayTags"
+				"GameplayTags",
+				"AbilitiesInputRuntime",
+				"EnhancedInput",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

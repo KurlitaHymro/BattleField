@@ -4,6 +4,17 @@
 #include "Ability/GameplayAbility_Anim.h"
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "AbilitiesInputComponent.h"
+#include "GameFramework/Character.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(GameplayAbility_Anim)
+
+UGameplayAbility_Anim::UGameplayAbility_Anim(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	PlayRate = 1.f;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
+}
 
 void UGameplayAbility_Anim::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -14,7 +25,10 @@ void UGameplayAbility_Anim::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
+	TWeakObjectPtr<AActor> AvatarActor = ActorInfo->AvatarActor.IsValid() ? ActorInfo->AvatarActor : ActorInfo->OwnerActor;
+	AvatarCharacter = Cast<ACharacter>(AvatarActor);
 	AbilitySystemComponent = ActorInfo->AbilitySystemComponent.Get();
+	AbilitiesInputComponent = Cast<UAbilitiesInputComponent>(AvatarCharacter->GetComponentByClass(UAbilitiesInputComponent::StaticClass()));
 	UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
 
 	if (MontageToPlay != nullptr && AnimInstance != nullptr && AnimInstance->GetActiveMontageInstance() == nullptr)
@@ -58,11 +72,15 @@ void UGameplayAbility_Anim::ActivateAbility(const FGameplayAbilitySpecHandle Han
 void UGameplayAbility_Anim::OnCancelled()
 {
 	OnTaskEnd();
+
+	K2_EndAbility();
 }
 
 void UGameplayAbility_Anim::OnInterrupted()
 {
 	OnTaskEnd();
+
+	K2_EndAbility();
 }
 
 void UGameplayAbility_Anim::OnBlendOut()
@@ -72,13 +90,11 @@ void UGameplayAbility_Anim::OnBlendOut()
 
 void UGameplayAbility_Anim::OnCompleted()
 {
-	OnTaskEnd();
+	K2_EndAbility();
 }
 
 void UGameplayAbility_Anim::OnTaskEnd()
 {
-	K2_EndAbility();
-
 	if (AbilitySystemComponent)
 	{
 		for (FActiveGameplayEffectHandle Handle : AppliedEffects)
@@ -90,5 +106,5 @@ void UGameplayAbility_Anim::OnTaskEnd()
 
 float UGameplayAbility_Anim::GetProgress()
 {
-	return bIsActive ? 1.f : 0.f;
+	return 0.f;
 }

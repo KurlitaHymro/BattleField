@@ -31,6 +31,7 @@ public class AbilitiesInputRuntime : ModuleRules
 				"PawnInput",
 				"GameFeatures",
 				"ModularGameplay",
+				"EnhancedInput",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -43,7 +44,6 @@ public class AbilitiesInputRuntime : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"EnhancedInput",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
