@@ -37,13 +37,20 @@ public:
 	TArray<TSubclassOf<UGameplayEffect>> GameplayEffectClassesWhileAnimating;
 
 protected:
-	ACharacter* AvatarCharacter;
-	
-	class UAbilitySystemComponent* AbilitySystemComponent;
-	
-	class UAbilitiesInputComponent* AbilitiesInputComponent;
+	struct FGameplayAbilitySpecHandle AbilitySpecHandle;
+
+	struct FGameplayAbilityActorInfo ActorInfo;
 
 	TArray<FActiveGameplayEffectHandle>	AppliedEffects;
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool TryPlayMontageTask();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void OnTaskEnd();
+
+	UFUNCTION(BlueprintCallable)
+	virtual float GetProgress();
 
 	UFUNCTION(Category = "AbilityDelegate")
 	virtual void OnCancelled();
@@ -56,10 +63,4 @@ protected:
 
 	UFUNCTION(Category = "AbilityDelegate")
 	virtual void OnCompleted();
-
-	UFUNCTION()
-	void OnTaskEnd();
-
-	UFUNCTION(BlueprintCallable)
-	float GetProgress();
 };

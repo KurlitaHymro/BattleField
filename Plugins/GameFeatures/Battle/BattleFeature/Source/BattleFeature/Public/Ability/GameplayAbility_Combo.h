@@ -28,18 +28,40 @@ class BATTLEFEATURE_API UGameplayAbility_Combo : public UGameplayAbility_Anim
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = ComboAbility)
+	TSubclassOf<UGameplayEffect> DuringMontageEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = ComboAbility)
+	FGameplayTag DuringMontageTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = ComboAbility)
+	TSubclassOf<UGameplayEffect> ComboInputEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = ComboAbility)
+	FGameplayTag ComboInputTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = ComboAbility)
 	TMap<class UInputAction*, TSubclassOf<UGameplayAbility>> DervieAbilities;
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* OwnerInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	virtual void OnCancelled() override;
-
-	virtual void OnInterrupted() override;
-
+protected:
 	virtual void OnBlendOut() override;
 
 	virtual void OnCompleted() override;
 
+	virtual bool TryPlayMontageTask() override;
+
+protected:
+	UPROPERTY()
+	bool bPlayComboMontageOnBlendOut;
+
+	UFUNCTION(Category = "AbilityDelegate")
+	virtual void OnMontageEnd();
+
+	UFUNCTION(Category = "AbilityDelegate")
+	virtual void OnComboInputStart();
+
 	void UpdateDervieAbilities();
 
+	void TryTriggerDervieAbility();
 };
