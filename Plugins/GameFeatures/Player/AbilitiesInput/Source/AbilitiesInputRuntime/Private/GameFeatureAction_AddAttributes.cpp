@@ -3,6 +3,7 @@
 
 #include "GameFeatureAction_AddAttributes.h"
 #include "AbilitiesInputComponent.h"
+#include "AbilitySystemComponent.h"
 #include "GameFeaturesSubsystemSettings.h"
 #include "Engine/AssetManager.h"
 #include "Components/GameFrameworkComponentManager.h"
@@ -208,9 +209,9 @@ void UGameFeatureAction_AddAttributes::AddAttributes(AActor* Actor, const FGameF
 		return;
 	}
 
-	FActorAttributes ActorExtension;
+	TArray<UAttributeSet*> ActorExtension;
 
-	ActorExtension.Attributes.Reserve(Entry.GrantedAttributes.Num());
+	ActorExtension.Reserve(Entry.GrantedAttributes.Num());
 	for (const auto& Attribute : Entry.GrantedAttributes)
 	{
 		if (!Attribute.AttributeSetType.IsNull())
@@ -230,7 +231,7 @@ void UGameFeatureAction_AddAttributes::AddAttributes(AActor* Actor, const FGameF
 				}
 				ASC->AddAttributeSetSubobject(SetObject);
 
-				ActorExtension.Attributes.Add(SetObject);
+				ActorExtension.Add(SetObject);
 			}
 		}
 	}
@@ -240,7 +241,7 @@ void UGameFeatureAction_AddAttributes::AddAttributes(AActor* Actor, const FGameF
 
 void UGameFeatureAction_AddAttributes::RemoveAttributes(AActor* Actor)
 {
-	FActorAttributes* ActorExtension = ActiveAttributes.Find(Actor);
+	TArray<UAttributeSet*>* ActorExtension = ActiveAttributes.Find(Actor);
 	if (ActorExtension)
 	{
 		UAbilitySystemComponent* ASC = Actor->FindComponentByClass<UAbilitySystemComponent>();
@@ -250,7 +251,7 @@ void UGameFeatureAction_AddAttributes::RemoveAttributes(AActor* Actor)
 			return;
 		}
 
-		for (auto Attribute : ActorExtension->Attributes)
+		for (auto Attribute : *ActorExtension)
 		{
 			ASC->GetSpawnedAttributes_Mutable().Remove(Attribute);
 		}

@@ -88,9 +88,5 @@ private:
 
 	TArray<TSharedPtr<struct FComponentRequestHandle>> ComponentRequests;
 
-	struct FActorAttributes
-	{
-		TArray<UAttributeSet*> Attributes;
-	};
-	TMap<AActor*, FActorAttributes> ActiveAttributes;
+	TMap<AActor*, TArray<UAttributeSet*>> ActiveAttributes;
 };

@@ -88,6 +88,10 @@
 		{
 			"Name": "BattleAbilityAttribute",
 			"Enabled": false
+		},
+		{
+			"Name": "SwordAndShield",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
