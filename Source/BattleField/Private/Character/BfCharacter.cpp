@@ -69,12 +69,6 @@ void ABfCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 }
 
 // IAbilitySystemInterface
-UAbilitySystemComponent* ABfCharacter::GetAbilitySystemComponent() const
-{
-	return AbilitySystemComponent;
-}
-
-// IAbilitySystemInterface
 UAbilitiesInputComponent* ABfCharacter::GetAbilitiesInputComponent()
 {
 	if (nullptr == AbilitiesInputComponent)

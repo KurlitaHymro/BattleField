@@ -10,20 +10,18 @@
 
 UBTTask_ActivateGameplayAbility::UBTTask_ActivateGameplayAbility()
 {
-	NodeName = "SendEventActivateAbility";
+	NodeName = "TryActivateAbility";
 	bNotifyTick = true;
 	BlackboardKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTTask_ActivateGameplayAbility, BlackboardKey), AActor::StaticClass());
 }
 
-EBTNodeResult::Type UBTTask_ActivateGameplayAbility::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::TypeUBTTask_ActivateGameplayAbility::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	OwnerPawn = Cast<ABfCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	AbilitySystemComponent = OwnerPawn->GetAbilitySystemComponent();
 
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
-	//FGameplayTag* TriggerTag = Cast<FGameplayTag>(Blackboard->GetValueAsObject(BlackboardKey.SelectedKeyName));
-	FGameplayTag TriggerTag;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(OwnerPawn, TriggerTag, Payload);
+	AbilitySystemComponent.
 	return EBTNodeResult::Succeeded;
 }
 
