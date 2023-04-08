@@ -15,7 +15,8 @@
 				"AIModule",
 				"ModularGameplay",
 				"ComponentReceiverActors",
-				"GameplayAbilities"
+				"GameplayAbilities",
+				"GameFeatures"
 			]
 		}
 	],
@@ -82,7 +83,7 @@
 			]
 		},
 		{
-			"Name": "AbilitiesInput",
+			"Name": "BattleFrame",
 			"Enabled": true
 		},
 		{
@@ -99,7 +100,12 @@
 		},
 		{
 			"Name": "AbilitySystemGameFeatureActions",
-			"Enabled": true		}
+			"Enabled": true		
+		},
+		{
+			"Name": "AbilitiesInput",
+			"Enabled": true		
+		}
 	],
 	"TargetPlatforms": [
 		"AllDesktop",
