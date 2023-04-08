@@ -15,7 +15,8 @@
 				"AIModule",
 				"ModularGameplay",
 				"ComponentReceiverActors",
-				"GameplayAbilities"
+				"GameplayAbilities",
+				"GameFeatures"
 			]
 		}
 	],
@@ -91,6 +92,10 @@
 		},
 		{
 			"Name": "SwordAndShield",
+			"Enabled": true
+		},
+		{
+			"Name": "BattleFrame",
 			"Enabled": true
 		}
 	],
