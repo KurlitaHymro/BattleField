@@ -3,7 +3,7 @@
 
 #include "Character/BfCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GrantAbilitySystemComponent.h"
+#include "BattleAbilitySystemComponent.h"
 #include "AbilitiesInputComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -25,7 +25,7 @@ ABfCharacter::ABfCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 325.f;
 
 	// Init AbilitySystemComponent
-	AbilitySystemComponent = CreateDefaultSubobject<UGrantAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent = CreateDefaultSubobject<UBattleAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 }
 
 // Called PreInitializeComponents

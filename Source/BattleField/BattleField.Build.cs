@@ -28,7 +28,8 @@ public class BattleField : ModuleRules
 			"RenderCore",
 			"SlateCore",
 			"ModularGameplay",
-			"AbilitiesInputRuntime"
+			"AbilitiesInputRuntime",
+			"BattleFrameRuntime",
 		});
 
 		// Uncomment if you are using Slate UI
