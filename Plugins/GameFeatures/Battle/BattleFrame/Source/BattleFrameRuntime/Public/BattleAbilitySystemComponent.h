@@ -6,7 +6,21 @@
 #include "AbilitySystemComponent.h"
 #include "BattleAbilitySystemComponent.generated.h"
 
+USTRUCT(BlueprintType)
+struct FBattleAbilityEntry
+{
+	GENERATED_BODY()
 
+	// SoftClass of Ability to grant
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<UGameplayAbility> AbilityType;
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayAbilitySpec AbilitySpec;
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayAbilitySpecHandle AbilitySpecHandle;
+};
 
 /**
  * 
@@ -16,4 +30,11 @@ class BATTLEFRAMERUNTIME_API UBattleAbilitySystemComponent : public UAbilitySyst
 {
 	GENERATED_BODY()
 	
+public:
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	int32 SynchronousLoadAbility(TSoftClassPtr<UGameplayAbility> AbilityType);
+
+private:
+	UPROPERTY(transient)
+	TMap<int32, FBattleAbilityEntry> MappedAbilities;
 };
