@@ -4,50 +4,26 @@
 #include "AbilityInputBindingComponent.h"
 #include "InputAction.h"
 #include "EnhancedInputComponent.h"
-#include "AbilitySystemComponent.h"
+#include "BattleAbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 
-namespace AbilityInputBindingComponent_Impl
+void UAbilityInputBindingComponent::SetupBinding(UInputAction* InputAction, int32 AbilityID)
 {
-	constexpr int32 InvalidInputID = 0;
-	int32 IncrementingInputID = InvalidInputID;
-
-	static int32 GetNextInputID()
-	{
-		return ++IncrementingInputID;
-	}
-}
-
-void UAbilityInputBindingComponent::SetupBinding(UInputAction* InputAction, FGameplayAbilitySpecHandle AbilityHandle)
-{
-	ensure(AbilityComponent);
+	ensure(BattleAbilityComponent);
 
 	FAbilityInputBinding* AbilityInputBinding = MappedAbilities.Find(InputAction);
 	if (AbilityInputBinding)
 	{
-		// 操作已存在时先废弃栈顶技能
-		FGameplayAbilitySpec* OldBoundAbility = AbilityComponent->FindAbilitySpecFromHandle(AbilityInputBinding->BoundAbilitiesStack.Top());
-		if (OldBoundAbility && OldBoundAbility->InputID == AbilityInputBinding->InputID)
-		{
-			OldBoundAbility->InputID = AbilityInputBindingComponent_Impl::InvalidInputID;
-		}
+		BattleAbilityComponent->DisableAbility(AbilityInputBinding->AbilitesStack.Top());
 	}
 	else
 	{
-		// 操作不存在时以新的ID构造该操作
 		AbilityInputBinding = &MappedAbilities.Add(InputAction);
-		AbilityInputBinding->InputID = AbilityInputBindingComponent_Impl::GetNextInputID();
 	}
 
-	// 将待绑定技能推到栈顶并同步ID
-	AbilityInputBinding->BoundAbilitiesStack.Push(AbilityHandle);
-	FGameplayAbilitySpec* BindingAbility = AbilityComponent->FindAbilitySpecFromHandle(AbilityHandle);
-	if (BindingAbility)
-	{
-		BindingAbility->InputID = AbilityInputBinding->InputID;
-	}
+	AbilityInputBinding->AbilitesStack.Push(AbilityID);
 
-	// 链接到输入操作
+	// Bind to InputAction
 	if (InputComponent)
 	{
 		// Pressed event
@@ -64,48 +40,35 @@ void UAbilityInputBindingComponent::SetupBinding(UInputAction* InputAction, FGam
 	}
 }
 
-void UAbilityInputBindingComponent::TeardownAbilityBinding(FGameplayAbilitySpecHandle AbilityHandle)
+void UAbilityInputBindingComponent::TeardownAbilityBinding(int32 AbilityID)
 {
-	ensure(AbilityComponent);
+	ensure(BattleAbilityComponent);
 
-	if (FGameplayAbilitySpec* FoundAbility = AbilityComponent->FindAbilitySpecFromHandle(AbilityHandle))
+	// Find the mapping for this ability
+	auto MappedIterator = MappedAbilities.CreateIterator();
+	while (MappedIterator)
 	{
-		// Find the mapping for this ability
-		auto MappedIterator = MappedAbilities.CreateIterator();
-		while (MappedIterator)
+		if (MappedIterator.Value().AbilitesStack.Top() == AbilityID)
 		{
-			if (MappedIterator.Value().InputID == FoundAbility->InputID)
-			{
-				break;
-			}
-
-			++MappedIterator;
+			break;
 		}
 
-		if (MappedIterator)
+		++MappedIterator;
+	}
+
+	if (MappedIterator)
+	{
+		FAbilityInputBinding& AbilityInputBinding = MappedIterator.Value();
+
+		if (AbilityInputBinding.AbilitesStack.Remove(AbilityID) > 0)
 		{
-			FAbilityInputBinding& AbilityInputBinding = MappedIterator.Value();
-
-			if (AbilityInputBinding.BoundAbilitiesStack.Remove(AbilityHandle) > 0)
+			if (AbilityInputBinding.AbilitesStack.Num() > 0)
 			{
-				if (AbilityInputBinding.BoundAbilitiesStack.Num() > 0)
-				{
-					// 如果仍留有其他技能则复原栈顶InputID
-					FGameplayAbilitySpec* StackedAbility = AbilityComponent->FindAbilitySpecFromHandle(AbilityInputBinding.BoundAbilitiesStack.Top());
-					if (StackedAbility && StackedAbility->InputID == 0)
-					{
-						StackedAbility->InputID = AbilityInputBinding.InputID;
-					}
-				}
-				else
-				{
-					// 操作上已无其他技能则也移除此操作
-					// NOTE: This will invalidate the `AbilityInputBinding` ref above
-					TeardownActionBinding(MappedIterator.Key());
-				}
-				// DO NOT act on `AbilityInputBinding` after here (it could have been removed)
-
-				FoundAbility->InputID = AbilityInputBindingComponent_Impl::InvalidInputID;
+				BattleAbilityComponent->EnableAbility(AbilityID);
+			}
+			else
+			{
+				TeardownActionBinding(MappedIterator.Key());
 			}
 		}
 	}
@@ -113,23 +76,19 @@ void UAbilityInputBindingComponent::TeardownAbilityBinding(FGameplayAbilitySpecH
 
 void UAbilityInputBindingComponent::TeardownActionBinding(UInputAction* InputAction)
 {
+	ensure(BattleAbilityComponent);
+
 	if (FAbilityInputBinding* Binding = MappedAbilities.Find(InputAction))
 	{
-		// 移除增强输入操作代理
 		if (InputComponent)
 		{
 			InputComponent->RemoveBindingByHandle(Binding->OnPressedHandle);
 			InputComponent->RemoveBindingByHandle(Binding->OnReleasedHandle);
 		}
 
-		// 废弃与操作ID所匹配的技能输入ID
-		for (FGameplayAbilitySpecHandle AbilityHandle : Binding->BoundAbilitiesStack)
+		for (auto AbilityID : Binding->AbilitesStack)
 		{
-			FGameplayAbilitySpec* AbilitySpec = AbilityComponent->FindAbilitySpecFromHandle(AbilityHandle);
-			if (AbilitySpec && AbilitySpec->InputID == Binding->InputID)
-			{
-				AbilitySpec->InputID = AbilityInputBindingComponent_Impl::InvalidInputID;
-			}
+			BattleAbilityComponent->DisableAbility(AbilityID);
 		}
 
 		MappedAbilities.Remove(InputAction);
@@ -140,9 +99,6 @@ void UAbilityInputBindingComponent::SetupPlayerControls_Implementation(UEnhanced
 {
 	DisableBindings();
 
-	/** 将本组件的Pressed/Released绑定到所有操作IA的Started/Completed上
-	 *  再根据具体的IA查找InputID并调用技能系统的Pressed/Released接口触发技能特例
-	 */
 	for (auto& Ability : MappedAbilities)
 	{
 		UInputAction* InputAction = Ability.Key;
@@ -167,23 +123,14 @@ void UAbilityInputBindingComponent::EnableBindings()
 	AActor* MyOwner = GetOwner();
 	check(MyOwner);
 
-	// 分配操作ID
-	AbilityComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(MyOwner);
-	if (AbilityComponent)
+	BattleAbilityComponent = Cast<UBattleAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(MyOwner));
+	if (BattleAbilityComponent)
 	{
 		for (auto& InputBinding : MappedAbilities)
 		{
-			const int32 NewInputID = AbilityInputBindingComponent_Impl::GetNextInputID();
-			InputBinding.Value.InputID = NewInputID;
-
-			// 同步操作ID到技能输入ID
-			for (FGameplayAbilitySpecHandle AbilityHandle : InputBinding.Value.BoundAbilitiesStack)
+			for (auto AbilityID : InputBinding.Value.AbilitesStack)
 			{
-				FGameplayAbilitySpec* FoundAbility = AbilityComponent->FindAbilitySpecFromHandle(AbilityHandle);
-				if (FoundAbility != nullptr)
-				{
-					FoundAbility->InputID = NewInputID;
-				}
+				BattleAbilityComponent->EnableAbility(AbilityID);
 			}
 		}
 	}
@@ -193,58 +140,50 @@ void UAbilityInputBindingComponent::DisableBindings()
 {
 	for (auto& InputBinding : MappedAbilities)
 	{
-		// 移除增强输入操作代理
 		if (InputComponent)
 		{
 			InputComponent->RemoveBindingByHandle(InputBinding.Value.OnPressedHandle);
 			InputComponent->RemoveBindingByHandle(InputBinding.Value.OnReleasedHandle);
 		}
 
-		// 废弃与操作ID所匹配的技能输入ID
-		if (AbilityComponent)
+		if (BattleAbilityComponent)
 		{
-			const int32 ExpectedInputID = InputBinding.Value.InputID;
-
-			for (FGameplayAbilitySpecHandle AbilityHandle : InputBinding.Value.BoundAbilitiesStack)
+			for (auto AbilityID : InputBinding.Value.AbilitesStack)
 			{
-				FGameplayAbilitySpec* FoundAbility = AbilityComponent->FindAbilitySpecFromHandle(AbilityHandle);
-				if (FoundAbility && FoundAbility->InputID == ExpectedInputID)
-				{
-					FoundAbility->InputID = AbilityInputBindingComponent_Impl::InvalidInputID;
-				}
+				BattleAbilityComponent->DisableAbility(AbilityID);
 			}
 		}
 	}
 
-	AbilityComponent = nullptr;
+	BattleAbilityComponent = nullptr;
 }
 
 void UAbilityInputBindingComponent::OnAbilityInputPressed(UInputAction* InputAction)
 {
 	// The AbilitySystemComponent may not have been valid when we first bound input... try again.
-	if (!AbilityComponent)
+	if (!BattleAbilityComponent)
 	{
 		EnableBindings();
 	}
 
-	if (AbilityComponent)
+	if (BattleAbilityComponent)
 	{
 		FAbilityInputBinding* FoundBinding = MappedAbilities.Find(InputAction);
-		if (FoundBinding && ensure(FoundBinding->InputID != AbilityInputBindingComponent_Impl::InvalidInputID))
+		if (FoundBinding)
 		{
-			AbilityComponent->AbilityLocalInputPressed(FoundBinding->InputID);
+			BattleAbilityComponent->AbilityLocalInputPressed(FoundBinding->AbilitesStack.Top());
 		}
 	}
 }
 
 void UAbilityInputBindingComponent::OnAbilityInputReleased(UInputAction* InputAction)
 {
-	if (AbilityComponent)
+	if (BattleAbilityComponent)
 	{
 		FAbilityInputBinding* FoundBinding = MappedAbilities.Find(InputAction);
-		if (FoundBinding && ensure(FoundBinding->InputID != AbilityInputBindingComponent_Impl::InvalidInputID))
+		if (FoundBinding)
 		{
-			AbilityComponent->AbilityLocalInputReleased(FoundBinding->InputID);
+			BattleAbilityComponent->AbilityLocalInputReleased(FoundBinding->AbilitesStack.Top());
 		}
 	}
 }

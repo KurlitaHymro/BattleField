@@ -96,7 +96,7 @@ protected:
 private:
 	struct FActorExtensions
 	{
-		TArray<FGameplayAbilitySpecHandle> Abilities;
+		TArray<int32> Abilities;
 		TArray<UAttributeSet*> Attributes;
 	};
 	TMap<AActor*, FActorExtensions> ActiveExtensions;

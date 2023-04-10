@@ -5,9 +5,13 @@
 #include "Components/GameFrameworkComponentManager.h"
 #include "Engine/AssetManager.h"
 #include "GameFeaturesSubsystemSettings.h"
-#include "AbilitySystemComponent.h"
+#include "BattleAbilitySystemComponent.h"
+#include "AbilityInputBindingComponent.h"
+#include "InputAction.h"
+#include "BattleFrameRuntimeModule.h"
 
 #define LOCTEXT_NAMESPACE "BattleGameFeatures"
+
 void UGameFeatureAction_AddBattleMode::OnGameFeatureActivating()
 {
 	if (!ensureAlways(ActiveExtensions.IsEmpty()) ||
@@ -149,7 +153,7 @@ void UGameFeatureAction_AddBattleMode::HandleActorExtension(AActor* Actor, FName
 	if (BattleModesList.IsValidIndex(EntryIndex))
 	{
 		const auto& Entry = BattleModesList[EntryIndex];
-		if (EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) // 防止重复添加，如果不好使就改成别的。4/9
+		if (EventName == UGameFrameworkComponentManager::NAME_GameActorReady)
 		{
 			AddActorBattleMode(Actor, Entry);
 		}
@@ -162,7 +166,7 @@ void UGameFeatureAction_AddBattleMode::HandleActorExtension(AActor* Actor, FName
 
 void UGameFeatureAction_AddBattleMode::AddActorBattleMode(AActor* Actor, const FGameplayBattleModeEntry& BattleModeEntry)
 {
-	if (UAbilitySystemComponent* ASC = FindOrAddComponentForActor<UAbilitySystemComponent>(Actor, BattleModeEntry))
+	if (UBattleAbilitySystemComponent* ASC = FindOrAddComponentForActor<UBattleAbilitySystemComponent>(Actor, BattleModeEntry))
 	{
 		FActorExtensions AddedExtensions;
 		AddedExtensions.Abilities.Reserve(BattleModeEntry.GrantedAbilities.Num());
@@ -172,23 +176,22 @@ void UGameFeatureAction_AddBattleMode::AddActorBattleMode(AActor* Actor, const F
 		{
 			if (!Ability.AbilityType.IsNull())
 			{
-				FGameplayAbilitySpec AbilitySpec(Ability.AbilityType.LoadSynchronous());
-				FGameplayAbilitySpecHandle AbilityHandle = ASC->GiveAbility(AbilitySpec);
+				int32 AbilityID = ASC->SynchronousLoadAbility(Ability.AbilityType);
 
-				//if (!Ability.InputAction.IsNull())
-				//{
-				//	UAbilityInputBindingComponent* InputComponent = FindOrAddComponentForActor<UAbilityInputBindingComponent>(Actor, BattleModeEntry);
-				//	if (InputComponent)
-				//	{
-				//		InputComponent->SetInputBinding(Ability.InputAction.LoadSynchronous(), AbilityHandle);
-				//	}
-				//	else
-				//	{
-				//		UE_LOG(LogBattleFrame, Error, TEXT("Failed to find/add an ability input binding component to '%s' -- are you sure it's a pawn class?"), *Actor->GetPathName());
-				//	}
-				//}
+				if (!Ability.InputAction.IsNull())
+				{
+					UAbilityInputBindingComponent* InputComponent = FindOrAddComponentForActor<UAbilityInputBindingComponent>(Actor, BattleModeEntry);
+					if (InputComponent)
+					{
+						InputComponent->SetupBinding(Ability.InputAction.LoadSynchronous(), AbilityID);
+					}
+					else
+					{
+						UE_LOG(LogBattleFrame, Error, TEXT("Failed to find/add an ability input binding component to '%s' -- are you sure it's a pawn class?"), *Actor->GetPathName());
+					}
+				}
 
-				AddedExtensions.Abilities.Add(AbilityHandle);
+				AddedExtensions.Abilities.Add(AbilityID);
 			}
 		}
 
@@ -227,21 +230,22 @@ void UGameFeatureAction_AddBattleMode::RemoveActorBattleMode(AActor* Actor)
 {
 	if (FActorExtensions* ActorExtensions = ActiveExtensions.Find(Actor))
 	{
-		if (UAbilitySystemComponent* ASC = Actor->FindComponentByClass<UAbilitySystemComponent>())
+		if (UBattleAbilitySystemComponent* ASC = Actor->FindComponentByClass<UBattleAbilitySystemComponent>())
 		{
 			for (UAttributeSet* AttributeSetInstance : ActorExtensions->Attributes)
 			{
 				ASC->RemoveSpawnedAttribute(AttributeSetInstance);
 			}
 
-			//UAbilityInputBindingComponent* InputComponent = Actor->FindComponentByClass<UAbilityInputBindingComponent>();
-			for (FGameplayAbilitySpecHandle AbilityHandle : ActorExtensions->Abilities)
+			UAbilityInputBindingComponent* InputComponent = Actor->FindComponentByClass<UAbilityInputBindingComponent>();
+			
+			for (auto AbilityID : ActorExtensions->Abilities)
 			{
-				//if (InputComponent)
-				//{
-				//	InputComponent->ClearInputBinding(AbilityHandle);
-				//}
-				ASC->SetRemoveAbilityOnEnd(AbilityHandle);
+				if (InputComponent)
+				{
+					InputComponent->TeardownAbilityBinding(AbilityID);
+				}
+				ASC->RemoveAbility(AbilityID);
 			}
 		}
 

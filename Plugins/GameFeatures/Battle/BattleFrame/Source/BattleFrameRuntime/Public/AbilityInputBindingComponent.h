@@ -12,10 +12,9 @@ struct FAbilityInputBinding
 {
 	GENERATED_BODY()
 
-	int32  InputID = 0;
 	uint32 OnPressedHandle = 0;
 	uint32 OnReleasedHandle = 0;
-	TArray<FGameplayAbilitySpecHandle> BoundAbilitiesStack;
+	TArray<int32> AbilitesStack;
 };
 
 /**
@@ -29,10 +28,10 @@ class BATTLEFRAMERUNTIME_API UAbilityInputBindingComponent : public UPawnInputMo
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void SetupBinding(UInputAction* InputAction, FGameplayAbilitySpecHandle AbilityHandle);
+	void SetupBinding(UInputAction* InputAction, int32 AbilityID);
 
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void TeardownAbilityBinding(FGameplayAbilitySpecHandle AbilityHandle);
+	void TeardownAbilityBinding(int32 AbilityID);
 
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void TeardownActionBinding(UInputAction* InputAction);
@@ -52,7 +51,7 @@ private:
 
 private:
 	UPROPERTY(transient)
-	UAbilitySystemComponent* AbilityComponent;
+	class UBattleAbilitySystemComponent* BattleAbilityComponent;
 
 	UPROPERTY(transient)
 	TMap<UInputAction*, FAbilityInputBinding> MappedAbilities;
