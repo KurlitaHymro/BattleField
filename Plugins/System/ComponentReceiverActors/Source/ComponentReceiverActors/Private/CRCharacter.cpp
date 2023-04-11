@@ -29,22 +29,20 @@ void ACRCharacter::BeginPlay()
 // Called when the game ends
 void ACRCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	UGameFrameworkComponentManager::RemoveGameFrameworkComponentReceiver(this);
-
 	Super::EndPlay(EndPlayReason);
+
+	UGameFrameworkComponentManager::RemoveGameFrameworkComponentReceiver(this);
 }
 
 // Called every frame
 void ACRCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
 void ACRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 

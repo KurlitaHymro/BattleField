@@ -29,9 +29,11 @@ public class BattleFrameRuntime : ModuleRules
 				"BattleField",
 				"GameplayAbilities",
 				"GameplayTasks",
+				"GameplayTags",
 				"PawnInput",
 				"GameFeatures",
 				"ModularGameplay",
+				"ComponentReceiverActors",
 				"EnhancedInput",
 				// ... add other public dependencies that you statically link with here ...
 			}

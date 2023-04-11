@@ -17,6 +17,16 @@ class BATTLEAIRUNTIME_API UBTTask_AbilityOperator : public UBTTaskNode
 	UPROPERTY(Category = Node, EditAnywhere)
 	TSoftClassPtr<class UGameplayAbility> AbilityType;
 
+	UPROPERTY(Category = Node, EditAnywhere)
+	uint32 bReverse : 1;
+
+	UPROPERTY()
+	TObjectPtr<UBehaviorTreeComponent> MyOwnerComp;
+
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual FString GetStaticDescription() const override;
+
 #if WITH_EDITOR
 	virtual FName GetNodeIconName() const override;
 #endif // WITH_EDITOR

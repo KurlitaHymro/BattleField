@@ -31,6 +31,7 @@ public class BattleAIRuntime : ModuleRules
 				"GameplayTasks",
 				"GameplayAbilities",
 				"NavigationSystem",
+				"BattleFrameRuntime",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
