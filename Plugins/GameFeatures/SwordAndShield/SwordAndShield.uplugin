@@ -19,7 +19,11 @@
 	"BuiltInInitialFeatureState": "Active",
 	"Plugins": [
 		{
-			"Name": "AbilitiesInput",
+			"Name": "BattleFrame",
+			"Enabled": true
+		},
+		{
+			"Name": "BattleAI",
 			"Enabled": true
 		}
 	]

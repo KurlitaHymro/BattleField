@@ -17,7 +17,6 @@ namespace BattleAbilitySystemComponent_Impl
 int32 UBattleAbilitySystemComponent::SynchronousLoadAbility(TSoftClassPtr<UGameplayAbility> AbilityType)
 {
 	FGameplayAbilitySpec AbilitySpec(AbilityType.LoadSynchronous());
-	// 先试下先分再给有没有用
 	int32 newID = BattleAbilitySystemComponent_Impl::GetNextID();
 	AbilitySpec.InputID = newID;
 	FGameplayAbilitySpecHandle AbilityHandle = GiveAbility(AbilitySpec);
@@ -58,8 +57,19 @@ void UBattleAbilitySystemComponent::DisableAbility(int32 AbilityID)
 	}
 }
 
-FBattleAbilityEntry UBattleAbilitySystemComponent::FindAbilityInfo(int32 AbilityID)
+int32 UBattleAbilitySystemComponent::FindAbilityByType(TSoftClassPtr<UGameplayAbility> AbilityType)
 {
-	return FBattleAbilityEntry();
+	auto MappedIterator = MappedAbilities.CreateIterator();
+	while (MappedIterator)
+	{
+		if (MappedIterator.Value().AbilityType == AbilityType)
+		{
+			return MappedIterator.Key();
+		}
+		++MappedIterator;
+	}
+	return BattleAbilitySystemComponent_Impl::InvalidID;
 }
+
+
 

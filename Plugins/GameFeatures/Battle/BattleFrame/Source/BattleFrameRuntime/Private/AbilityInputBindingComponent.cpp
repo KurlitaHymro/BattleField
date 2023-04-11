@@ -9,7 +9,10 @@
 
 void UAbilityInputBindingComponent::SetupBinding(UInputAction* InputAction, int32 AbilityID)
 {
-	ensure(BattleAbilityComponent);
+	if (!BattleAbilityComponent)
+	{
+		EnableBindings();
+	}
 
 	FAbilityInputBinding* AbilityInputBinding = MappedAbilities.Find(InputAction);
 	if (AbilityInputBinding)
@@ -160,12 +163,6 @@ void UAbilityInputBindingComponent::DisableBindings()
 
 void UAbilityInputBindingComponent::OnAbilityInputPressed(UInputAction* InputAction)
 {
-	// The AbilitySystemComponent may not have been valid when we first bound input... try again.
-	if (!BattleAbilityComponent)
-	{
-		EnableBindings();
-	}
-
 	if (BattleAbilityComponent)
 	{
 		FAbilityInputBinding* FoundBinding = MappedAbilities.Find(InputAction);

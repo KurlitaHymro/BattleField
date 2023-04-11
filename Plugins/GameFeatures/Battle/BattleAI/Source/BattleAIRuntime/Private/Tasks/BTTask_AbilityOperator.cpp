@@ -2,9 +2,9 @@
 
 
 #include "Tasks/BTTask_AbilityOperator.h"
+#include "BattleCharacter.h"
 #include "BattleAbilitySystemComponent.h"
 #include "AIController.h"
-//#include "BattleCharacter.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTTask_AbilityOperator)
 
@@ -26,11 +26,25 @@ EBTNodeResult::Type UBTTask_AbilityOperator::ExecuteTask(UBehaviorTreeComponent&
 	MyOwnerComp = &OwnerComp;
 	if (AbilityType && MyController && MyController->GetPawn())
 	{
-		//ACharacter* const MyCharacter = Cast<ACharacter>(MyController->GetPawn());
-
+		ABattleCharacter* const MyCharacter = Cast<ABattleCharacter>(MyController->GetPawn());
+		UBattleAbilitySystemComponent* const AbilitySystemComponent = Cast<UBattleAbilitySystemComponent>(MyCharacter->GetAbilitySystemComponent());
+	
+		auto AbilityID = AbilitySystemComponent->FindAbilityByType(AbilityType);
+		if (AbilityID)
+		{
+			if (bReverse)
+			{
+				AbilitySystemComponent->AbilityLocalInputReleased(AbilityID);
+			}
+			else
+			{
+				AbilitySystemComponent->AbilityLocalInputPressed(AbilityID);
+			}
+		}
+		
 	}
 
-	return EBTNodeResult::Type();
+	return Result;
 }
 
 EBTNodeResult::Type UBTTask_AbilityOperator::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

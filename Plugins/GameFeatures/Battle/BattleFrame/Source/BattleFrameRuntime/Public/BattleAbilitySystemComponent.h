@@ -34,6 +34,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	int32 SynchronousLoadAbility(TSoftClassPtr<UGameplayAbility> AbilityType);
 
+public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void RemoveAbility(int32 AbilityID);
 
@@ -43,8 +44,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void DisableAbility(int32 AbilityID);
 
+public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	FBattleAbilityEntry FindAbilityInfo(int32 AbilityID);
+	int32 FindAbilityByType(TSoftClassPtr<UGameplayAbility> AbilityType);
 
 private:
 	UPROPERTY(transient)

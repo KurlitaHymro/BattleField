@@ -21,9 +21,9 @@ void ACRCharacter::PreInitializeComponents()
 // Called when the game starts or when spawned
 void ACRCharacter::BeginPlay()
 {
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, UGameFrameworkComponentManager::NAME_GameActorReady);
-
 	Super::BeginPlay();
+
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, UGameFrameworkComponentManager::NAME_GameActorReady);
 }
 
 // Called when the game ends
