@@ -4,19 +4,24 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+void UMovementAttributeSet::InitFromMetaDataTable(const UDataTable* DataTable)
+{
+	Super::InitFromMetaDataTable(DataTable);
+
+	SpeedSync(MoveSpeed.GetCurrentValue());
+}
+
 void UMovementAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
 {
 	Super::PostAttributeChange(Attribute, OldValue, NewValue);
 
+	float NewSpeed = MoveSpeed.GetCurrentValue();
 	if (Attribute == GetMoveSpeedRateAttribute())
 	{
-		float speed = MoveSpeed.GetBaseValue() * NewValue;
-		SpeedSync(speed);
+		NewSpeed += MoveSpeed.GetBaseValue() * (NewValue - OldValue);
+		MoveSpeed.SetCurrentValue(NewSpeed);
 	}
-	else if (Attribute == GetMoveSpeedAttribute())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Try To Change Speed Current Value %f"), OldValue);
-	}
+	SpeedSync(NewSpeed);
 }
 
 void UMovementAttributeSet::SpeedSync(float NewSpeed)

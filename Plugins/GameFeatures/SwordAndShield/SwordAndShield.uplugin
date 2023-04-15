@@ -25,6 +25,10 @@
 		{
 			"Name": "BattleAI",
 			"Enabled": true
+		},
+		{
+			"Name": "BattleFeature",
+			"Enabled": true
 		}
 	]
 }

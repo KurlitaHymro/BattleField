@@ -21,8 +21,6 @@ UBTTask_AbilityOperator::UBTTask_AbilityOperator(const FObjectInitializer& Objec
 EBTNodeResult::Type UBTTask_AbilityOperator::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* const MyController = OwnerComp.GetAIOwner();
-	EBTNodeResult::Type Result = EBTNodeResult::Failed;
-
 	MyOwnerComp = &OwnerComp;
 	if (AbilityType && MyController && MyController->GetPawn())
 	{
@@ -40,21 +38,22 @@ EBTNodeResult::Type UBTTask_AbilityOperator::ExecuteTask(UBehaviorTreeComponent&
 			{
 				AbilitySystemComponent->AbilityLocalInputPressed(AbilityID);
 			}
+			return EBTNodeResult::Succeeded;
 		}
 		
 	}
 
-	return Result;
+	return EBTNodeResult::Failed;
 }
 
 EBTNodeResult::Type UBTTask_AbilityOperator::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	return EBTNodeResult::Type();
+	return Super::AbortTask(OwnerComp, NodeMemory);
 }
 
 FString UBTTask_AbilityOperator::GetStaticDescription() const
 {
-	return FString();
+	return FString::Printf(TEXT("%s: %s"), bReverse ? TEXT("Released") : TEXT("Pressed"), *AbilityType.GetAssetName());
 }
 
 

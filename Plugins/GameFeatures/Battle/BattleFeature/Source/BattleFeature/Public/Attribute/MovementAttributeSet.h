@@ -27,6 +27,8 @@ public:
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(MoveSpeedRate)
 
 protected:
+	virtual void InitFromMetaDataTable(const UDataTable* DataTable) override;
+
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 
 private:

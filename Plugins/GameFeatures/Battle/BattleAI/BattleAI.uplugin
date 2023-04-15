@@ -26,7 +26,7 @@
 	"BuiltInInitialFeatureState": "Active",
 	"Plugins": [
 		{
-			"Name": "GameplayAbilities",
+			"Name": "BattleFeature",
 			"Enabled": true
 		}
 	]
