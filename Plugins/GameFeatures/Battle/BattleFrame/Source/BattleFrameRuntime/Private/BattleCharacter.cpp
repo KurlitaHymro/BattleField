@@ -35,6 +35,11 @@ void ABattleCharacter::PreInitializeComponents()
     Super::PreInitializeComponents();
 }
 
+float ABattleCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+    return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+}
+
 UAbilitySystemComponent* ABattleCharacter::GetAbilitySystemComponent() const
 {
     return AbilitySystemComponent;

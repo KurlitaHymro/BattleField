@@ -35,10 +35,16 @@ protected:
 	virtual void PreInitializeComponents() override;
 
 public:
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+public:
 	// IAbilitySystemInterface - Returns our Ability System Component. 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
 	class UAbilitySystemComponent* AbilitySystemComponent;
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TArray<class UStaticMeshComponent*> Weapons;
 };
