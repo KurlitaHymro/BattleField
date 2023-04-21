@@ -10,26 +10,14 @@
  * 
  */
 
-//USTRUCT()
-//struct FWeaponAnimHit
-//{
-//	GENERATED_BODY()
-//
-//	UPROPERTY(EditAnywhere, Category = "Weapon")
-//	UStaticMeshComponent* WeaponMesh;
-//
-//	UPROPERTY(EditAnywhere, Category = "Weapon")
-//	TArray<FName> HitPoint;
-//};
-
 UCLASS()
 class BATTLEFRAMERUNTIME_API UAnimNotifyState_BattleAnimHit : public UAnimNotifyState
 {
 	GENERATED_BODY()
 
 public:
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	TArray<TArray<FName>> HitPoint;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FName HitPoint;
 
 protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
@@ -41,5 +29,10 @@ protected:
 private:
 	class ABattleCharacter* OwnerCharacter;
 
-	TArray<TArray<FVector>> WeaponSocketsLocations;
+	FVector WeaponSocketLocation;
+
+	TArray<AActor*> HitActors;
+
+private:
+	void UpdateHitResult(TArray<FHitResult> AllHitResult);
 };

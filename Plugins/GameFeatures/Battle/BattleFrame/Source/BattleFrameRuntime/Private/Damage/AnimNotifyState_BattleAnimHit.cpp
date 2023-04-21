@@ -10,20 +10,9 @@ void UAnimNotifyState_BattleAnimHit::NotifyBegin(USkeletalMeshComponent* MeshCom
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 
 	OwnerCharacter = Cast<ABattleCharacter>(MeshComp->GetOwner());
+	WeaponSocketLocation = OwnerCharacter->Weapons[0]->GetSocketLocation(HitPoint); // TODO 用新的武器Actor
 
-	HitPoint = { {FName("Blade0"), FName("Blade1")}, { } };
-
-	WeaponSocketsLocations = { };
-	for (int32 WeaponID = 0; WeaponID < OwnerCharacter->Weapons.Num(); WeaponID++)
-	{
-		TArray<FVector> WeaponSocket;
-		for (int32 SocketID = 0; SocketID < HitPoint[WeaponID].Num(); SocketID++)
-		{
-			FVector SocketLocation = OwnerCharacter->Weapons[WeaponID]->GetSocketLocation(HitPoint[WeaponID][SocketID]);
-			WeaponSocket.Emplace(SocketLocation);
-		}
-		WeaponSocketsLocations.Emplace(WeaponSocket);
-	}
+	HitActors.Empty();
 }
 
 void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, float FrameDeltaTime)
@@ -34,29 +23,48 @@ void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* Me
 
 	TArray<AActor*> HitTargetIgnore;
 
-	TArray<FHitResult> hitResult;
+	TArray<FHitResult> TickAllHitResult;
 
-	for (int32 WeaponID = 0; WeaponID < OwnerCharacter->Weapons.Num(); WeaponID++)
-	{
-		for (int32 SocketID = 0; SocketID < HitPoint[WeaponID].Num(); SocketID++)
-		{
-			FVector SocketLocation = OwnerCharacter->Weapons[WeaponID]->GetSocketLocation(HitPoint[WeaponID][SocketID]);
-			UKismetSystemLibrary::BoxTraceMulti(OwnerCharacter->GetWorld(),
-				WeaponSocketsLocations[WeaponID][SocketID], SocketLocation,
-				FVector(1, 4, 20), // 1，刃宽，刃长
-				OwnerCharacter->Weapons[WeaponID]->GetComponentRotation(),
-				ETraceTypeQuery::TraceTypeQuery4,
-				false,
-				HitTargetIgnore,
-				EDrawDebugTrace::ForDuration,
-				hitResult,
-				true);
-			WeaponSocketsLocations[WeaponID][SocketID] = SocketLocation;
-		}
-	}
+	FVector SocketLocation = OwnerCharacter->Weapons[0]->GetSocketLocation(HitPoint);
+	UKismetSystemLibrary::BoxTraceMulti(OwnerCharacter->GetWorld(),
+		WeaponSocketLocation, SocketLocation,
+		FVector(1, 4, 20), // 密度，刃宽，刃长
+		OwnerCharacter->Weapons[0]->GetComponentRotation(),
+		ETraceTypeQuery::TraceTypeQuery4,
+		false,
+		HitTargetIgnore,
+		EDrawDebugTrace::ForDuration,
+		TickAllHitResult,
+		true);
+	WeaponSocketLocation = SocketLocation;
+
+	UpdateHitResult(TickAllHitResult);
 }
 
 void UAnimNotifyState_BattleAnimHit::NotifyEnd(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation)
 {
 	Super::NotifyEnd(MeshComp, Animation);
+
+	HitActors.Empty();
+}
+
+void UAnimNotifyState_BattleAnimHit::UpdateHitResult(TArray<FHitResult> AllHitResult)
+{
+	for (auto HitResult : AllHitResult)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActors.Contains(HitActor))
+		{
+			continue;
+		}
+		else
+		{
+			HitActors.Add(HitActor);
+			ABattleCharacter* HitCharacter = Cast<ABattleCharacter>(HitActor);
+			if (HitCharacter)
+			{
+				OwnerCharacter->CauseDamage(10.f, FDamageEvent(), HitCharacter->Controller, nullptr);
+			}
+		}
+	}
 }

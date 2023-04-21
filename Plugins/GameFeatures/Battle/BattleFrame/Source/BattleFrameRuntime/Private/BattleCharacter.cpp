@@ -37,10 +37,19 @@ void ABattleCharacter::PreInitializeComponents()
 
 float ABattleCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-    return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+    float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+    return ActualDamage;
+}
+
+float ABattleCharacter::CauseDamage_Implementation(float Damage, FDamageEvent const& DamageEvent, AController* EventVictim, AActor* DamageCauser)
+{
+    float ActualDamage = Damage;
+
+    return ActualDamage;
 }
 
 UAbilitySystemComponent* ABattleCharacter::GetAbilitySystemComponent() const
 {
-    return AbilitySystemComponent;
+    return AbilitySystemComponent; 
 }

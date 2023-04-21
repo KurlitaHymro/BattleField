@@ -37,6 +37,10 @@ protected:
 public:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION(Category = "Damage", BlueprintNativeEvent)
+	float CauseDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventVictim, AActor* DamageCauser);
+	virtual float CauseDamage_Implementation(float Damage, struct FDamageEvent const& DamageEvent, AController* EventVictim, AActor* DamageCauser);
+
 public:
 	// IAbilitySystemInterface - Returns our Ability System Component. 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
