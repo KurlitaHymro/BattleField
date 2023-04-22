@@ -7,15 +7,15 @@
 #include "MeleeWeapon.generated.h"
 
 USTRUCT()
-struct FWeaponAnimHit
+struct FWeaponHitSlot
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
-	UStaticMeshComponent* WeaponMesh;
+	FName HitPoint;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
-	TArray<FName> HitPoint;
+	FVector TraceSize;
 };
 
 UCLASS()
@@ -35,4 +35,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY()
+	TObjectPtr<USceneComponent> Root;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	TObjectPtr<UMeshComponent> WeaponMeshComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	TArray<FWeaponHitSlot> HitPoints;
 };

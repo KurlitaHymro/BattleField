@@ -29,6 +29,8 @@ protected:
 private:
 	class ABattleCharacter* OwnerCharacter;
 
+	class AMeleeWeapon* Weapon;
+
 	FVector WeaponSocketLocation;
 
 	TArray<AActor*> HitActors;

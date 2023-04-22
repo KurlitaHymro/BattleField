@@ -50,5 +50,5 @@ protected:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	TArray<class UStaticMeshComponent*> Weapons;
+	class AActor* Weapon;
 };

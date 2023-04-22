@@ -3,6 +3,7 @@
 
 #include "Damage/AnimNotifyState_BattleAnimHit.h"
 #include "BattleCharacter.h"
+#include "MeleeWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 void UAnimNotifyState_BattleAnimHit::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
@@ -10,7 +11,16 @@ void UAnimNotifyState_BattleAnimHit::NotifyBegin(USkeletalMeshComponent* MeshCom
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 
 	OwnerCharacter = Cast<ABattleCharacter>(MeshComp->GetOwner());
-	WeaponSocketLocation = OwnerCharacter->Weapons[0]->GetSocketLocation(HitPoint); // TODO 用新的武器Actor
+	if (!OwnerCharacter)
+	{
+		return;
+	}
+
+	Weapon = Cast<AMeleeWeapon>(OwnerCharacter->Weapon);
+	if (Weapon)
+	{
+		WeaponSocketLocation = Weapon->WeaponMeshComponent->GetSocketLocation(HitPoint);
+	}
 
 	HitActors.Empty();
 }
@@ -19,17 +29,22 @@ void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* Me
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime);
 
+	if (!OwnerCharacter || !Weapon)
+	{
+		return;
+	}
+
 	TArray<AActor*> HitTarget;
 
 	TArray<AActor*> HitTargetIgnore;
 
 	TArray<FHitResult> TickAllHitResult;
 
-	FVector SocketLocation = OwnerCharacter->Weapons[0]->GetSocketLocation(HitPoint);
+	FVector SocketLocation = Weapon->WeaponMeshComponent->GetSocketLocation(HitPoint);
 	UKismetSystemLibrary::BoxTraceMulti(OwnerCharacter->GetWorld(),
 		WeaponSocketLocation, SocketLocation,
-		FVector(1, 4, 20), // 密度，刃宽，刃长
-		OwnerCharacter->Weapons[0]->GetComponentRotation(),
+		Weapon->HitPoints[0].TraceSize, // 密度，刃宽，刃长
+		Weapon->WeaponMeshComponent->GetComponentRotation(),
 		ETraceTypeQuery::TraceTypeQuery4,
 		false,
 		HitTargetIgnore,
