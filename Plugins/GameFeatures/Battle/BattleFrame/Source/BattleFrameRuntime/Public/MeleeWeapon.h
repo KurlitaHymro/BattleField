@@ -14,8 +14,8 @@ struct FWeaponHitSlot
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	FName HitPoint;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	FVector TraceSize;
+	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (DisplayName = "Density | Land | Length"))
+	FVector TraceHalfSize;
 };
 
 UCLASS()
@@ -38,7 +38,7 @@ public:
 	UPROPERTY()
 	TObjectPtr<USceneComponent> Root;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon")
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon")
 	TObjectPtr<UMeshComponent> WeaponMeshComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")

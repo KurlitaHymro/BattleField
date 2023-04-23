@@ -34,16 +34,23 @@ void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* Me
 		return;
 	}
 
-	TArray<AActor*> HitTarget;
-
+	// TODO: ºöÂÔTag
 	TArray<AActor*> HitTargetIgnore;
+	HitTargetIgnore.Add(OwnerCharacter);
 
-	TArray<FHitResult> TickAllHitResult;
+	
 
 	FVector SocketLocation = Weapon->WeaponMeshComponent->GetSocketLocation(HitPoint);
+	if (SocketLocation.FVector::IsNearlyZero() || SocketLocation.Equals(WeaponSocketLocation))
+	{
+		return;
+	}
+
+	/* µ¶¹â¼ì²â */
+	TArray<FHitResult> TickAllHitResult;
 	UKismetSystemLibrary::BoxTraceMulti(OwnerCharacter->GetWorld(),
 		WeaponSocketLocation, SocketLocation,
-		Weapon->HitPoints[0].TraceSize, // ÃÜ¶È£¬ÈÐ¿í£¬ÈÐ³¤
+		Weapon->HitPoints[0].TraceHalfSize, // ÃÜ¶È£¬ÈÐ¿í£¬ÈÐ³¤
 		Weapon->WeaponMeshComponent->GetComponentRotation(),
 		ETraceTypeQuery::TraceTypeQuery4,
 		false,
