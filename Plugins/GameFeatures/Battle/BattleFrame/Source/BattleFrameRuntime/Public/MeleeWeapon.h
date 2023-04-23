@@ -6,18 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "MeleeWeapon.generated.h"
 
-USTRUCT()
-struct FWeaponHitSlot
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	FName HitPoint;
-
-	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (DisplayName = "Density | Land | Length"))
-	FVector TraceHalfSize;
-};
-
 UCLASS()
 class BATTLEFRAMERUNTIME_API AMeleeWeapon : public AActor
 {
@@ -38,9 +26,9 @@ public:
 	UPROPERTY()
 	TObjectPtr<USceneComponent> Root;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Weapon")
+	UPROPERTY(Category = "Weapon", VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMeshComponent> WeaponMeshComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	TArray<FWeaponHitSlot> HitPoints;
+	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (DisplayName = "Density Land Length"))
+	TMap<FName, FVector> HitPoints;
 };

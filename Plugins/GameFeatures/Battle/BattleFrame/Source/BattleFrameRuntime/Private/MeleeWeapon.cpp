@@ -12,6 +12,7 @@ AMeleeWeapon::AMeleeWeapon()
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 
+	WeaponMeshComponent = CreateDefaultSubobject<UMeshComponent>(TEXT("Mesh"));
 }
 
 // Called when the game starts or when spawned

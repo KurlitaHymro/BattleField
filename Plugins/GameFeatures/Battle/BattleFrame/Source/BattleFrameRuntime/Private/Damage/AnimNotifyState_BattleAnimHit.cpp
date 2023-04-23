@@ -6,7 +6,9 @@
 #include "MeleeWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-void UAnimNotifyState_BattleAnimHit::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
+
+
+void UAnimNotifyState_BattleAnimHit::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 
@@ -19,17 +21,22 @@ void UAnimNotifyState_BattleAnimHit::NotifyBegin(USkeletalMeshComponent* MeshCom
 	Weapon = Cast<AMeleeWeapon>(OwnerCharacter->Weapon);
 	if (Weapon)
 	{
-		WeaponSocketLocation = Weapon->WeaponMeshComponent->GetSocketLocation(HitPoint);
+		HitPointInfo = Weapon->HitPoints.Find(HitPoint);
+		if (HitPointInfo)
+		{
+			HitPointHalfSize = *HitPointInfo;
+			HitPointLocation = Weapon->WeaponMeshComponent->GetSocketLocation(HitPoint);
+		}
 	}
 
 	HitActors.Empty();
 }
 
-void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, float FrameDeltaTime)
+void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime);
 
-	if (!OwnerCharacter || !Weapon)
+	if (!OwnerCharacter || !HitPointInfo)
 	{
 		return;
 	}
@@ -40,8 +47,8 @@ void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* Me
 
 	
 
-	FVector SocketLocation = Weapon->WeaponMeshComponent->GetSocketLocation(HitPoint);
-	if (SocketLocation.FVector::IsNearlyZero() || SocketLocation.Equals(WeaponSocketLocation))
+	FVector CurrentLocation = Weapon->WeaponMeshComponent->GetSocketLocation(HitPoint);
+	if (CurrentLocation.IsNearlyZero() || CurrentLocation.Equals(HitPointLocation))
 	{
 		return;
 	}
@@ -49,8 +56,9 @@ void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* Me
 	/* 刀光检测 */
 	TArray<FHitResult> TickAllHitResult;
 	UKismetSystemLibrary::BoxTraceMulti(OwnerCharacter->GetWorld(),
-		WeaponSocketLocation, SocketLocation,
-		Weapon->HitPoints[0].TraceHalfSize, // 密度，刃宽，刃长
+		HitPointLocation, // 起点位置
+		CurrentLocation, // 重点点位置
+		HitPointHalfSize, // 密度，刃宽，刃长
 		Weapon->WeaponMeshComponent->GetComponentRotation(),
 		ETraceTypeQuery::TraceTypeQuery4,
 		false,
@@ -58,16 +66,16 @@ void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* Me
 		EDrawDebugTrace::ForDuration,
 		TickAllHitResult,
 		true);
-	WeaponSocketLocation = SocketLocation;
+	HitPointLocation = CurrentLocation;
 
 	UpdateHitResult(TickAllHitResult);
 }
 
-void UAnimNotifyState_BattleAnimHit::NotifyEnd(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation)
+void UAnimNotifyState_BattleAnimHit::NotifyEnd(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation);
 
-	HitActors.Empty();
+	HitPointInfo = nullptr;
 }
 
 void UAnimNotifyState_BattleAnimHit::UpdateHitResult(TArray<FHitResult> AllHitResult)
