@@ -3,11 +3,15 @@
 
 #include "BattleCharacter.h"
 #include "BattleAbilitySystemComponent.h"
+#include "EquipmentSystem/EquipmentSystemComponent.h"
 
 // Sets default values
 ABattleCharacter::ABattleCharacter()
 {
     AbilitySystemComponent = CreateDefaultSubobject<UBattleAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+    AbilitySystemComponent->SetIsReplicated(true);
+
+    EquipmentSystemComponent = CreateDefaultSubobject<UEquipmentSystemComponent>(TEXT("EquipmentSystemComponent"));
 }
 
 void ABattleCharacter::BeginPlay()
@@ -52,4 +56,9 @@ float ABattleCharacter::CauseDamage_Implementation(float Damage, FDamageEvent co
 UAbilitySystemComponent* ABattleCharacter::GetAbilitySystemComponent() const
 {
     return AbilitySystemComponent; 
+}
+
+UEquipmentSystemComponent* ABattleCharacter::GetEquipmentSystemComponent() const
+{
+    return EquipmentSystemComponent;
 }

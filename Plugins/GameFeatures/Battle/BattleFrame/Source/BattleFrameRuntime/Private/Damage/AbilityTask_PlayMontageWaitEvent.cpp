@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Damage/AbilityTask_PlayMontageWaitEvent.h"
+#include "DamageSystem/AbilityTask_PlayMontageWaitEvent.h"
 #include "AbilitySystemGlobals.h"
 #include "AbilitySystemComponent.h"
 #include "GameFramework/Character.h"

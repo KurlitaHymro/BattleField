@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Damage/AnimNotifyState_BattleAnimHit.h"
+#include "DamageSystem/AnimNotifyState_BattleAnimHit.h"
 #include "BattleCharacter.h"
-#include "MeleeWeapon.h"
+#include "EquipmentSystem/EquipmentSystemComponent.h"
+#include "EquipmentSystem/MoveDamageWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -18,14 +19,14 @@ void UAnimNotifyState_BattleAnimHit::NotifyBegin(USkeletalMeshComponent* MeshCom
 		return;
 	}
 
-	Weapon = Cast<AMeleeWeapon>(OwnerCharacter->Weapon);
+	Weapon = Cast<AMoveDamageWeapon>(OwnerCharacter->GetEquipmentSystemComponent()->FindEquipFromSlot(EquipSlot));
 	if (Weapon)
 	{
 		HitPointInfo = Weapon->HitPoints.Find(HitPoint);
 		if (HitPointInfo)
 		{
 			HitPointHalfSize = *HitPointInfo;
-			HitPointLocation = Weapon->WeaponMeshComponent->GetSocketLocation(HitPoint);
+			HitPointLocation = Weapon->GetMesh()->GetSocketLocation(HitPoint);
 		}
 	}
 
@@ -47,7 +48,7 @@ void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* Me
 
 	
 
-	FVector CurrentLocation = Weapon->WeaponMeshComponent->GetSocketLocation(HitPoint);
+	FVector CurrentLocation = Weapon->GetMesh()->GetSocketLocation(HitPoint);
 	if (CurrentLocation.IsNearlyZero() || CurrentLocation.Equals(HitPointLocation))
 	{
 		return;
@@ -59,7 +60,7 @@ void UAnimNotifyState_BattleAnimHit::NotifyTick(class USkeletalMeshComponent* Me
 		HitPointLocation, // 起点位置
 		CurrentLocation, // 重点点位置
 		HitPointHalfSize, // 密度，刃宽，刃长
-		Weapon->WeaponMeshComponent->GetComponentRotation(),
+		Weapon->GetMesh()->GetComponentRotation(),
 		ETraceTypeQuery::TraceTypeQuery4,
 		false,
 		HitTargetIgnore,

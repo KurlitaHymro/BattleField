@@ -42,11 +42,15 @@ public:
 	virtual float CauseDamage_Implementation(float Damage, struct FDamageEvent const& DamageEvent, AController* EventVictim, AActor* DamageCauser);
 
 public:
-	// IAbilitySystemInterface - Returns our Ability System Component. 
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UFUNCTION(Category = "Equipment", BlueprintCallable)
+	virtual class UEquipmentSystemComponent* GetEquipmentSystemComponent() const;
 
 protected:
 	class UAbilitySystemComponent* AbilitySystemComponent;
+
+	class UEquipmentSystemComponent* EquipmentSystemComponent;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")

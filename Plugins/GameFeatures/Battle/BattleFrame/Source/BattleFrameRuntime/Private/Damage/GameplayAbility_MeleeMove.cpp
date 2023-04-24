@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Damage/GameplayAbility_MeleeMove.h"
+#include "DamageSystem/GameplayAbility_MeleeMove.h"
 #include "BattleCharacter.h"
 #include "AbilitySystemComponent.h"
 

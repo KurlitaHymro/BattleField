@@ -17,6 +17,9 @@ class BATTLEFRAMERUNTIME_API UAnimNotifyState_BattleAnimHit : public UAnimNotify
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FName EquipSlot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName HitPoint;
 
 protected:
@@ -29,7 +32,7 @@ protected:
 private:
 	class ABattleCharacter* OwnerCharacter;
 
-	class AMeleeWeapon* Weapon;
+	class AMoveDamageWeapon* Weapon;
 
 	FVector* HitPointInfo;
 
