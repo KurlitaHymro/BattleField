@@ -6,14 +6,40 @@
 #include "AttributeSet.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AttackAttributeSet)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(DefenseAttributeSet)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(HealthAttributeSet)
+
+// -------------------------------------------------------------------------
+//	Helper macros for declaring attribute captures 
+// -------------------------------------------------------------------------
+
+#define DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(P, T) \
+	FProperty* T##P##Property; \
+	FGameplayEffectAttributeCaptureDefinition T##P##Def; \
+
+#define DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(S, P, T, B) \
+{ \
+	T##P##Property = FindFieldChecked<FProperty>(S::StaticClass(), GET_MEMBER_NAME_CHECKED(S, P)); \
+	T##P##Def = FGameplayEffectAttributeCaptureDefinition(T##P##Property, EGameplayEffectAttributeCaptureSource::T, B); \
+}
 
 struct BattleDamageStatics
 {
-	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPower);
+	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(AttackPower, Source);
+	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(MeleeMoveFactor, Source);
+
+	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(DefensePower, Target);
+	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(Health, Target);
 
 	BattleDamageStatics()
 	{
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAttackAttributeSet, AttackPower, Source, true);
+		// 伤害来源的属性
+		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UAttackAttributeSet, AttackPower, Source, true);
+		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UAttackAttributeSet, MeleeMoveFactor, Source, true);
+
+		// 伤害目标的属性
+		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UDefenseAttributeSet, DefensePower, Target, true);
+		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UHealthAttributeSet, Health, Target, true);
 	}
 };
 
@@ -25,7 +51,10 @@ static const BattleDamageStatics& DamageStatics()
 
 UBattleDamageExecutionCalculation::UBattleDamageExecutionCalculation()
 {
-	RelevantAttributesToCapture.Add(DamageStatics().AttackPowerDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceAttackPowerDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceMeleeMoveFactorDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetDefensePowerDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetHealthDef);
 }
 
 void UBattleDamageExecutionCalculation::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -48,15 +77,23 @@ void UBattleDamageExecutionCalculation::Execute_Implementation(const FGameplayEf
 
 	// --------------------------------------
 	//	CauseDamage = MeleeMoveFactos * AttackPower
-	//	ApplyCauseDamage = CauseDamage - DefensivePower
+	//	ApplyCauseDamage = CauseDamage * (DefensePower / (DefensePower + 100))
 	// --------------------------------------
 
-	float AttackPower = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().AttackPowerDef, EvaluationParameters, AttackPower);
+	float SourceAttackPower = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceAttackPowerDef, EvaluationParameters, SourceAttackPower);
 
-	float Damage = AttackPower;
-	if (Damage > 0.f)
+	float SourceMeleeMoveFactor = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceMeleeMoveFactorDef, EvaluationParameters, SourceMeleeMoveFactor);
+
+	float CauseDamage = SourceAttackPower * SourceMeleeMoveFactor;
+
+	float TargetDefensePower = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetDefensePowerDef, EvaluationParameters, TargetDefensePower);
+
+	float ApplyDamage = CauseDamage * (TargetDefensePower / (TargetDefensePower + 100.f));
+	if (ApplyDamage > 0.f)
 	{
-		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().AttackPowerProperty, EGameplayModOp::Additive, Damage));
+		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().TargetHealthProperty, EGameplayModOp::Additive, -ApplyDamage));
 	}
 }

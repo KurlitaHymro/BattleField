@@ -71,5 +71,17 @@ int32 UBattleAbilitySystemComponent::FindAbilityByType(TSoftClassPtr<UGameplayAb
 	return BattleAbilitySystemComponent_Impl::InvalidID;
 }
 
+void UBattleAbilitySystemComponent::HandleHitEvent(AActor* Target)
+{
+	AActor* Instigator = GetOwner();
+	if (IsValidChecked(this) && IsValid(Instigator) && IsValid(Target))
+	{
+		FGameplayEventData Payload;
+		Payload.Instigator = Instigator;
+		Payload.Target = Target;
+		HandleGameplayEvent(FGameplayTag::EmptyTag, &Payload);
+	}
+}
+
 
 

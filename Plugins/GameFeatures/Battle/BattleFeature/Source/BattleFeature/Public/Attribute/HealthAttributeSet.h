@@ -16,15 +16,15 @@ class BATTLEFEATURE_API UHealthAttributeSet : public UAttributeSet
 	GENERATED_BODY()
 
 public:
-	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UHealthAttributeSet, Hp)
-	GAMEPLAYATTRIBUTE_VALUE_GETTER(Hp)
-	GAMEPLAYATTRIBUTE_VALUE_SETTER(Hp)
-	GAMEPLAYATTRIBUTE_VALUE_INITTER(Hp)
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UHealthAttributeSet, Health)
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(Health)
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(Health)
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(Health)
 
-	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UHealthAttributeSet, MaxHp)
-	GAMEPLAYATTRIBUTE_VALUE_GETTER(MaxHp)
-	GAMEPLAYATTRIBUTE_VALUE_SETTER(MaxHp)
-	GAMEPLAYATTRIBUTE_VALUE_INITTER(MaxHp)
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UHealthAttributeSet, MaxHealth)
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(MaxHealth)
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(MaxHealth)
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(MaxHealth)
 
 protected:
 	virtual void InitFromMetaDataTable(const UDataTable* DataTable) override;
@@ -34,11 +34,11 @@ protected:
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = true))
-	FGameplayAttributeData Hp;
+	friend struct BattleDamageStatics;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = true))
-	FGameplayAttributeData MaxHp;
+	UPROPERTY(BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Health;
 
-
+	UPROPERTY(BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MaxHealth;
 };

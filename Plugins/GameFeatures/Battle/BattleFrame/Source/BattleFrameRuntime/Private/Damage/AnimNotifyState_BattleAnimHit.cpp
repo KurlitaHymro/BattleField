@@ -3,6 +3,7 @@
 
 #include "DamageSystem/AnimNotifyState_BattleAnimHit.h"
 #include "BattleCharacter.h"
+#include "BattleAbilitySystemComponent.h"
 #include "EquipmentSystem/EquipmentSystemComponent.h"
 #include "EquipmentSystem/MoveDamageWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -81,6 +82,7 @@ void UAnimNotifyState_BattleAnimHit::NotifyEnd(class USkeletalMeshComponent* Mes
 
 void UAnimNotifyState_BattleAnimHit::UpdateHitResult(TArray<FHitResult> AllHitResult)
 {
+	UBattleAbilitySystemComponent* ASC = Cast<UBattleAbilitySystemComponent>(OwnerCharacter->GetAbilitySystemComponent());
 	for (auto HitResult : AllHitResult)
 	{
 		AActor* HitActor = HitResult.GetActor();
@@ -91,10 +93,9 @@ void UAnimNotifyState_BattleAnimHit::UpdateHitResult(TArray<FHitResult> AllHitRe
 		else
 		{
 			HitActors.Add(HitActor);
-			ABattleCharacter* HitCharacter = Cast<ABattleCharacter>(HitActor);
-			if (HitCharacter)
+			if (ASC != nullptr)
 			{
-				OwnerCharacter->CauseDamage(10.f, FDamageEvent(), HitCharacter->Controller, nullptr);
+				ASC->HandleHitEvent(HitActor);
 			}
 		}
 	}

@@ -21,7 +21,18 @@ public:
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(AttackPower)
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(AttackPower)
 
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = true))
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UAttackAttributeSet, MeleeMoveFactor)
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(MeleeMoveFactor)
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(MeleeMoveFactor)
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(MeleeMoveFactor)
+
+private:
+	friend struct BattleDamageStatics;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData AttackPower;
+
+	// 武器挥舞命中时，玩家当前的招式伤害系数。
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MeleeMoveFactor;
 };

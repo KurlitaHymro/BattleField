@@ -48,6 +48,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	int32 FindAbilityByType(TSoftClassPtr<UGameplayAbility> AbilityType);
 
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void HandleHitEvent(AActor* Target);
+
 private:
 	UPROPERTY(transient)
 	TMap<int32, FBattleAbilityEntry> MappedAbilities;
