@@ -40,6 +40,9 @@ public:
 	void TakeOffEquipFromSlot(FName EquipSlot);
 
 	UFUNCTION(BlueprintCallable)
+	void TakeOffEquipAll();
+
+	UFUNCTION(BlueprintCallable)
 	class AEquipBase* FindEquipFromSlot(FName EquipSlot);
 
 private:

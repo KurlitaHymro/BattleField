@@ -19,8 +19,10 @@ public:
 	// Sets default values for this actor's properties
 	AEquipBase();
 
+	UPROPERTY(BlueprintAssignable)
 	FPutOnEquipDelegate OnPutOnDelegate;
 
+	UPROPERTY(BlueprintAssignable)
 	FTakeOffEquipDelegate OnTakeOffDelegate;
 
 protected:

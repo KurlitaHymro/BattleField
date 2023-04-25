@@ -7,6 +7,8 @@
 #include "AbilitySystemInterface.h"
 #include "BattleCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDieDelegate, ABattleCharacter*, SelfCharacter);
+
 /**
  * 
  */
@@ -35,13 +37,6 @@ protected:
 	virtual void PreInitializeComponents() override;
 
 public:
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
-	UFUNCTION(Category = "Damage", BlueprintNativeEvent)
-	float CauseDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventVictim, AActor* DamageCauser);
-	virtual float CauseDamage_Implementation(float Damage, struct FDamageEvent const& DamageEvent, AController* EventVictim, AActor* DamageCauser);
-
-public:
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	UFUNCTION(Category = "Equipment", BlueprintCallable)
@@ -53,6 +48,14 @@ protected:
 	class UEquipmentSystemComponent* EquipmentSystemComponent;
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	class AActor* Weapon;
+	UPROPERTY(BlueprintAssignable)
+	FCharacterDieDelegate OnBattleCharacterDie;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void Die();
+	virtual void Die_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void Destroy();
+	virtual void Destroy_Implementation();
 };

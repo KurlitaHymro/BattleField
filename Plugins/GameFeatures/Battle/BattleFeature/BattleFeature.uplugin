@@ -33,6 +33,10 @@
 		{
 			"Name": "AbilitiesInput",
 			"Enabled": true
+		},
+		{
+			"Name": "BattleFrame",
+			"Enabled": true
 		}
 	],
 	"BuiltInInitialFeatureState": "Active"

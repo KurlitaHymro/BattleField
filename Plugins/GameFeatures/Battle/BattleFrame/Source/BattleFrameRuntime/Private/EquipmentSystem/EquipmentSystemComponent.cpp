@@ -95,6 +95,14 @@ void UEquipmentSystemComponent::TakeOffEquipFromSlot(FName EquipSlot)
 	}
 }
 
+void UEquipmentSystemComponent::TakeOffEquipAll()
+{
+	for (auto Equip : Equipped)
+	{
+		TakeOffEquipFromSlot(Equip.Key);
+	}
+}
+
 AEquipBase* UEquipmentSystemComponent::FindEquipFromSlot(FName EquipSlot)
 {
 	auto Equip = Equipped.Find(EquipSlot);

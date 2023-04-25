@@ -26,21 +26,22 @@ EBTNodeResult::Type UBTTask_AbilityOperator::ExecuteTask(UBehaviorTreeComponent&
 	{
 		ABattleCharacter* const MyCharacter = Cast<ABattleCharacter>(MyController->GetPawn());
 		UBattleAbilitySystemComponent* const AbilitySystemComponent = Cast<UBattleAbilitySystemComponent>(MyCharacter->GetAbilitySystemComponent());
-	
-		auto AbilityID = AbilitySystemComponent->FindAbilityByType(AbilityType);
-		if (AbilityID)
+		if (AbilitySystemComponent)
 		{
-			if (bReverse)
+			auto AbilityID = AbilitySystemComponent->FindAbilityByType(AbilityType);
+			if (AbilityID != 0)
 			{
-				AbilitySystemComponent->AbilityLocalInputReleased(AbilityID);
+				if (bReverse)
+				{
+					AbilitySystemComponent->AbilityLocalInputReleased(AbilityID);
+				}
+				else
+				{
+					AbilitySystemComponent->AbilityLocalInputPressed(AbilityID);
+				}
+				return EBTNodeResult::Succeeded;
 			}
-			else
-			{
-				AbilitySystemComponent->AbilityLocalInputPressed(AbilityID);
-			}
-			return EBTNodeResult::Succeeded;
 		}
-		
 	}
 
 	return EBTNodeResult::Failed;

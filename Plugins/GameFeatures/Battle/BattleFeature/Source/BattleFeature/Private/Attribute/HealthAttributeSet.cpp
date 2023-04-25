@@ -2,6 +2,7 @@
 
 
 #include "Attribute/HealthAttributeSet.h"
+#include "BattleCharacter.h"
 
 void UHealthAttributeSet::InitFromMetaDataTable(const UDataTable* DataTable)
 {
@@ -11,10 +12,17 @@ void UHealthAttributeSet::InitFromMetaDataTable(const UDataTable* DataTable)
 
 void UHealthAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
-
+	
 }
 
 void UHealthAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
 {
-
+	if (Attribute == GetHealthAttribute())
+	{
+		if (NewValue <= 0.f)
+		{
+			ABattleCharacter* TargetCharacter = GetTypedOuter<ABattleCharacter>();
+			TargetCharacter->Die();
+		}
+	}
 }

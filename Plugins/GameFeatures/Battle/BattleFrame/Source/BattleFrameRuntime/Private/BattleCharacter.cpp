@@ -17,6 +17,8 @@ ABattleCharacter::ABattleCharacter()
 void ABattleCharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+
 }
 
 void ABattleCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -39,20 +41,6 @@ void ABattleCharacter::PreInitializeComponents()
     Super::PreInitializeComponents();
 }
 
-float ABattleCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-    float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-
-    return ActualDamage;
-}
-
-float ABattleCharacter::CauseDamage_Implementation(float Damage, FDamageEvent const& DamageEvent, AController* EventVictim, AActor* DamageCauser)
-{
-    float ActualDamage = Damage;
-
-    return ActualDamage;
-}
-
 UAbilitySystemComponent* ABattleCharacter::GetAbilitySystemComponent() const
 {
     return AbilitySystemComponent; 
@@ -61,4 +49,25 @@ UAbilitySystemComponent* ABattleCharacter::GetAbilitySystemComponent() const
 UEquipmentSystemComponent* ABattleCharacter::GetEquipmentSystemComponent() const
 {
     return EquipmentSystemComponent;
+}
+
+void ABattleCharacter::Die_Implementation()
+{
+    OnBattleCharacterDie.Broadcast(this);
+
+    DetachFromControllerPendingDestroy();
+
+    EquipmentSystemComponent->TakeOffEquipAll();
+
+    GetMesh()->SetSimulatePhysics(true);
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+    FTimerHandle Handle;
+    auto TimerDelegate = FTimerDelegate::CreateUObject(this, &ABattleCharacter::Destroy);
+    GetWorldTimerManager().SetTimer(Handle, TimerDelegate, 5.0f, false);
+}
+
+void ABattleCharacter::Destroy_Implementation()
+{
+    AActor::Destroy();
 }

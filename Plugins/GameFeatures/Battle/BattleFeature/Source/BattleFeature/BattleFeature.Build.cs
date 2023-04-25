@@ -41,6 +41,7 @@ public class BattleFeature : ModuleRules
 				"GameplayAbilities",
 				"GameplayTasks",
 				"GameplayTags",
+				"BattleFrameRuntime",
 				"AbilitiesInputRuntime",
 				"EnhancedInput",
 				// ... add private dependencies that you statically link with here ...	
