@@ -92,6 +92,8 @@ void UEquipmentSystemComponent::TakeOffEquipFromSlot(FName EquipSlot)
 	if (Equip)
 	{
 		Equip->OnTakeOffDelegate.Broadcast(GetPawn<APawn>());
+
+		Equipped.Remove(EquipSlot);
 	}
 }
 
