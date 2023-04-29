@@ -8,8 +8,6 @@
 #include "EquipmentSystem/MoveDamageWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-
-
 void UAnimNotifyState_BattleAnimHit::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);

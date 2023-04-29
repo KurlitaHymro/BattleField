@@ -16,10 +16,10 @@ class BATTLEFRAMERUNTIME_API UAnimNotifyState_BattleAnimHit : public UAnimNotify
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	UPROPERTY(EditAnywhere, Category = "Weapon")
 	FName EquipSlot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	UPROPERTY(EditAnywhere, Category = "Weapon")
 	FName HitPoint;
 
 protected:
