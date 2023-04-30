@@ -28,7 +28,6 @@ public class BattleField : ModuleRules
 			"RenderCore",
 			"SlateCore",
 			"ModularGameplay",
-			"AbilitiesInputRuntime",
 			"BattleFrameRuntime",
 		});
 

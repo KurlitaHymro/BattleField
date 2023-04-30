@@ -31,10 +31,6 @@
 			"Enabled": true
 		},
 		{
-			"Name": "AbilitiesInput",
-			"Enabled": true
-		},
-		{
 			"Name": "BattleFrame",
 			"Enabled": true
 		}

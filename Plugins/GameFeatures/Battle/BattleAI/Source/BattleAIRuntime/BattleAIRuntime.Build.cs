@@ -27,9 +27,8 @@ public class BattleAIRuntime : ModuleRules
 			{
 				"Core",
 				"AIModule",
-				"GameplayTags",
-				"GameplayTasks",
 				"GameplayAbilities",
+				"GameplayTasks",
 				"NavigationSystem",
 				"BattleFrameRuntime",
 				// ... add other public dependencies that you statically link with here ...
