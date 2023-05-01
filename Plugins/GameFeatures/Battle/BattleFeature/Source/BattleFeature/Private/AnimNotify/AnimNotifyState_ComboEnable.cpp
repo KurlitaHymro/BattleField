@@ -12,16 +12,22 @@ void UAnimNotifyState_ComboEnable::NotifyBegin(USkeletalMeshComponent* MeshComp,
 	{
 		OwnerASC = OwnerCharacter->GetAbilitySystemComponent();
 	}
-	if (!OwnerASC || !GameplayEffectClass)
+	if (OwnerASC == nullptr || GameplayEffectClass == nullptr)
 	{
 		return;
 	}
-	Handle = OwnerASC->ApplyGameplayEffectToSelf(Cast<UGameplayEffect>(GameplayEffectClass->ClassDefaultObject), 0, OwnerASC->MakeEffectContext());
+
+	auto GameplayEffectObject = GameplayEffectClass->ClassDefaultObject;
+	auto FGameplayEffectContextHandle = OwnerASC->MakeEffectContext();
+	if (GameplayEffectObject != nullptr && FGameplayEffectContextHandle.IsValid())
+	{
+		Handle = OwnerASC->ApplyGameplayEffectToSelf(Cast<UGameplayEffect>(GameplayEffectObject), 0, FGameplayEffectContextHandle);
+	}
 }
 
 void UAnimNotifyState_ComboEnable::NotifyEnd(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-	if (!OwnerASC)
+	if (OwnerASC == nullptr || !Handle.IsValid())
 	{
 		return;
 	}
