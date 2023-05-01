@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayFrame/GameFeatureAction_AddToWorldBase.h"
+#include "GameFeatureAction_AddToWorld.h"
 #include "Abilities/GameplayAbility.h"
 #include "GameFeatureAction_AddBattleMode.generated.h"
 
@@ -57,7 +57,7 @@ struct FGameplayBattleModeEntry
  * 
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "Add Character Battle Mode"))
-class UGameFeatureAction_AddBattleMode : public UGameFeatureAction_AddToWorldBase
+class UGameFeatureAction_AddBattleMode : public UGameFeatureAction_AddToWorld
 {
 	GENERATED_BODY()
 

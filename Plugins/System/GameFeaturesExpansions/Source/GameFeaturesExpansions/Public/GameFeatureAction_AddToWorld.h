@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFeatureAction.h"
-#include "GameFeatureAction_AddToWorldBase.generated.h"
+#include "GameFeatureAction_AddToWorld.generated.h"
 
 /**
  * 
  */
 UCLASS(Abstract)
-class BATTLEFIELD_API UGameFeatureAction_AddToWorldBase : public UGameFeatureAction
+class GAMEFEATURESEXPANSIONS_API UGameFeatureAction_AddToWorld : public UGameFeatureAction
 {
 	GENERATED_BODY()
-
+	
 public:
 	//~ Begin UGameFeatureAction interface
 	virtual void OnGameFeatureActivating() override;
@@ -22,7 +22,7 @@ public:
 
 private:
 	void HandleGameInstanceStart(UGameInstance* GameInstance);
-	virtual void AddToWorld(const FWorldContext& WorldContext) PURE_VIRTUAL(UGameFeatureAction_WorldActionBase::AddToWorld, );
+	virtual void AddToWorld(const FWorldContext& WorldContext) PURE_VIRTUAL(UGameFeatureAction_AddToWorld::AddToWorld, );
 
 private:
 	FDelegateHandle GameInstanceStartHandle;

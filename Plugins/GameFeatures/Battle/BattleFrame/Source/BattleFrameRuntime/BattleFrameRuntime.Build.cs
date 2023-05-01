@@ -34,6 +34,7 @@ public class BattleFrameRuntime : ModuleRules
 				"GameFeatures",
 				"ModularGameplay",
 				"ComponentReceiverActors",
+				"GameFeaturesExpansions",
 				"EnhancedInput",
 				// ... add other public dependencies that you statically link with here ...
 			}
