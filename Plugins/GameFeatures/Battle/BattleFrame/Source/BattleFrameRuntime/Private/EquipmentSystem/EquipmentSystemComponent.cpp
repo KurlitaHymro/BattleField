@@ -70,19 +70,21 @@ void UEquipmentSystemComponent::PutOnEquip(AEquipBase* Equip, FName EquipSlot)
 
 void UEquipmentSystemComponent::TakeOffEquip(AEquipBase* Equip)
 {
-	auto MappedIterator = Equipped.CreateIterator();
-	while (MappedIterator)
+	auto Iterator = Equipped.CreateIterator();
+	while (Iterator)
 	{
-		if (MappedIterator.Value() == Equip)
+		if (Iterator.Value() == Equip)
 		{
 			break;
 		}
-		++MappedIterator;
+		++Iterator;
 	}
 
-	if (MappedIterator)
+	if (Iterator)
 	{
-		TakeOffEquipFromSlot(MappedIterator.Key());
+		TakeOffEquipFromSlot(Iterator.Key());
+		Iterator.Value()->OnTakeOffDelegate.Broadcast(GetPawn<APawn>());
+		Iterator.RemoveCurrent();
 	}
 }
 
@@ -92,7 +94,6 @@ void UEquipmentSystemComponent::TakeOffEquipFromSlot(FName EquipSlot)
 	if (Equip)
 	{
 		Equip->OnTakeOffDelegate.Broadcast(GetPawn<APawn>());
-
 		Equipped.Remove(EquipSlot);
 	}
 }
@@ -101,8 +102,9 @@ void UEquipmentSystemComponent::TakeOffEquipAll()
 {
 	for (auto Equip : Equipped)
 	{
-		TakeOffEquipFromSlot(Equip.Key);
+		Equip.Value->OnTakeOffDelegate.Broadcast(GetPawn<APawn>());
 	}
+	Equipped.Empty();
 }
 
 AEquipBase* UEquipmentSystemComponent::FindEquipFromSlot(FName EquipSlot)

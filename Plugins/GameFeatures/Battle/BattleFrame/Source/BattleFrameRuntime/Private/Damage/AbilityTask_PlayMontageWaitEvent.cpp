@@ -14,7 +14,7 @@ UAbilityTask_PlayMontageWaitEvent::UAbilityTask_PlayMontageWaitEvent(const FObje
 	bStopWhenAbilityEnds = true;
 }
 
-UAbilityTask_PlayMontageWaitEvent* UAbilityTask_PlayMontageWaitEvent::PlayMontageWaitEvent(
+UAbilityTask_PlayMontageWaitEvent* UAbilityTask_PlayMontageWaitEvent::CreatePlayMontageWaitEventProxy(
 	UGameplayAbility* OwningAbility,
 	FName TaskInstanceName,
 	UAnimMontage* MontageToPlay,
@@ -44,8 +44,7 @@ void UAbilityTask_PlayMontageWaitEvent::Activate()
 	bool bPlayedMontage = false;
 	if (AnimInstance && AbilitySystemComponent != nullptr && Ability)
 	{
-		EventHandle = AbilitySystemComponent->AddGameplayEventTagContainerDelegate(EventTags, 
-			FGameplayEventTagMulticastDelegate::FDelegate::CreateUObject(this, &UAbilityTask_PlayMontageWaitEvent::OnGameplayEvent));
+		EventHandle = AbilitySystemComponent->AddGameplayEventTagContainerDelegate(EventTags, FGameplayEventTagMulticastDelegate::FDelegate::CreateUObject(this, &UAbilityTask_PlayMontageWaitEvent::OnGameplayEvent));
 	
 		if (AbilitySystemComponent->PlayMontage(Ability, Ability->GetCurrentActivationInfo(), MontageToPlay, Rate, StartSection) > 0.f)
 		{
