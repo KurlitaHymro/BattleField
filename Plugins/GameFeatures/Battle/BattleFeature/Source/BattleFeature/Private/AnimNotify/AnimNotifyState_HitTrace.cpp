@@ -7,11 +7,14 @@
 #include "EquipmentSystem/EquipmentSystemComponent.h"
 #include "EquipmentSystem/MoveDamageWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Calculation/TableRowDefine.h"
 
 void UAnimNotifyState_HitTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
-	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
+	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
+	OwnerCharacter = nullptr;
+	OwnerASC = nullptr;
 	OwnerCharacter = Cast<ABattleCharacter>(MeshComp->GetOwner());
 	if (!OwnerCharacter)
 	{
@@ -29,12 +32,22 @@ void UAnimNotifyState_HitTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 		}
 	}
 
+	OwnerASC = OwnerCharacter->GetAbilitySystemComponent();
+	if (OwnerASC == nullptr || DefaultSelfMoveEffect == nullptr || OwnerASC->GetOwner() == nullptr)
+	{
+		return;
+	}
+	FGameplayEffectContextHandle GameplayEffectContextHandle = OwnerASC->MakeEffectContext();
+	FGameplayEffectSpecHandle SelfMoveEffectSpecHandle = OwnerASC->MakeOutgoingSpec(DefaultSelfMoveEffect, 0, GameplayEffectContextHandle);
+	SelfMoveEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Battle.Data.MoveFactor")), DamageFactor);
+	Handle = OwnerASC->ApplyGameplayEffectSpecToSelf(*SelfMoveEffectSpecHandle.Data.Get(), OwnerASC->GetPredictionKeyForNewAction());
+
 	HitActors.Empty();
 }
 
 void UAnimNotifyState_HitTrace::NotifyTick(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
-	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime);
+	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
 
 	if (!OwnerCharacter || !HitPointInfo)
 	{
@@ -73,9 +86,49 @@ void UAnimNotifyState_HitTrace::NotifyTick(class USkeletalMeshComponent* MeshCom
 
 void UAnimNotifyState_HitTrace::NotifyEnd(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-	Super::NotifyEnd(MeshComp, Animation);
+	Super::NotifyEnd(MeshComp, Animation, EventReference);
 
 	HitPointInfo = nullptr;
+	if (OwnerASC == nullptr || !Handle.IsValid())
+	{
+		return;
+	}
+	OwnerASC->RemoveActiveGameplayEffect(Handle);
+}
+
+void UAnimNotifyState_HitTrace::PostLoad()
+{
+	Super::PostLoad();
+
+	UDataTable* DataTable = LoadObject<UDataTable>(0, TEXT("DataTable'/SwordAndShield/DT_AnimMoveDamageConfig.DT_AnimMoveDamageConfig'"));
+	if (DataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("LoadObject DataTable Success"));
+		TArray<FAnimMoveDamageConfig*> Rows;
+		DataTable->GetAllRows<FAnimMoveDamageConfig>("", Rows);
+		auto Iter = Rows.CreateIterator();
+		while (Iter)
+		{
+			if ((*Iter)->HitMoveName == HitMoveName)
+			{
+				break;
+			}
+			++Iter;
+		}
+		if (Iter)
+		{
+			DamageFactor = (*Iter)->DamageFactor;
+		}
+		else
+		{
+			DamageFactor = 0;
+		}
+	}
+	else
+	{
+		DamageFactor = 0;
+		UE_LOG(LogTemp, Error, TEXT("LoadObject DataTable Fail"));
+	}
 }
 
 void UAnimNotifyState_HitTrace::UpdateHitResult(TArray<FHitResult> AllHitResult)

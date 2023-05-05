@@ -7,12 +7,16 @@
 
 void UAnimNotifyState_ComboEnable::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
-	auto OwnerCharacter = Cast<ABattleCharacter>(MeshComp->GetOwner());
+	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
+
+	OwnerCharacter = nullptr;
+	OwnerASC = nullptr;
+	OwnerCharacter = Cast<ABattleCharacter>(MeshComp->GetOwner());
 	if (OwnerCharacter)
 	{
 		OwnerASC = OwnerCharacter->GetAbilitySystemComponent();
 	}
-	if (OwnerASC == nullptr || GameplayEffectClass == nullptr)
+	if (OwnerCharacter == nullptr || OwnerASC == nullptr || GameplayEffectClass == nullptr || OwnerASC->GetOwner() == nullptr)
 	{
 		return;
 	}
@@ -27,7 +31,9 @@ void UAnimNotifyState_ComboEnable::NotifyBegin(USkeletalMeshComponent* MeshComp,
 
 void UAnimNotifyState_ComboEnable::NotifyEnd(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-	if (OwnerASC == nullptr || !Handle.IsValid())
+	Super::NotifyEnd(MeshComp, Animation, EventReference);
+
+	if (OwnerCharacter == nullptr || OwnerASC == nullptr || !Handle.IsValid())
 	{
 		return;
 	}

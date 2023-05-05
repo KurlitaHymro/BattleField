@@ -41,4 +41,7 @@ protected:
 	void OnTryCombo(float WaitTime);
 	virtual void OnTryCombo_Implementation(float WaitTime);
 
+private:
+	class UAbilityTask_WaitGameplayTagAdded* ComboStartTask;
+
 };

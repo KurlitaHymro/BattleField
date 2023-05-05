@@ -17,8 +17,6 @@ ABattleCharacter::ABattleCharacter()
 void ABattleCharacter::BeginPlay()
 {
     Super::BeginPlay();
-
-
 }
 
 void ABattleCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)

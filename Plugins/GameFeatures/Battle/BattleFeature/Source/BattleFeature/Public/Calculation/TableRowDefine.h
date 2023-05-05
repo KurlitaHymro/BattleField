@@ -11,16 +11,13 @@
  */
 
 USTRUCT(BlueprintType)
-struct FAnimDamageFactor : public FTableRowBase
+struct FAnimMoveDamageConfig : public FTableRowBase
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	TSoftObjectPtr<class UAnimMontage> AnimMontageClass;
+	FName HitMoveName;
 
 	UPROPERTY(EditDefaultsOnly)
-	int32 HitTraceIndex;
-
-	UPROPERTY(EditDefaultsOnly)
-	float Factor;
+	float DamageFactor;
 };

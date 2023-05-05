@@ -44,7 +44,7 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = Ability)
-	virtual void ApplySelfGameplayEffect(float DamageFactor);
+	virtual void ApplySelfGameplayEffect();
 
 	UFUNCTION(BlueprintCallable, Category = Ability)
 	virtual FGameplayAbilityTargetDataHandle AssembleTargetData(const FGameplayEventData& EventData);
@@ -82,6 +82,7 @@ protected:
 	virtual void OnReceiveEvent_Implementation(FGameplayTag EventTag, FGameplayEventData EventData);
 
 protected:
-	UPROPERTY(BlueprintReadOnly)
+	class UAbilityTask_PlayMontageWaitEvent* MontageTask;
+
 	struct FActiveGameplayEffectHandle SelfEffectHandle;
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
+#include "GameplayEffect.h"
 #include "AnimNotifyState_HitTrace.generated.h"
 
 /**
@@ -21,6 +22,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	FName HitPoint;
 
+	UPROPERTY(EditAnywhere, Category = "Ability")
+	FName HitMoveName;
+
+	UPROPERTY(EditAnywhere, Category = "Ability")
+	TSubclassOf<UGameplayEffect> DefaultSelfMoveEffect;
+
 protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 
@@ -29,9 +36,15 @@ protected:
 	virtual void NotifyEnd(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
 private:
-	class ABattleCharacter* OwnerCharacter;
+	class ABattleCharacter* OwnerCharacter = nullptr;
+
+	class UAbilitySystemComponent* OwnerASC = nullptr;
 
 	class AMoveDamageWeapon* Weapon;
+
+	float DamageFactor;
+
+	FActiveGameplayEffectHandle Handle;
 
 	FVector* HitPointInfo;
 
@@ -41,6 +54,8 @@ private:
 	TArray<AActor*> HitActors;
 
 private:
+	virtual void PostLoad() override;
+
 	void UpdateHitResult(TArray<FHitResult> AllHitResult);
 
 };

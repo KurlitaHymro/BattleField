@@ -6,10 +6,9 @@
 #include "AbilitySystemComponent.h"
 #include "DamageSystem/AbilityTask_PlayMontageWaitEvent.h"
 
-void UGameplayAbility_AnimMove::ApplySelfGameplayEffect(float DamageFactor)
+void UGameplayAbility_AnimMove::ApplySelfGameplayEffect()
 {
 	auto SelfMoveEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DefaultSelfMoveEffect, GetAbilityLevel());
-	SelfMoveEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Battle.Data.MoveFactor")), DamageFactor);
 	SelfEffectHandle = K2_ApplyGameplayEffectSpecToOwner(SelfMoveEffectSpecHandle);
 }
 
@@ -32,17 +31,17 @@ void UGameplayAbility_AnimMove::PlayMontageTask(
 	float Rate,
 	float AnimRootMotionTranslationScale)
 {
-	auto Task = UAbilityTask_PlayMontageWaitEvent::CreatePlayMontageWaitEventProxy(
+	MontageTask = UAbilityTask_PlayMontageWaitEvent::CreatePlayMontageWaitEventProxy(
 		this, NAME_None, MontageToPlay, EventTags, Rate, StartSection, bStopWhenAbilityEnds, AnimRootMotionTranslationScale);
 
-	Task->OnCancelled.AddDynamic(this, &UGameplayAbility_AnimMove::OnCancelled);
-	Task->OnInterrupted.AddDynamic(this, &UGameplayAbility_AnimMove::OnInterrupted);
-	Task->OnBlendOut.AddDynamic(this, &UGameplayAbility_AnimMove::OnBlendOut);
-	Task->OnCompleted.AddDynamic(this, &UGameplayAbility_AnimMove::OnCompleted);
-	Task->OnReceiveEvent.AddDynamic(this, &UGameplayAbility_AnimMove::OnReceiveEvent);
-	Task->Activate();
+	MontageTask->OnCancelled.AddDynamic(this, &UGameplayAbility_AnimMove::OnCancelled);
+	MontageTask->OnInterrupted.AddDynamic(this, &UGameplayAbility_AnimMove::OnInterrupted);
+	MontageTask->OnBlendOut.AddDynamic(this, &UGameplayAbility_AnimMove::OnBlendOut);
+	MontageTask->OnCompleted.AddDynamic(this, &UGameplayAbility_AnimMove::OnCompleted);
+	MontageTask->OnReceiveEvent.AddDynamic(this, &UGameplayAbility_AnimMove::OnReceiveEvent);
+	MontageTask->Activate();
 
-	ApplySelfGameplayEffect(10.f);
+	ApplySelfGameplayEffect();
 }
 
 void UGameplayAbility_AnimMove::PlayDefaultAnimMoveMontage(FGameplayTagContainer EventTags, bool bStopWhenAbilityEnds)
@@ -52,22 +51,26 @@ void UGameplayAbility_AnimMove::PlayDefaultAnimMoveMontage(FGameplayTagContainer
 
 void UGameplayAbility_AnimMove::OnCancelled_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	UE_LOG(LogTemp, Error, TEXT("Cancelled"));
+	MontageTask->EndTask();
 	K2_EndAbility();
 }
 
 void UGameplayAbility_AnimMove::OnInterrupted_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	UE_LOG(LogTemp, Error, TEXT("Interrupted"));
+	MontageTask->EndTask();
 	K2_EndAbility();
 }
 
 void UGameplayAbility_AnimMove::OnBlendOut_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	auto ASC = GetAbilitySystemComponentFromActorInfo_Ensured();
-	ASC->RemoveActiveGameplayEffect(SelfEffectHandle);
+
 }
 
 void UGameplayAbility_AnimMove::OnCompleted_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	MontageTask->EndTask();
 	K2_EndAbility();
 }
 

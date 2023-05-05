@@ -3,6 +3,7 @@
 
 #include "Abilities/GameplayAbility_ComboAnimMoves.h"
 #include "AbilitySystemComponent.h"
+#include "DamageSystem/AbilityTask_PlayMontageWaitEvent.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
 #include "Abilities/Tasks/AbilityTask_WaitInputPress.h"
 
@@ -17,29 +18,30 @@ void UGameplayAbility_ComboAnimMoves::PlayDefaultAnimMoveMontage(FGameplayTagCon
 	Container.AddTag(CanComboTag);
 	ASC->RemoveActiveEffectsWithTags(Container);
 
-	auto WaitCanCombo = UAbilityTask_WaitGameplayTagAdded::WaitGameplayTagAdd(this, CanComboTag, nullptr, true);
-	WaitCanCombo->Added.AddDynamic(this, &UGameplayAbility_ComboAnimMoves::OnCanComboTagAdd);
-	WaitCanCombo->Activate();
+	ComboStartTask = UAbilityTask_WaitGameplayTagAdded::WaitGameplayTagAdd(this, CanComboTag, nullptr, true);
+	ComboStartTask->Added.AddDynamic(this, &UGameplayAbility_ComboAnimMoves::OnCanComboTagAdd);
+	ComboStartTask->Activate();
 }
 
 void UGameplayAbility_ComboAnimMoves::OnBlendOut_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	Super::OnBlendOut_Implementation(EventTag, EventData);
 
+	ComboStartTask->EndTask();
 	if (bComboEnable)
 	{
+		MontageTask->EndTask();
 		ComboCount++;
 		if (ComboCount < ComboAnimMoves.Num())
 		{
 			PlayDefaultAnimMoveMontage(FGameplayTagContainer(), false);
+			bComboEnable = false;
 		}
 	}
 }
 
 void UGameplayAbility_ComboAnimMoves::OnCanComboTagAdd_Implementation()
 {
-	bComboEnable = false;
-
 	auto WaitTryCombo = UAbilityTask_WaitInputPress::WaitInputPress(this, false);
 	WaitTryCombo->OnPress.AddDynamic(this, &UGameplayAbility_ComboAnimMoves::OnTryCombo);
 	WaitTryCombo->Activate();

@@ -79,7 +79,6 @@ void UBattleAbilitySystemComponent::HandleHitEvent(AActor* Target)
 		FGameplayEventData Payload;
 		Payload.Instigator = Instigator;
 		Payload.Target = Target;
-		FScopedPredictionWindow NewScopedWindow(this, true);
 		HandleGameplayEvent(FGameplayTag::EmptyTag, &Payload);
 	}
 }

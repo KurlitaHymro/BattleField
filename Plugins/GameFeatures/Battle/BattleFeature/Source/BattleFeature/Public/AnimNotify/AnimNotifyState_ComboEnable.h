@@ -17,7 +17,7 @@ class BATTLEFEATURE_API UAnimNotifyState_ComboEnable : public UAnimNotifyState
 
 public:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UGameplayEffect> GameplayEffectClass;
+	TSubclassOf<UGameplayEffect> GameplayEffectClass;
 
 protected:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
@@ -25,7 +25,9 @@ protected:
 	virtual void NotifyEnd(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
 private:
-	class UAbilitySystemComponent* OwnerASC;
+	class ABattleCharacter* OwnerCharacter = nullptr;
+
+	class UAbilitySystemComponent* OwnerASC = nullptr;
 
 	FActiveGameplayEffectHandle Handle;
 };
