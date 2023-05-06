@@ -32,6 +32,9 @@ protected:
 
 	virtual void OnBlendOut_Implementation(FGameplayTag EventTag, FGameplayEventData EventData) override;
 
+	UFUNCTION(BlueprintCallable, Category = Ability)
+	void EnableComboWait();
+
 protected:
 	UFUNCTION(Category = Ability, BlueprintNativeEvent)
 	void OnCanComboTagAdd();

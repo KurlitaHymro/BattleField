@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "GameplayEffect.h"
+#include "Calculation/TableRowDefine.h"
 #include "AnimNotifyState_HitTrace.generated.h"
 
 /**
@@ -54,8 +55,5 @@ private:
 	TArray<AActor*> HitActors;
 
 private:
-	virtual void PostLoad() override;
-
 	void UpdateHitResult(TArray<FHitResult> AllHitResult);
-
 };

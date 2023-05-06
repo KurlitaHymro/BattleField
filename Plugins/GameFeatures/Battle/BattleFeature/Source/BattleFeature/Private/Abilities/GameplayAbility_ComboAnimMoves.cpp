@@ -13,14 +13,7 @@ void UGameplayAbility_ComboAnimMoves::PlayDefaultAnimMoveMontage(FGameplayTagCon
 
 	Super::PlayDefaultAnimMoveMontage(EventTags, bStopWhenAbilityEnds);
 
-	auto ASC = GetAbilitySystemComponentFromActorInfo_Ensured();
-	FGameplayTagContainer Container;
-	Container.AddTag(CanComboTag);
-	ASC->RemoveActiveEffectsWithTags(Container);
-
-	ComboStartTask = UAbilityTask_WaitGameplayTagAdded::WaitGameplayTagAdd(this, CanComboTag, nullptr, true);
-	ComboStartTask->Added.AddDynamic(this, &UGameplayAbility_ComboAnimMoves::OnCanComboTagAdd);
-	ComboStartTask->Activate();
+	EnableComboWait();
 }
 
 void UGameplayAbility_ComboAnimMoves::OnBlendOut_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -38,6 +31,18 @@ void UGameplayAbility_ComboAnimMoves::OnBlendOut_Implementation(FGameplayTag Eve
 			bComboEnable = false;
 		}
 	}
+}
+
+void UGameplayAbility_ComboAnimMoves::EnableComboWait()
+{
+	auto ASC = GetAbilitySystemComponentFromActorInfo_Ensured();
+	FGameplayTagContainer Container;
+	Container.AddTag(CanComboTag);
+	ASC->RemoveActiveEffectsWithTags(Container);
+
+	ComboStartTask = UAbilityTask_WaitGameplayTagAdded::WaitGameplayTagAdd(this, CanComboTag, nullptr, true);
+	ComboStartTask->Added.AddDynamic(this, &UGameplayAbility_ComboAnimMoves::OnCanComboTagAdd);
+	ComboStartTask->Activate();
 }
 
 void UGameplayAbility_ComboAnimMoves::OnCanComboTagAdd_Implementation()

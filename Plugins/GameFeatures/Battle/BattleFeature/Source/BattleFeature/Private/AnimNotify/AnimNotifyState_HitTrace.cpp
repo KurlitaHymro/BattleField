@@ -7,10 +7,34 @@
 #include "EquipmentSystem/EquipmentSystemComponent.h"
 #include "EquipmentSystem/MoveDamageWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Calculation/TableRowDefine.h"
 
 void UAnimNotifyState_HitTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
+	// TODO:等数据表源搞好，下面这一坨想办法挪到加载时。
+	if (0 == DamageFactor)
+	{
+		UDataTable* DataTable = LoadObject<UDataTable>(0, TEXT("DataTable'/SwordAndShield/DT_AnimMoveDamageConfig.DT_AnimMoveDamageConfig'"));
+		TArray<FAnimMoveDamageConfig*> Rows;
+		DataTable->GetAllRows<FAnimMoveDamageConfig>("", Rows);
+		auto Iter = Rows.CreateIterator();
+		while (Iter)
+		{
+			if ((*Iter)->HitMoveName == HitMoveName)
+			{
+				break;
+			}
+			++Iter;
+		}
+		if (Iter)
+		{
+			DamageFactor = (*Iter)->DamageFactor;
+		}
+		else
+		{
+			DamageFactor = 0;
+		}
+	}
+
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
 	OwnerCharacter = nullptr;
@@ -94,41 +118,6 @@ void UAnimNotifyState_HitTrace::NotifyEnd(class USkeletalMeshComponent* MeshComp
 		return;
 	}
 	OwnerASC->RemoveActiveGameplayEffect(Handle);
-}
-
-void UAnimNotifyState_HitTrace::PostLoad()
-{
-	Super::PostLoad();
-
-	UDataTable* DataTable = LoadObject<UDataTable>(0, TEXT("DataTable'/SwordAndShield/DT_AnimMoveDamageConfig.DT_AnimMoveDamageConfig'"));
-	if (DataTable)
-	{
-		UE_LOG(LogTemp, Error, TEXT("LoadObject DataTable Success"));
-		TArray<FAnimMoveDamageConfig*> Rows;
-		DataTable->GetAllRows<FAnimMoveDamageConfig>("", Rows);
-		auto Iter = Rows.CreateIterator();
-		while (Iter)
-		{
-			if ((*Iter)->HitMoveName == HitMoveName)
-			{
-				break;
-			}
-			++Iter;
-		}
-		if (Iter)
-		{
-			DamageFactor = (*Iter)->DamageFactor;
-		}
-		else
-		{
-			DamageFactor = 0;
-		}
-	}
-	else
-	{
-		DamageFactor = 0;
-		UE_LOG(LogTemp, Error, TEXT("LoadObject DataTable Fail"));
-	}
 }
 
 void UAnimNotifyState_HitTrace::UpdateHitResult(TArray<FHitResult> AllHitResult)
