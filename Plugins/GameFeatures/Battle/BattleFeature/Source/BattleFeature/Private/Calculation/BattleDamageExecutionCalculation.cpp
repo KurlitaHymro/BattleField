@@ -92,7 +92,7 @@ void UBattleDamageExecutionCalculation::Execute_Implementation(const FGameplayEf
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetDefensePowerDef, EvaluationParameters, TargetDefensePower);
 
 	float ApplyDamage = CauseDamage * (100.f / (TargetDefensePower + 100.f));
-	UE_LOG(LogTemp, Error, TEXT("Damage %f"), ApplyDamage);
+	//UE_LOG(LogTemp, Error, TEXT("Damage %f"), ApplyDamage);
 	if (ApplyDamage > 0.f)
 	{
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().TargetHealthProperty, EGameplayModOp::Additive, -ApplyDamage));
