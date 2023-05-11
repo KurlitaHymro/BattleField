@@ -82,9 +82,13 @@ void UAnimNotifyState_HitTrace::NotifyTick(class USkeletalMeshComponent* MeshCom
 	TArray<AActor*> HitTargetIgnore;
 	HitTargetIgnore.Add(OwnerCharacter);
 
+	FVector CurrentLocation;
+	if (Weapon == nullptr || Weapon->GetMesh() == nullptr)
+	{
+		return;
+	}
 
-
-	FVector CurrentLocation = Weapon->GetMesh()->GetSocketLocation(HitPoint);
+	CurrentLocation = Weapon->GetMesh()->GetSocketLocation(HitPoint);
 	if (CurrentLocation.IsNearlyZero() || CurrentLocation.Equals(HitPointLocation))
 	{
 		return;
@@ -100,7 +104,7 @@ void UAnimNotifyState_HitTrace::NotifyTick(class USkeletalMeshComponent* MeshCom
 		ETraceTypeQuery::TraceTypeQuery4,
 		false,
 		HitTargetIgnore,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None,
 		TickAllHitResult,
 		true);
 	HitPointLocation = CurrentLocation;
