@@ -21,7 +21,7 @@ void UActorSpawnerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	NS = UNavigationSystemV1::GetCurrent(GetWorld());
 }
 
 
@@ -73,22 +73,22 @@ void UActorSpawnerComponent::SpawnFromSet()
 
 FVector UActorSpawnerComponent::GetRandomLocationWithNavigationSystem()
 {
-	static auto NS = UNavigationSystemV1::GetCurrent(GetWorld());
-	if (NS)
+	FVector TargetLocation = GetComponentLocation();
+	if (NS != nullptr && RandomRadius > 0)
 	{
 		FNavLocation NavLocation;
-		if (NS->GetRandomReachablePointInRadius(GetComponentLocation(), RandomRadius, NavLocation))
+		if (NS->GetRandomReachablePointInRadius(TargetLocation, RandomRadius, NavLocation))
 		{
-			return NavLocation.Location;
+			TargetLocation = NavLocation.Location;
 		}
 	}
-	return GetComponentLocation();
+	return TargetLocation;
 }
 
 AActor* UActorSpawnerComponent::DoSpawn(TSubclassOf<AActor> ActorClass, const FVector SpawnLocation, const FRotator SpawnRotation)
 {
 	FActorSpawnParameters SpawnConfig;
 	SpawnConfig.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
 	return GetWorld()->SpawnActor(ActorClass, &SpawnLocation, &SpawnRotation, SpawnConfig);
-	//AActor* NewActor = World->SpawnActor<AActor>(ActorEntry.ActorType, ActorEntry.SpawnTransform);
 }

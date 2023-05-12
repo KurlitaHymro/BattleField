@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (BlueprintSpawnableComponent))
 class MOVEMENTINPUT_API UCharacterMovementInputComponent : public UPawnInputModComponent
 {
 	GENERATED_BODY()
