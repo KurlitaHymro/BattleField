@@ -2,7 +2,7 @@
 
 
 #include "GameplayComponent/ActorSpawnerComponent.h"
-#include "NavigationSystem.h"
+#include "NavigationSystemAdapter.h"
 
 // Sets default values for this component's properties
 UActorSpawnerComponent::UActorSpawnerComponent()
@@ -21,7 +21,6 @@ void UActorSpawnerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	NS = UNavigationSystemV1::GetCurrent(GetWorld());
 }
 
 
@@ -62,27 +61,14 @@ void UActorSpawnerComponent::SpawnFromSet()
 		if (Iter.Value() > 0)
 		{
 			Iter.Value()--;
-			auto Actor = DoSpawn(Iter.Key(), GetRandomLocationWithNavigationSystem(), GetComponentRotation());
+			auto SpawnLocation = UNavigationSystemAdapter::GetInstance()->GetRandomLocationWithNavigationSystem(GetWorld(), GetComponentLocation(), RandomRadius);
+			auto Actor = DoSpawn(Iter.Key(), SpawnLocation, GetComponentRotation());
 			if (Iter.Value() == 0)
 			{
 				Iter.RemoveCurrent();
 			}
 		}
 	}
-}
-
-FVector UActorSpawnerComponent::GetRandomLocationWithNavigationSystem()
-{
-	FVector TargetLocation = GetComponentLocation();
-	if (NS != nullptr && RandomRadius > 0)
-	{
-		FNavLocation NavLocation;
-		if (NS->GetRandomReachablePointInRadius(TargetLocation, RandomRadius, NavLocation))
-		{
-			TargetLocation = NavLocation.Location;
-		}
-	}
-	return TargetLocation;
 }
 
 AActor* UActorSpawnerComponent::DoSpawn(TSubclassOf<AActor> ActorClass, const FVector SpawnLocation, const FRotator SpawnRotation)

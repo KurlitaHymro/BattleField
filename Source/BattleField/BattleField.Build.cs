@@ -19,6 +19,7 @@ public class BattleField : ModuleRules
 			"GameplayTasks",
 			"GameplayTags",
 			"EnhancedInput",
+			"CommunalFunctionLibrary",
 			"ComponentReceiverActors",
 		});
 

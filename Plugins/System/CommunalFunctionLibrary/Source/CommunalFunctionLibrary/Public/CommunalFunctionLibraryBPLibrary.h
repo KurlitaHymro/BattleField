@@ -27,6 +27,10 @@ class UCommunalFunctionLibraryBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
+public:
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "CommunalFunctionLibrary sample test testing"), Category = "CommunalFunctionLibraryTesting")
 	static float CommunalFunctionLibrarySampleFunction(float Param);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Random Location With Navigation System"), Category = "Navigation")
+	static FVector GetRandomLocationWithNavigationSystem(UWorld* World, FVector CenterLocation, float RandomRadius);
 };

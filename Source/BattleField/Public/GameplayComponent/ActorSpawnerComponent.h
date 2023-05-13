@@ -42,11 +42,5 @@ public:
 	void SpawnFromSet();
 
 	UFUNCTION(BlueprintCallable)
-	FVector GetRandomLocationWithNavigationSystem();
-
-	UFUNCTION(BlueprintCallable)
 	AActor* DoSpawn(TSubclassOf<AActor> ActorClass, const FVector SpawnLocation, const FRotator SpawnRotation);
-
-private:
-	class UNavigationSystemV1* NS;
 };
