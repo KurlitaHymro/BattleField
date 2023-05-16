@@ -28,6 +28,10 @@
 		{
 			"Name": "BattleFeature",
 			"Enabled": true
+		},
+		{
+			"Name": "CommunalFunctionLibrary",
+			"Enabled": true
 		}
 	]
 }

@@ -9,7 +9,7 @@
 void UGameplayAbility_AnimMove::ApplySelfGameplayEffect()
 {
 	auto SelfMoveEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DefaultSelfMoveEffect, GetAbilityLevel());
-	SelfEffectHandle = K2_ApplyGameplayEffectSpecToOwner(SelfMoveEffectSpecHandle);
+	SelfEffectHandle = ApplyGameplayEffectSpecToOwner(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SelfMoveEffectSpecHandle);
 }
 
 FGameplayAbilityTargetDataHandle UGameplayAbility_AnimMove::AssembleTargetData(const FGameplayEventData& EventData)
@@ -40,8 +40,6 @@ void UGameplayAbility_AnimMove::PlayMontageTask(
 	MontageTask->OnCompleted.AddDynamic(this, &UGameplayAbility_AnimMove::OnCompleted);
 	MontageTask->OnReceiveEvent.AddDynamic(this, &UGameplayAbility_AnimMove::OnReceiveEvent);
 	MontageTask->Activate();
-
-	ApplySelfGameplayEffect();
 }
 
 void UGameplayAbility_AnimMove::PlayDefaultAnimMoveMontage(FGameplayTagContainer EventTags, bool bStopWhenAbilityEnds)
@@ -53,25 +51,26 @@ void UGameplayAbility_AnimMove::OnCancelled_Implementation(FGameplayTag EventTag
 {
 	UE_LOG(LogTemp, Error, TEXT("Cancelled"));
 	MontageTask->EndTask();
-	K2_EndAbility();
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void UGameplayAbility_AnimMove::OnInterrupted_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	UE_LOG(LogTemp, Error, TEXT("Interrupted"));
 	MontageTask->EndTask();
-	K2_EndAbility();
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UGameplayAbility_AnimMove::OnBlendOut_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-
+	UE_LOG(LogTemp, Error, TEXT("BlendOut"));
 }
 
 void UGameplayAbility_AnimMove::OnCompleted_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
+	UE_LOG(LogTemp, Error, TEXT("Completed"));
 	MontageTask->EndTask();
-	K2_EndAbility();
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UGameplayAbility_AnimMove::OnReceiveEvent_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
@@ -83,7 +82,22 @@ void UGameplayAbility_AnimMove::OnReceiveEvent_Implementation(FGameplayTag Event
 		{
 			auto DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DefaultDamageEffect, GetAbilityLevel());
 			auto DataHandle = AssembleTargetData(EventData);
-			K2_ApplyGameplayEffectSpecToTarget(DamageEffectSpecHandle, DataHandle);
+			ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, DamageEffectSpecHandle, DataHandle);
 		}
 	}
+}
+
+void UGameplayAbility_AnimMove::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{
+	ApplySelfGameplayEffect();
+
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
+
+void UGameplayAbility_AnimMove::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	auto const ASC = GetAbilitySystemComponentFromActorInfo_Ensured();
+	ASC->RemoveActiveGameplayEffect(SelfEffectHandle, -1);
+
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

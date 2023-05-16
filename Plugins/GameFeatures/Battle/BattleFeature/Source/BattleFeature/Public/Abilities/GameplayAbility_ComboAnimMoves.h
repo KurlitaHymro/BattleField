@@ -16,7 +16,7 @@ class BATTLEFEATURE_API UGameplayAbility_ComboAnimMoves : public UGameplayAbilit
 	
 public:
 	UPROPERTY(EditDefaultsOnly)
-	FGameplayTag CanComboTag = FGameplayTag::RequestGameplayTag(FName("Battle.Base.CanCombo"));
+	FGameplayTag CanComboTag = FGameplayTag::RequestGameplayTag(FName("Battle.Base.Status.AcceptComboInput"));
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TArray<FAnimMoveMontage> ComboAnimMoves;
@@ -47,4 +47,5 @@ protected:
 private:
 	class UAbilityTask_WaitGameplayTagAdded* ComboStartTask;
 
+	class UAbilityTask_WaitInputPress* WaitComboInputTask;
 };

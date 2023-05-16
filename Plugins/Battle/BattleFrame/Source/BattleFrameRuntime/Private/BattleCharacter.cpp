@@ -53,8 +53,6 @@ void ABattleCharacter::Die_Implementation()
 {
     OnBattleCharacterDie.Broadcast(this);
 
-    DetachFromControllerPendingDestroy();
-
     EquipmentSystemComponent->TakeOffEquipAll();
 
     GetMesh()->SetSimulatePhysics(true);
@@ -63,6 +61,8 @@ void ABattleCharacter::Die_Implementation()
     FTimerHandle Handle;
     auto TimerDelegate = FTimerDelegate::CreateUObject(this, &ABattleCharacter::Destroy);
     GetWorldTimerManager().SetTimer(Handle, TimerDelegate, 5.0f, false);
+
+    DetachFromControllerPendingDestroy();
 }
 
 void ABattleCharacter::Destroy_Implementation()

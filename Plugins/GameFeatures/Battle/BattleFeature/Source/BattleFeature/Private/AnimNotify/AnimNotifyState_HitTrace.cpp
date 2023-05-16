@@ -63,7 +63,7 @@ void UAnimNotifyState_HitTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 	}
 	FGameplayEffectContextHandle GameplayEffectContextHandle = OwnerASC->MakeEffectContext();
 	FGameplayEffectSpecHandle SelfMoveEffectSpecHandle = OwnerASC->MakeOutgoingSpec(DefaultSelfMoveEffect, 0, GameplayEffectContextHandle);
-	SelfMoveEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Battle.Data.MoveFactor")), DamageFactor);
+	SelfMoveEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Battle.Base.Data.AnimMoveFactor")), DamageFactor);
 	Handle = OwnerASC->ApplyGameplayEffectSpecToSelf(*SelfMoveEffectSpecHandle.Data.Get(), OwnerASC->GetPredictionKeyForNewAction());
 
 	HitActors.Empty();

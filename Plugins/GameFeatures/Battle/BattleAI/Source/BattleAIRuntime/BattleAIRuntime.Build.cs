@@ -27,10 +27,7 @@ public class BattleAIRuntime : ModuleRules
 			{
 				"Core",
 				"AIModule",
-				"GameplayAbilities",
-				"GameplayTasks",
 				"NavigationSystem",
-				"BattleFrameRuntime",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -43,7 +40,10 @@ public class BattleAIRuntime : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"BattleField",
+				"GameplayAbilities",
+				"GameplayTasks",
+				"CommunalFunctionLibrary",
+				"BattleFrameRuntime",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
