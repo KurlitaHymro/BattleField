@@ -28,13 +28,17 @@ void UGameplayAbility_ComboAnimMoves::OnBlendOut_Implementation(FGameplayTag Eve
 
 	if (bComboEnable)
 	{
-		MontageTask->EndTask();
 		ComboCount++;
 		if (ComboCount < ComboAnimMoves.Num())
 		{
+			MontageTask->EndTask();
 			PlayDefaultAnimMoveMontage(FGameplayTagContainer(), false);
 		}
 		bComboEnable = false;
+	}
+	else
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 	}
 }
 

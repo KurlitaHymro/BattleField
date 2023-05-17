@@ -2,6 +2,7 @@
 
 
 #include "BattleAbilitySystemComponent.h"
+#include "AbilitySystemGlobals.h"
 
 namespace BattleAbilitySystemComponent_Impl
 {
@@ -74,12 +75,27 @@ int32 UBattleAbilitySystemComponent::FindAbilityByType(TSoftClassPtr<UGameplayAb
 void UBattleAbilitySystemComponent::HandleHitEvent(AActor* Target)
 {
 	AActor* Instigator = GetOwner();
-	if (IsValidChecked(this) && IsValid(Instigator) && IsValid(Target))
+	auto TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Target);
+	if (IsValid(Instigator) && IsValid(Target) && IsValidChecked(this) && IsValidChecked(TargetASC))
 	{
 		FGameplayEventData Payload;
 		Payload.Instigator = Instigator;
 		Payload.Target = Target;
-		HandleGameplayEvent(FGameplayTag::EmptyTag, &Payload);
+
+		FVector DamageSourceDirection = Instigator->GetActorLocation() - Target->GetActorLocation();
+		FVector ForwardVector = Target->GetActorForwardVector();
+		const float AngleDifference = DamageSourceDirection.CosineAngle2D(ForwardVector);
+		//UE_LOG(LogTemp, Error, TEXT("CosineAngleDifference %f"), AngleDifference);
+
+		const float ShieldDefauseThresholdCosineAngle = 0.5f; // 60бу
+		if (AngleDifference > ShieldDefauseThresholdCosineAngle && TargetASC->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Battle.Base.Status.ShieldDefense"))))
+		{
+			HandleGameplayEvent(FGameplayTag::RequestGameplayTag(FName("Battle.Base.Event.HitShieldDefense")), &Payload);
+		}
+		else
+		{
+			HandleGameplayEvent(FGameplayTag::RequestGameplayTag(FName("Battle.Base.Event.HitDefault")), &Payload);
+		}
 	}
 }
 

@@ -29,6 +29,8 @@ struct BattleDamageStatics
 	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(MeleeMoveFactor, Source);
 
 	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(DefensePower, Target);
+	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(ApplyDamageFactor, Target);
+
 	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(Health, Target);
 
 	BattleDamageStatics()
@@ -39,6 +41,8 @@ struct BattleDamageStatics
 
 		// 伤害目标的属性
 		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UDefenseAttributeSet, DefensePower, Target, true);
+		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UDefenseAttributeSet, ApplyDamageFactor, Target, true);
+
 		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UHealthAttributeSet, Health, Target, true);
 	}
 };
@@ -54,6 +58,7 @@ UBattleDamageExecutionCalculation::UBattleDamageExecutionCalculation()
 	RelevantAttributesToCapture.Add(DamageStatics().SourceAttackPowerDef);
 	RelevantAttributesToCapture.Add(DamageStatics().SourceMeleeMoveFactorDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetDefensePowerDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetApplyDamageFactorDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetHealthDef);
 }
 
@@ -86,13 +91,15 @@ void UBattleDamageExecutionCalculation::Execute_Implementation(const FGameplayEf
 	float SourceMeleeMoveFactor = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceMeleeMoveFactorDef, EvaluationParameters, SourceMeleeMoveFactor);
 
-	float CauseDamage = SourceAttackPower * SourceMeleeMoveFactor;
-
 	float TargetDefensePower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetDefensePowerDef, EvaluationParameters, TargetDefensePower);
 
-	float ApplyDamage = CauseDamage * (100.f / (TargetDefensePower + 100.f));
-	//UE_LOG(LogTemp, Error, TEXT("Damage %f"), ApplyDamage);
+	float TargetApplyDamageFactor = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetApplyDamageFactorDef, EvaluationParameters, TargetApplyDamageFactor);
+
+	// 攻击力 * 招式系数 * 承伤系数 * (100 / (防御力 + 100))
+	float ApplyDamage = SourceAttackPower * SourceMeleeMoveFactor * TargetApplyDamageFactor * (100.f / (TargetDefensePower + 100.f));
+	UE_LOG(LogTemp, Error, TEXT("Damage %f"), ApplyDamage);
 	if (ApplyDamage > 0.f)
 	{
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().TargetHealthProperty, EGameplayModOp::Additive, -ApplyDamage));

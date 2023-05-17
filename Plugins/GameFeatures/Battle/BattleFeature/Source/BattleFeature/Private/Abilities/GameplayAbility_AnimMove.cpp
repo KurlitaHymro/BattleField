@@ -12,6 +12,12 @@ void UGameplayAbility_AnimMove::ApplySelfGameplayEffect()
 	SelfEffectHandle = ApplyGameplayEffectSpecToOwner(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SelfMoveEffectSpecHandle);
 }
 
+void UGameplayAbility_AnimMove::RemoveSelfGameplayEffect()
+{
+	auto const ASC = GetAbilitySystemComponentFromActorInfo_Ensured();
+	ASC->RemoveActiveGameplayEffect(SelfEffectHandle, -1);
+}
+
 FGameplayAbilityTargetDataHandle UGameplayAbility_AnimMove::AssembleTargetData(const FGameplayEventData& EventData)
 {
 	FGameplayAbilityTargetDataHandle TargetData;
@@ -49,33 +55,33 @@ void UGameplayAbility_AnimMove::PlayDefaultAnimMoveMontage(FGameplayTagContainer
 
 void UGameplayAbility_AnimMove::OnCancelled_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	UE_LOG(LogTemp, Error, TEXT("Cancelled"));
+	//UE_LOG(LogTemp, Error, TEXT("Cancelled"));
 	MontageTask->EndTask();
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void UGameplayAbility_AnimMove::OnInterrupted_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	UE_LOG(LogTemp, Error, TEXT("Interrupted"));
+	//UE_LOG(LogTemp, Error, TEXT("Interrupted"));
 	MontageTask->EndTask();
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UGameplayAbility_AnimMove::OnBlendOut_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	UE_LOG(LogTemp, Error, TEXT("BlendOut"));
+	//UE_LOG(LogTemp, Error, TEXT("BlendOut"));
 }
 
 void UGameplayAbility_AnimMove::OnCompleted_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	UE_LOG(LogTemp, Error, TEXT("Completed"));
+	//UE_LOG(LogTemp, Error, TEXT("Completed"));
 	MontageTask->EndTask();
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UGameplayAbility_AnimMove::OnReceiveEvent_Implementation(FGameplayTag EventTag, FGameplayEventData EventData)
 {
-	if (EventTag == FGameplayTag::EmptyTag) // TODO: 和ASC的Send配合修改以支持更多Tag
+	if (EventTag == FGameplayTag::RequestGameplayTag(FName("Battle.Base.Event.HitDefault")))
 	{
 		auto ASC = GetAbilitySystemComponentFromActorInfo_Ensured();
 		if (ASC != nullptr)
@@ -85,19 +91,8 @@ void UGameplayAbility_AnimMove::OnReceiveEvent_Implementation(FGameplayTag Event
 			ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, DamageEffectSpecHandle, DataHandle);
 		}
 	}
-}
-
-void UGameplayAbility_AnimMove::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
-{
-	ApplySelfGameplayEffect();
-
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-}
-
-void UGameplayAbility_AnimMove::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
-{
-	auto const ASC = GetAbilitySystemComponentFromActorInfo_Ensured();
-	ASC->RemoveActiveGameplayEffect(SelfEffectHandle, -1);
-
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	else if (EventTag == FGameplayTag::RequestGameplayTag(FName("Battle.Base.Event.HitShieldDefense")))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Block"));
+	}
 }

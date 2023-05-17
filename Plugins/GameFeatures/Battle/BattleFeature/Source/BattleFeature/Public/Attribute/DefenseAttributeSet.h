@@ -21,9 +21,17 @@ public:
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(DefensePower)
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(DefensePower)
 
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UDefenseAttributeSet, ApplyDamageFactor)
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(ApplyDamageFactor)
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(ApplyDamageFactor)
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(ApplyDamageFactor)
+
 private:
 	friend struct BattleDamageStatics;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Defense", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData DefensePower;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Defense", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData ApplyDamageFactor;
 };

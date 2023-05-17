@@ -47,6 +47,9 @@ protected:
 	virtual void ApplySelfGameplayEffect();
 
 	UFUNCTION(BlueprintCallable, Category = Ability)
+	virtual void RemoveSelfGameplayEffect();
+
+	UFUNCTION(BlueprintCallable, Category = Ability)
 	virtual FGameplayAbilityTargetDataHandle AssembleTargetData(const FGameplayEventData& EventData);
 
 	UFUNCTION(BlueprintCallable, Category = Ability)
@@ -80,11 +83,6 @@ protected:
 	UFUNCTION(Category = Ability, BlueprintNativeEvent)
 	void OnReceiveEvent(FGameplayTag EventTag, FGameplayEventData EventData);
 	virtual void OnReceiveEvent_Implementation(FGameplayTag EventTag, FGameplayEventData EventData);
-
-protected:
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 protected:
 	class UAbilityTask_PlayMontageWaitEvent* MontageTask;
