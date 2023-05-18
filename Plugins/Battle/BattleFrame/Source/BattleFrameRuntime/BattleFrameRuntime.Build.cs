@@ -26,7 +26,6 @@ public class BattleFrameRuntime : ModuleRules
 			new string[]
 			{
 				"Core",
-				"BattleField",
 				"GameplayAbilities",
 				"GameplayTasks",
 				"GameplayTags",

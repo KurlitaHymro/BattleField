@@ -26,13 +26,23 @@ public:
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(MeleeMoveFactor)
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(MeleeMoveFactor)
 
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UAttackAttributeSet, ShockLevel)
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(ShockLevel)
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(ShockLevel)
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(ShockLevel)
+
 private:
 	friend struct BattleDamageStatics;
 
+	// 攻击力
 	UPROPERTY(BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData AttackPower;
 
-	// 武器挥舞命中时，玩家当前的招式伤害系数。
+	// 武器挥舞攻击帧中的附加招式伤害系数
 	UPROPERTY(BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MeleeMoveFactor;
+
+	// 武器挥舞攻击帧中的附加冲击强度
+	UPROPERTY(BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData ShockLevel;
 };

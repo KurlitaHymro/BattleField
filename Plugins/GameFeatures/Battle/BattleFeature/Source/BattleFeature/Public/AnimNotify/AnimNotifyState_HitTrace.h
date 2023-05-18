@@ -45,6 +45,10 @@ private:
 
 	float DamageFactor;
 
+	float ShockLevel;
+
+	float StoicLevel;
+
 	FActiveGameplayEffectHandle Handle;
 
 	FVector* HitPointInfo;

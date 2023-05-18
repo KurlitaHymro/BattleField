@@ -11,7 +11,7 @@
  */
 
 USTRUCT(BlueprintType)
-struct FAnimMoveDamageConfig : public FTableRowBase
+struct FAnimMoveConfig : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -20,4 +20,10 @@ struct FAnimMoveDamageConfig : public FTableRowBase
 
 	UPROPERTY(EditDefaultsOnly)
 	float DamageFactor;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ShockLevel;
+
+	UPROPERTY(EditDefaultsOnly)
+	float StoicLevel;
 };

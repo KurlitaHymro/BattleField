@@ -13,9 +13,9 @@ void UAnimNotifyState_HitTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 	// TODO:等数据表源搞好，下面这一坨想办法挪到加载时。
 	if (0 == DamageFactor)
 	{
-		UDataTable* DataTable = LoadObject<UDataTable>(0, TEXT("DataTable'/SwordAndShield/DT_AnimMoveDamageConfig.DT_AnimMoveDamageConfig'"));
-		TArray<FAnimMoveDamageConfig*> Rows;
-		DataTable->GetAllRows<FAnimMoveDamageConfig>("", Rows);
+		UDataTable* DataTable = LoadObject<UDataTable>(0, TEXT("DataTable'/SwordAndShield/DT_AnimMoveConfig.DT_AnimMoveConfig'"));
+		TArray<FAnimMoveConfig*> Rows;
+		DataTable->GetAllRows<FAnimMoveConfig>("", Rows);
 		auto Iter = Rows.CreateIterator();
 		while (Iter)
 		{
@@ -28,10 +28,14 @@ void UAnimNotifyState_HitTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 		if (Iter)
 		{
 			DamageFactor = (*Iter)->DamageFactor;
+			ShockLevel = (*Iter)->ShockLevel;
+			StoicLevel = (*Iter)->StoicLevel;
 		}
 		else
 		{
 			DamageFactor = 0;
+			ShockLevel = 0;
+			StoicLevel = 0;
 		}
 	}
 
@@ -63,7 +67,9 @@ void UAnimNotifyState_HitTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 	}
 	FGameplayEffectContextHandle GameplayEffectContextHandle = OwnerASC->MakeEffectContext();
 	FGameplayEffectSpecHandle SelfMoveEffectSpecHandle = OwnerASC->MakeOutgoingSpec(DefaultSelfMoveEffect, 0, GameplayEffectContextHandle);
-	SelfMoveEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Battle.Base.Data.AnimMoveFactor")), DamageFactor);
+	SelfMoveEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Battle.Base.Data.AnimMove.DamageFactor")), DamageFactor);
+	SelfMoveEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Battle.Base.Data.AnimMove.ShockLevel")), ShockLevel);
+	SelfMoveEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Battle.Base.Data.AnimMove.StoicLevel")), StoicLevel);
 	Handle = OwnerASC->ApplyGameplayEffectSpecToSelf(*SelfMoveEffectSpecHandle.Data.Get(), OwnerASC->GetPredictionKeyForNewAction());
 
 	HitActors.Empty();

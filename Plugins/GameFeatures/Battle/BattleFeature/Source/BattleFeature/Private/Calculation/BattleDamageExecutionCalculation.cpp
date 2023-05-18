@@ -27,9 +27,12 @@ struct BattleDamageStatics
 {
 	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(AttackPower, Source);
 	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(MeleeMoveFactor, Source);
+	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(ShockLevel, Source);
 
 	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(DefensePower, Target);
 	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(ApplyDamageFactor, Target);
+	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(StoicLevel, Target);
+	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(StableState, Target);
 
 	DECLARE_SOURCE_ATTRIBUTE_CAPTUREDEF(Health, Target);
 
@@ -38,10 +41,13 @@ struct BattleDamageStatics
 		// 伤害来源的属性
 		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UAttackAttributeSet, AttackPower, Source, true);
 		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UAttackAttributeSet, MeleeMoveFactor, Source, true);
+		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UAttackAttributeSet, ShockLevel, Source, true);
 
 		// 伤害目标的属性
 		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UDefenseAttributeSet, DefensePower, Target, true);
 		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UDefenseAttributeSet, ApplyDamageFactor, Target, true);
+		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UDefenseAttributeSet, StoicLevel, Target, true);
+		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UDefenseAttributeSet, StableState, Target, true);
 
 		DEFINE_SOURCE_ATTRIBUTE_CAPTUREDEF(UHealthAttributeSet, Health, Target, true);
 	}
@@ -57,8 +63,11 @@ UBattleDamageExecutionCalculation::UBattleDamageExecutionCalculation()
 {
 	RelevantAttributesToCapture.Add(DamageStatics().SourceAttackPowerDef);
 	RelevantAttributesToCapture.Add(DamageStatics().SourceMeleeMoveFactorDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceShockLevelDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetDefensePowerDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetApplyDamageFactorDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetStoicLevelDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetStableStateDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetHealthDef);
 }
 
@@ -82,7 +91,7 @@ void UBattleDamageExecutionCalculation::Execute_Implementation(const FGameplayEf
 
 	// --------------------------------------
 	//	CauseDamage = MeleeMoveFactos * AttackPower
-	//	ApplyCauseDamage = CauseDamage * (DefensePower / (DefensePower + 100))
+	//	ApplyDamage = CauseDamage * ApplyDamageFactor * (DefensePower / (DefensePower + 100))
 	// --------------------------------------
 
 	float SourceAttackPower = 0.f;
@@ -97,11 +106,28 @@ void UBattleDamageExecutionCalculation::Execute_Implementation(const FGameplayEf
 	float TargetApplyDamageFactor = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetApplyDamageFactorDef, EvaluationParameters, TargetApplyDamageFactor);
 
-	// 攻击力 * 招式系数 * 承伤系数 * (100 / (防御力 + 100))
+	// Health = Health - (攻击力 * 招式系数 * 承伤系数 * (100 / (防御力 + 100)))
 	float ApplyDamage = SourceAttackPower * SourceMeleeMoveFactor * TargetApplyDamageFactor * (100.f / (TargetDefensePower + 100.f));
 	UE_LOG(LogTemp, Error, TEXT("Damage %f"), ApplyDamage);
 	if (ApplyDamage > 0.f)
 	{
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().TargetHealthProperty, EGameplayModOp::Additive, -ApplyDamage));
+	}
+
+	// --------------------------------------
+	// StableState = Stoic - ShockLevel
+	// --------------------------------------
+
+	float SourceShockLevel = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceShockLevelDef, EvaluationParameters, SourceShockLevel);
+
+	float TargetStoicLevel = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetStoicLevelDef, EvaluationParameters, TargetStoicLevel);
+
+	float ApplyShock = SourceShockLevel - TargetStoicLevel;
+	UE_LOG(LogTemp, Error, TEXT("Shock %f"), ApplyShock);
+	if (ApplyShock > 0.f)
+	{
+		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().TargetStableStateProperty, EGameplayModOp::Additive, -ApplyShock));
 	}
 }
