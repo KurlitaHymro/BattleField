@@ -36,6 +36,9 @@ public:
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(StableState)
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(StableState)
 
+protected:
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+
 private:
 	friend struct BattleDamageStatics;
 
