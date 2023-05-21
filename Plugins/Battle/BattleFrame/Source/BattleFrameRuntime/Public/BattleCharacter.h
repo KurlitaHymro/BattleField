@@ -58,4 +58,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void Destroy();
 	virtual void Destroy_Implementation();
+
+public:
+	UFUNCTION(BlueprintNativeEvent)
+	FRotator GetExceptRotation();
+	virtual FRotator GetExceptRotation_Implementation();
 };

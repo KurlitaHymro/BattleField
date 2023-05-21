@@ -4,6 +4,7 @@
 #include "BattleCharacter.h"
 #include "BattleAbilitySystemComponent.h"
 #include "EquipmentSystem/EquipmentSystemComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ABattleCharacter::ABattleCharacter()
@@ -68,4 +69,9 @@ void ABattleCharacter::Die_Implementation()
 void ABattleCharacter::Destroy_Implementation()
 {
     AActor::Destroy();
+}
+
+FRotator ABattleCharacter::GetExceptRotation_Implementation()
+{
+    return GetActorRotation();
 }
